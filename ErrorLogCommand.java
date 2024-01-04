@@ -1,12 +1,12 @@
 public class ErrorLogCommand implements Command{
-    private String msg;
-    private Error ;
-    public ErrorLogCommand(String msg){
 
-        this.msg = msg;
+    private Error Elog;
+    public ErrorLogCommand(Error Elog){
+
+        this.Elog = Elog;
     }
     public void execute(){
-
+        Elog.logToFile(msg);
     }
     public void undo(){
 
