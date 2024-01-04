@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
-public class UDPServerClient {
-    
+public class Terminal {
+    private String[] history = new String[100];
     
     public static void main(String[] args) {
         
