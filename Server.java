@@ -8,6 +8,8 @@ public class Server implements Runnable{
     private static final int LunghezzaBuffer = 1024;
     private DatagramPacket packet;
     private static DatagramSocket socket;
+    // private String[] history = new String[100];
+
     public Server(DatagramPacket packet) {
 
         this.packet = packet;
