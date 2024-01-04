@@ -3,7 +3,7 @@ public interface Command {
     /**execute permette di eseguire il comando
      * 
      */
-    public void execute();
+    public boolean execute();
     /**undo permette di annullare il comando
      * 
      */

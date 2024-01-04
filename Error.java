@@ -35,16 +35,11 @@ public class Error {
      * @param errorMessage messaggio da scrivere in modalità append
      * @throws IOException eccezione sollevata dal metodo write di PrintWriter 
      */
-    public boolean appendToStream(String errorMessage){
-        //! da decidere se sollevare un eccezione oppure restituire true o false
-        try{
-            openStream(true);
-            this.out.write(errorMessage);
-            closeStream();
-            return true;
-        }catch(Exception e){
-            return false;
-        }
+    public void appendToStream(String errorMessage) throws IOException{
+        openStream(true);
+        this.out.write(errorMessage);
+        closeStream();
+        
     }
 
     /** permette l'apertura del file log
