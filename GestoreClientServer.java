@@ -1,11 +1,13 @@
+import java.util.ArrayList;
+
 public class GestoreClientServer {
 
-    private Server []listaServer;
-    private Client []listaClient;
+    private ArrayList<Server> listaServer;
+    private ArrayList<Client> listaClient;
 
     public GestoreClientServer(){
-        this.listaServer = new Server[10]; 
-        this.listaClient = new Client[10];
+        this.listaServer = new ArrayList<Server>(10); 
+        this.listaClient = new ArrayList<Client>(10);
     }
 
     public Server ricercaServer(String nome){
@@ -21,17 +23,17 @@ public class GestoreClientServer {
 
     public boolean stampaLista(boolean client,boolean server){
         //messaggi in base alla presenza di elementi in listaServer e listaClient
-        String lista = this.listaClient.length == 0 && client ? "non è presente nessun client" : "";
-        lista = this.listaServer.length == 0 && server ? "non è presente nessun server" : lista;
-        lista = this.listaClient.length == 0 && this.listaServer.length == 0 ? "non è presente nessun client o server" : lista;
+        String lista = this.listaClient.size() == 0 && client ? "non è presente nessun client" : "";
+        lista = this.listaServer.size() == 0 && server ? "non è presente nessun server" : lista;
+        lista = this.listaClient.size() == 0 && this.listaServer.size() == 0 ? "non è presente nessun client o server" : lista;
         if(client == false && server == false) return false;
-        if(client){
+        if(client && this.listaClient.size() > 0){
             lista += "\n--- LISTA CLIENT ---";
             for (Client c : listaClient) {
             lista += c.toString() + "\n";
             }
         }
-        if(server){
+        if(server && this.listaServer.size() > 0){
             lista += "--- LISTA SERVER ---";
             for (Server s : listaServer) {
                 lista += s.toString() + "\n";

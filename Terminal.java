@@ -37,7 +37,7 @@ public class Terminal {
                     "Comandi Terminale Generale\n\n"+
                     "help\t\tpermette di visualizzare tutti i comandi \n" + 
                     "quit\t\tpermette di terminare l'esecuzione \n" + 
-                    "show\t\tpermette di visualizzare la lista di tutti i client e server creati\n\t\t(show client) per visualizzare solo la lista di client,\n\t\t(show server) per visualizzare solo la lista di server\n"+
+                    "show\t\tpermette di visualizzare la lista di tutti i client e server creati\n\t\t(show all) per visualizzare lista di client e server,\n\t\t(show client) per visualizzare solo la lista di client,\n\t\t(show server) per visualizzare solo la lista di server\n"+
                     "info\t\tpermette di visualizzare le informazioni di uno specifico client o server (info nome)\n" +
                     "new \t\tpermette di creare un server o client specifico\n\t\t(new client nomeClient ip porta) l'ip e la porta si riferiscono al socket remoto destinatario\n\t\t(new server nomeServer porta) la porta si riferisce alla porta su cui creare la nuova Socket locale\n" +
                     "select\t\tpermette di selezionare un server o client in base al nome\n\t\t(select client nomeClient) permette di selezionare un client\n\t\t(select server nomeServer) permette di selezionare un server\n"+
@@ -46,12 +46,12 @@ public class Terminal {
                 );
                 break;
             case "show":
-
-                //TODO mostra tutti i client e server oppure se specificato show client solo i client oppure solo i server con show server
-                //TODO controlla che dopo show ci siano effettivamente scritte cose sensate per il comando
-                CommandShow comando = new CommandShow(this.gestore, false, false);
-                comando.execute();
-
+                String[] t = menu.toLowerCase().split(" ");
+                String scelta = t.length <= 1  || t.length > 2 || t == null? "" : t[1];
+                CommandShow comando = new CommandShow(gestore,scelta);
+                if(comando == null || !comando.execute()){
+                    System.out.println("errore, non è stato specificato cosa stampare");
+                }
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
