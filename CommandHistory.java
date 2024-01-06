@@ -1,13 +1,13 @@
 import java.util.Stack;
 
 public class CommandHistory {
-    private Stack<Command> history = new Stack<>();
+    private Stack<UndoableCommand> history = new Stack<>();
 
-    public void push(Command c) {
+    public void push(UndoableCommand c) {
         history.push(c);
     }
 
-    public Command pop() {
+    public UndoableCommand pop() {
         return history.pop();
     }
 

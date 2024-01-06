@@ -2,16 +2,14 @@ import java.util.Scanner;
 
 public class Terminal {
 
-    private CommandHistory storiaComandi;
     private Error errorLog;
-    private Server []listaServer;
-    private Client []listaClient;
+    private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
+    private GestoreClientServer gestore;
 
     public Terminal(String urlFileLogErrori){
-        this.storiaComandi = new CommandHistory();
         this.errorLog = new Error(urlFileLogErrori);
-        this.listaServer = new Server[10];
-        this.listaClient = new Client[10];
+        this.storiaComandi = new CommandHistory();
+        this.gestore = new GestoreClientServer();
     }
 
     public void main() {
@@ -43,16 +41,21 @@ public class Terminal {
                     "info\t\tpermette di visualizzare le informazioni di uno specifico client o server (info nome)\n" +
                     "new \t\tpermette di creare un server o client specifico\n\t\t(new client nomeClient ip porta) l'ip e la porta si riferiscono al socket remoto destinatario\n\t\t(new server nomeServer porta) la porta si riferisce alla porta su cui creare la nuova Socket locale\n" +
                     "select\t\tpermette di selezionare un server o client in base al nome\n\t\t(select client nomeClient) permette di selezionare un client\n\t\t(select server nomeServer) permette di selezionare un server\n"+
-                    "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n"
+                    "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
+                    "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
                 );
                 break;
             case "show":
+
                 //TODO mostra tutti i client e server oppure se specificato show client solo i client oppure solo i server con show server
                 //TODO controlla che dopo show ci siano effettivamente scritte cose sensate per il comando
+                CommandShow comando = new CommandShow(this.gestore, false, false);
+                comando.execute();
+
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
-                    System.out.println("Chiusura Terminale In Corso...");
+                    System.out.println("Chiusura In Corso...");
                     break;
                 }
             default:
@@ -63,16 +66,19 @@ public class Terminal {
         
     }
 
+
+
+
     private void undo() {
         if (storiaComandi.isEmpty()) return;
 
-        Command command = storiaComandi.pop();
+        UndoableCommand command = storiaComandi.pop();
         if (command != null) {
             command.undo();
         }
     }
 
-    private void executeCommand(Command command) {
+    private void executeCommand(UndoableCommand command) {
         if (command.execute()) {
             storiaComandi.push(command);
         }

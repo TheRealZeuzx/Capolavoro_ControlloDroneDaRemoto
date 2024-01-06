@@ -4,8 +4,5 @@ public interface Command {
      * 
      */
     public boolean execute();
-    /**undo permette di annullare il comando
-     * 
-     */
-    public void undo();
+    
 }
