@@ -4,7 +4,7 @@ public class GestoreClientServer {
     private Client []listaClient;
 
     public GestoreClientServer(){
-        this.listaServer = new Server[10];
+        this.listaServer = new Server[10]; 
         this.listaClient = new Client[10];
     }
 
@@ -19,8 +19,12 @@ public class GestoreClientServer {
         
     }
 
-    public void stampaLista(boolean client,boolean server){
-        String lista = (client == false && server == false)? "errore, non è stato specificato cosa stampare" : "";
+    public boolean stampaLista(boolean client,boolean server){
+        //messaggi in base alla presenza di elementi in listaServer e listaClient
+        String lista = this.listaClient.length == 0 && client ? "non è presente nessun client" : "";
+        lista = this.listaServer.length == 0 && server ? "non è presente nessun server" : lista;
+        lista = this.listaClient.length == 0 && this.listaServer.length == 0 ? "non è presente nessun client o server" : lista;
+        if(client == false && server == false) return false;
         if(client){
             lista += "\n--- LISTA CLIENT ---";
             for (Client c : listaClient) {
@@ -33,8 +37,9 @@ public class GestoreClientServer {
                 lista += s.toString() + "\n";
             }
         }
-        
+        if(lista.isBlank()) return false;
         System.out.println(lista);
+        return true;
     }
 
 

@@ -6,9 +6,7 @@ public class CommandShow implements Command{
         this.gestore = gestore;
     }
     public boolean execute(){
-        if(!this.client && !this.server) return false;
-        this.gestore.stampaLista(this.client, this.server);
-        return true;
+        return this.gestore.stampaLista(this.client, this.server);
     }
 
 }
