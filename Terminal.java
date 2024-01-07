@@ -1,5 +1,8 @@
 import java.util.Scanner;
-
+/**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
+ * ha la possibilità di fare l'undo dei comandi significativi come delete e new
+ * 
+ */
 public class Terminal {
 
     private Error errorLog;
@@ -27,7 +30,6 @@ public class Terminal {
             //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
             else temp = menu.toLowerCase().split(" ")[0];
             
-            //?Usare command anche nei comandi della console (penso di si)
             switch(temp){ 
             case "h":
             case "?":
@@ -48,10 +50,17 @@ public class Terminal {
             case "show":
                 String[] t = menu.toLowerCase().split(" ");
                 String scelta = t.length <= 1  || t.length > 2 || t == null? "" : t[1];
-                CommandShow comando = new CommandShow(gestore,scelta);
-                if(comando == null || !comando.execute()){
+                if(!this.executeCommand(new CommandShow(gestore,scelta)))
                     System.out.println("errore, non è stato specificato cosa stampare");
-                }
+                break;
+
+            case "info":
+                
+                break;
+            
+            case "undo":
+                if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
+                else System.out.println("l'ultima azione significativa è stata annullata con successo");
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
@@ -68,19 +77,28 @@ public class Terminal {
 
 
 
-
-    private void undo() {
-        if (storiaComandi.isEmpty()) return;
-
+    /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
+     * @return true se l'esecuzione è andata a buon fine altrimenti false
+     */
+    private boolean undo() {
+        if (storiaComandi.isEmpty()) return false;
         UndoableCommand command = storiaComandi.pop();
         if (command != null) {
-            command.undo();
+            return command.undo();
         }
+        return false;
     }
 
-    private void executeCommand(UndoableCommand command) {
-        if (command.execute()) {
-            storiaComandi.push(command);
-        }
+    /**esegue il comando e restituisce true se l'esec è riuscita altrimenti false, se il comando implementa undoable command, viene inserito nella storia comandi
+     * 
+     * @param command comando da eseguire (deve implementare Command)
+     * @return true se l'esecuzione è andata a buon fine altrimenti false
+     */
+    private boolean executeCommand(Command command) {
+        if(command == null) return false;
+        boolean temp = command.execute();
+        if(command instanceof UndoableCommand && temp)storiaComandi.push((UndoableCommand)command);
+        return temp;
+        
     }
 }

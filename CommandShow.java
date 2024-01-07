@@ -5,6 +5,8 @@ public class CommandShow implements Command{
         this.gestore = gestore;
         this.scelta = scelta;
     }
+
+    //? si può fare o è meglio dividere in 2 comandi showclient e show server e poi utilizzare un compositeCommand oppure showall command?
     public boolean execute(){
         
         boolean client = false;

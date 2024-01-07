@@ -6,12 +6,14 @@ import java.net.InetSocketAddress;
 
 public class Server extends SocketUDP implements Runnable{
 
+    //TODO creare i seguenti metodi per eseguire le op di :
     //? TODO risposta al client con stesso msg?
     //TODO salva su file msg client
-    //TODO
+    
     private static final int LunghezzaBuffer = 1024;
     private DatagramPacket packet;
     private DatagramSocket socket;
+
 
     public Server(DatagramSocket socket,String nomeServer) throws Exception{
         if(!super.setNome(nomeServer)) throw new Exception("il nome inserito non è valido");
@@ -30,7 +32,7 @@ public class Server extends SocketUDP implements Runnable{
     @Override
     public String toString() {
         
-        return super.nome + "\t"+ this.socket.getInetAddress() +"\t"+ this.socket.getPort();
+        return this.getNome() + "\t"+ this.socket.getInetAddress() +"\t"+ this.socket.getPort() +"\t"+ (this.getStato() ? "attivo" : "disattivo");
     }
 
     
