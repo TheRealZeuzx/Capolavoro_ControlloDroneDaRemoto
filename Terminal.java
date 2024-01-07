@@ -24,40 +24,13 @@ public class Terminal {
             System.out.print(">");
             menu = input.nextLine();
             
-            String temp;
+            String[] params;
             if(menu.isBlank())
-                temp = "";
-            //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
-            else temp = menu.toLowerCase().split(" ")[0];
-            
-            switch(temp){ 
-            case "h":
-            case "?":
-            case "help":
-                System.out.println(
-                    "-------------------------------------------------------------------------------\n"+
-                    "Comandi Terminale Generale\n\n"+
-                    "help\t\tpermette di visualizzare tutti i comandi \n" + 
-                    "quit\t\tpermette di terminare l'esecuzione \n" + 
-                    "show\t\tpermette di visualizzare la lista di tutti i client e server creati\n\t\t(show all) per visualizzare lista di client e server,\n\t\t(show client) per visualizzare solo la lista di client,\n\t\t(show server) per visualizzare solo la lista di server\n"+
-                    "info\t\tpermette di visualizzare le informazioni di uno specifico client o server (info nome)\n" +
-                    "new \t\tpermette di creare un server o client specifico\n\t\t(new client nomeClient ip porta) l'ip e la porta si riferiscono al socket remoto destinatario\n\t\t(new server nomeServer porta) la porta si riferisce alla porta su cui creare la nuova Socket locale\n" +
-                    "select\t\tpermette di selezionare un server o client in base al nome\n\t\t(select client nomeClient) permette di selezionare un client\n\t\t(select server nomeServer) permette di selezionare un server\n"+
-                    "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
-                    "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
-                );
-                break;
-            case "show":
-                String[] t = menu.toLowerCase().split(" ");
-                String scelta = t.length <= 1  || t.length > 2 || t == null? "" : t[1];
-                if(!this.executeCommand(new CommandShow(gestore,scelta)))
-                    System.out.println("errore, non è stato specificato cosa stampare");
-                break;
+                params = null;
+                //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
+            else params = menu.toLowerCase().split(" ");
 
-            case "info":
-                
-                break;
-            
+            switch((params == null ? "" : params[0])){
             case "undo":
                 if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
                 else System.out.println("l'ultima azione significativa è stata annullata con successo");
@@ -68,7 +41,12 @@ public class Terminal {
                     break;
                 }
             default:
-                System.out.println("il comando '" + menu + "' non è riconosciuto");
+                SimpleCommandFactory factory = new SimpleCommandFactory();
+                try{
+                    this.executeCommand(factory.getCommand(this.gestore,params));
+                }catch(CommandException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             }
         }while(!menu.equalsIgnoreCase("quit"));
