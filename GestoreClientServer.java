@@ -6,10 +6,12 @@ public class GestoreClientServer {
 
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;
+    private TerminalGestoreClientServer terminal;
 
-    public GestoreClientServer(){
+    public GestoreClientServer(Error errorLog){
         this.listaServer = new ArrayList<Server>(10); 
         this.listaClient = new ArrayList<Client>(10);
+        this.terminal = new TerminalGestoreClientServer(this);
     }
 
 
@@ -64,16 +66,6 @@ public class GestoreClientServer {
         return true;
     }
 
-    
-    public void attiva(String nome,String tipo){
-
-        
-    }
-    public void disattiva(String nome,String tipo){
-
-        
-    }
-
     /**ricerca di un socketUDP all interno di un vettore di SocketUDP (anche client o server)
      * 
      * @param nome nome del socket 
@@ -86,6 +78,10 @@ public class GestoreClientServer {
             i++;
         }
         return (i==socket.size() ? null : socket.get(i)); 
+    }
+
+    public void startTerminal(){
+        this.terminal.main();
     }
 
 }
