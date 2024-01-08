@@ -1,4 +1,4 @@
-public class CommandFactoryServer implements CommandFactory<Server>{
+public class CommandFactoryServer implements CommandFactory{
     
     public CommandFactoryServer(){}
     public Command getCommand(Server gestore, String []params) throws CommandException {
@@ -13,6 +13,14 @@ public class CommandFactoryServer implements CommandFactory<Server>{
             default:    
                 return new CommandDefault(params);
         }
+    }
+    @Override
+    public Command getCommand(GestoreClientServer gestore, String[] params) throws CommandException {
+        return null;
+    }
+    @Override
+    public Command getCommand(Client gestore, String[] params) throws CommandException {
+         return null;
     }
 
 }

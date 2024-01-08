@@ -1,4 +1,4 @@
-public class CommandFactoryGestore implements CommandFactory<GestoreClientServer>{
+public class CommandFactoryGestore implements CommandFactory{
     
     public CommandFactoryGestore(){}
     public Command getCommand(GestoreClientServer gestore, String []params) throws CommandException {
@@ -22,13 +22,35 @@ public class CommandFactoryGestore implements CommandFactory<GestoreClientServer
                 );
             case "s":
             case "show":
-                return new CommandShow(gestore,params);
+            
+                switch (params == null || params.length == 1 ? "" : params[1]) {
+                case "a":
+                case "all":
+                    return new CommandShowAll(gestore);
+                case "c":
+                case "client":
+                    return new CommandShowClient(gestore);
+                case "s":
+                case "server":
+                    return new CommandShowServer(gestore);
+                default:
+                    throw new CommandException("Errore, non è stato specificato cosa stampare");
+                }
             case "i":
             case "info":
                 return new CommandInfo(gestore,params);
             default:    
                 return new CommandDefault(params);
         }
+
+    }
+    @Override
+    public Command getCommand(Client gestore, String[] params) throws CommandException {
+        return null;
+    }
+    @Override
+    public Command getCommand(Server gestore, String[] params) throws CommandException {
+         return null;
     }
 
 }

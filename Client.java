@@ -6,7 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class Client extends SocketUDP implements Runnable{
+public class Client extends SocketUDP implements Runnable,Commandable{
 
 	private static final int LunghezzaBuffer = 1024;
     private DatagramPacket packet;
@@ -29,6 +29,11 @@ public class Client extends SocketUDP implements Runnable{
     public String toString() {
         
         return this.getNome() + "\t"+ this.socket.getInetAddress() +"\t"+ this.socket.getPort()+"\t"+ (this.getStato() ? "attivo" : "disattivo");
+    }
+
+    @Override
+    public void startTerminal() {
+        
     }
 }
 

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 /**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server che la classe Terminal non deve gestire
  * 
  */
-public class GestoreClientServer {
+public class GestoreClientServer implements Commandable{
 
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;

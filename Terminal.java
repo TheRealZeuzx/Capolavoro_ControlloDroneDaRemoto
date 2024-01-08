@@ -3,17 +3,17 @@ import java.util.Scanner;
  * ha la possibilità di fare l'undo dei comandi significativi come delete e new
  * 
  */
-public class Terminal<T>{
+public class Terminal<T extends Commandable>{
     
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
     private T gestore;
-    private CommandFactory<T> factory;
+    private CommandFactory factory;
 
     public Terminal(T gestore,Class<T> tipoClasse) throws CommandException{
         
         this.storiaComandi = new CommandHistory();
         this.gestore = gestore;
-        this.factory = (CommandFactory<T>) CommandFactoryInstantiator.newInstance(gestore.getClass());
+        this.factory = CommandFactoryInstantiator.newInstance(gestore.getClass());
     }
 
     public void main() {
@@ -44,7 +44,9 @@ public class Terminal<T>{
             default:
                 
                 try{
-                    this.executeCommand(factory.getCommand(this.gestore,params));
+                    if(this.gestore instanceof GestoreClientServer)this.executeCommand(factory.getCommand((GestoreClientServer)this.gestore,params));
+                    if(this.gestore instanceof Client)this.executeCommand(factory.getCommand((Client)this.gestore,params));
+                    if(this.gestore instanceof Server)this.executeCommand(factory.getCommand((Server)this.gestore,params));
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
                 }

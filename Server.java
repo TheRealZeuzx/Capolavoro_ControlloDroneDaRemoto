@@ -4,7 +4,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-public class Server extends SocketUDP implements Runnable{
+public class Server extends SocketUDP implements Runnable,Commandable{
 
     //TODO creare i seguenti metodi per eseguire le op di :
     //? TODO risposta al client con stesso msg?
@@ -33,6 +33,11 @@ public class Server extends SocketUDP implements Runnable{
     public String toString() {
         
         return this.getNome() + "\t"+ this.socket.getInetAddress() +"\t"+ this.socket.getPort() +"\t"+ (this.getStato() ? "attivo" : "disattivo");
+    }
+
+    @Override
+    public void startTerminal() {
+        
     }
 
     
