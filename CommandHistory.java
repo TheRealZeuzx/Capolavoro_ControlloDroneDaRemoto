@@ -1,5 +1,7 @@
 import java.util.Stack;
-
+/**Permette di salvare in uno stack i comandi che implementano UndoableCommand , che quindi dispongono del metodo  undo
+ * 
+ */
 public class CommandHistory {
     private Stack<UndoableCommand> history = new Stack<>();
 

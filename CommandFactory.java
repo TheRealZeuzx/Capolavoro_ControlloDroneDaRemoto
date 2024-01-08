@@ -1,4 +1,6 @@
-
+/**Interfaccia per la generalizzazione delle varie factory
+ * 
+ */
 public interface CommandFactory {
     
     public abstract Command getCommand(GestoreClientServer gestore,String[] params)  throws CommandException;

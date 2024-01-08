@@ -1,3 +1,7 @@
+/**Factory per la creazione di specifici comandi per il Server
+
+ * 
+ */
 public class CommandFactoryServer implements CommandFactory{
     
     public CommandFactoryServer(){}

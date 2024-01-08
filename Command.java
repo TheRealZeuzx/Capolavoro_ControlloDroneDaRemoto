@@ -2,9 +2,10 @@
  * 
  */
 public interface Command {
+
     /**execute permette di eseguire il comando
      * 
      */
-    public boolean execute();
+    public void execute() throws CommandException;
     
 }

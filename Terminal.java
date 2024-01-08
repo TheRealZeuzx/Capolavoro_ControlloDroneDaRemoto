@@ -1,6 +1,6 @@
 import java.util.Scanner;
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
- * ha la possibilità di fare l'undo dei comandi significativi come delete e new
+ * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
  * 
  */
 public class Terminal<T extends Commandable>{
@@ -74,12 +74,12 @@ public class Terminal<T extends Commandable>{
      * 
      * @param command comando da eseguire (deve implementare Command)
      * @return true se l'esecuzione è andata a buon fine altrimenti false
+     * @throws CommandException
      */
-    private boolean executeCommand(Command command) {
-        if(command == null) return false;
-        boolean temp = command.execute();
-        if(command instanceof UndoableCommand && temp)storiaComandi.push((UndoableCommand)command);
-        return temp;
+    private void executeCommand(Command command) throws CommandException {
+        if(command == null) return;
+        command.execute();
+        if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
         
     }
 }

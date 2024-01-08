@@ -1,6 +1,6 @@
 import java.io.IOException;
-
-/**permette di eseguire 
+//TODO cosa implementa? command o qualcos'altro?
+/**permette di stampare in modalità append il msg di errore
  * 
  */
 public class ErrorLogCommand{

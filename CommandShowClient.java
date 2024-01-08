@@ -1,12 +1,12 @@
-public class CommandShowClient implements Command{
-    private GestoreClientServer gestore;
-    public CommandShowClient(GestoreClientServer gestore){
-        this.gestore = gestore;
+/**permette di stampare la lista di client presenti nel GestoreClientServer
+ * 
+ */
+public class CommandShowClient extends CommandI<GestoreClientServer>{
+    public CommandShowClient(GestoreClientServer gestore) throws CommandException{
+        super(gestore);
     }
-
-
-    public boolean execute(){
-        return this.gestore.stampaLista(true,false);
+    public void execute() throws CommandException{
+        if(!this.getGestore().stampaLista(true,false)) throw new CommandException("");
     }
 
 }

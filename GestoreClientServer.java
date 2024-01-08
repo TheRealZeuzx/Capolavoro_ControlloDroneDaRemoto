@@ -1,5 +1,6 @@
 import java.util.ArrayList;
-/**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server che la classe Terminal non deve gestire
+/**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server
+ * contiene al suo interno il proprio terminale che esegue i propri command
  * 
  */
 public class GestoreClientServer implements Commandable{
@@ -16,12 +17,20 @@ public class GestoreClientServer implements Commandable{
 
 
     public Server ricercaServer(String nome){
-       
-        return (Server)this.ricerca(nome, (ArrayList<SocketUDP>) ((ArrayList<?>) this.listaServer));
+        int i = 0;
+        while(i<this.listaServer.size() && !this.listaServer.get(i).getNome().equals(nome)){
+            i++;
+        }
+        return (i==this.listaServer.size() ? null : this.listaServer.get(i)); 
+
     }
     public Client ricercaClient(String nome){
-        
-        return (Client)this.ricerca(nome, (ArrayList<SocketUDP>) ((ArrayList<?>) this.listaClient));
+        int i = 0;
+        while(i<this.listaClient.size() && !this.listaClient.get(i).getNome().equals(nome)){
+            i++;
+        }
+        return (i==this.listaClient.size() ? null : this.listaClient.get(i)); 
+
     }
     
     public void creaServer(String nome,boolean attiva){
@@ -30,7 +39,10 @@ public class GestoreClientServer implements Commandable{
     public void creaClient(String nome,boolean attiva){
         
     }
-
+    public boolean isEmpty(boolean client){
+        if(client) return this.listaClient.isEmpty();
+        return this.listaServer.isEmpty();
+    }
     /**permette di stampare la lista di client e server presenti in base ai parametri passati
      * 
      * @param client valore booleano che mi permette di capire se stampare la lista di client o meno
@@ -64,20 +76,6 @@ public class GestoreClientServer implements Commandable{
     public boolean remove(String nome,String tipo){
 
         return true;
-    }
-
-    /**ricerca di un socketUDP all interno di un vettore di SocketUDP (anche client o server)
-     * 
-     * @param nome nome del socket 
-     * @param socket vettore di socketUDP
-     * @return SocketUDP , restituisce il client o server se lo ha trovato altrimenti restituisce null
-     */
-    private SocketUDP ricerca(String nome,ArrayList<SocketUDP> socket){
-        int i = 0;
-        while(i<socket.size() && !socket.get(i).getNome().equals(nome)){
-            i++;
-        }
-        return (i==socket.size() ? null : socket.get(i)); 
     }
 
     public void startTerminal(){

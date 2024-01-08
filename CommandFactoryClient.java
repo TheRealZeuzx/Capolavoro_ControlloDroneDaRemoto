@@ -1,3 +1,6 @@
+/**factory per la creazione di Comandi specifici per il Client
+ * 
+ */
 public class CommandFactoryClient implements  CommandFactory{
 
 

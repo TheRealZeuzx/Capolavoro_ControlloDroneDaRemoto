@@ -1,3 +1,6 @@
+/**Factory per la creazione di specifici comandi per il GestoreClientServer
+ * 
+ */
 public class CommandFactoryGestore implements CommandFactory{
     
     public CommandFactoryGestore(){}
@@ -23,7 +26,7 @@ public class CommandFactoryGestore implements CommandFactory{
             case "s":
             case "show":
             
-                switch (params == null || params.length == 1 ? "" : params[1]) {
+                switch (params == null || params.length <= 1 ? "" : params[1]) {
                 case "a":
                 case "all":
                     return new CommandShowAll(gestore);
@@ -38,7 +41,17 @@ public class CommandFactoryGestore implements CommandFactory{
                 }
             case "i":
             case "info":
-                return new CommandInfo(gestore,params);
+                switch (params == null || params.length <= 2 ? "" : params[1]) {
+                case "c":
+                case "client":
+                    return new CommandInfo(gestore,true,params[2]);
+                case "s":
+                case "server":
+                    return new CommandInfo(gestore,false,params[2]);
+                default:
+                    throw new CommandException("Errore, non è stato specificato cosa stampare");
+                }
+                
             default:    
                 return new CommandDefault(params);
         }
