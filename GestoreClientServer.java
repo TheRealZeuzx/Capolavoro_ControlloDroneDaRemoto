@@ -6,12 +6,12 @@ public class GestoreClientServer {
 
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;
-    private TerminalGestoreClientServer terminal;
+    private Terminal<GestoreClientServer> terminal;
 
-    public GestoreClientServer(Error errorLog){
+    public GestoreClientServer(Error errorLog) throws CommandException{
         this.listaServer = new ArrayList<Server>(10); 
         this.listaClient = new ArrayList<Client>(10);
-        this.terminal = new TerminalGestoreClientServer(this);
+        this.terminal = new Terminal<GestoreClientServer>(this,GestoreClientServer.class);
     }
 
 

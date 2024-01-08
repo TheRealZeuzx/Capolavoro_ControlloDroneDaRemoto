@@ -5,7 +5,7 @@
 public class User {
     private Error errorLog;
     private GestoreClientServer gestore;
-    public User(String pathErrorLogFile){
+    public User(String pathErrorLogFile) throws CommandException{
         this.errorLog = new Error(pathErrorLogFile);
         this.gestore = new GestoreClientServer(this.errorLog);
     }
@@ -17,7 +17,13 @@ public class User {
 
     //! MAIN
     public static void main(String[] args) {
-        User u = new User("errorLog.txt");
-        u.start();
+        User u;
+        try {
+            u = new User("errorLog.txt");
+            u.start();
+        } catch (CommandException e) {
+            e.getMessage();
+        }
+       
     }
 }
