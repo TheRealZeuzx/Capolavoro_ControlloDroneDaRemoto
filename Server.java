@@ -38,7 +38,7 @@ public class Server implements Runnable,Commandable{
             try {
                 this.socket.receive(pacchetto);
                 Thread threadRisposta = null;
-                threadRisposta = new Thread(new ServerThread(pacchetto));
+                threadRisposta = new Thread(new ServerThread(pacchetto, this.socket));
                 threadRisposta.start();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
