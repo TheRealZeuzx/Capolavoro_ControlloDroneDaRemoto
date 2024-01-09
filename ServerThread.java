@@ -10,7 +10,7 @@ public class ServerThread extends Thread{
     DatagramSocket socketRisposta;
 
     //TODO creare i seguenti metodi per eseguire le op di :
-    //? TODO risposta al client con stesso msg?
+    //? DONE risposta al client con stesso msg?
     //TODO salva su file msg client
 
     //TODO Cambiare da Exception a un eccezione apposita
@@ -42,9 +42,14 @@ public class ServerThread extends Thread{
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
-
 		
     }
+
+    private boolean writeToFile(msgRicevuto){
+        
+    }
+
+    
 }
 
 
