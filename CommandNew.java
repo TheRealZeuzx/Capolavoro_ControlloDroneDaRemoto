@@ -1,17 +1,18 @@
 public class CommandNew extends CommandI<GestoreClientServer> implements UndoableCommand{
 
-    public CommandNew(GestoreClientServer gestore) throws CommandException {
+    private String nome;
+    public CommandNew(GestoreClientServer gestore,String nome) throws CommandException {
         super(gestore);
     }
 
     @Override
     public void execute() throws CommandException {
-        
+        //this.getGestore().creaClient(, false);
     }
 
     @Override
     public boolean undo() {
-       
+       return true;
     }
     
 }

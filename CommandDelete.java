@@ -9,6 +9,6 @@ public class CommandDelete extends CommandI<GestoreClientServer> implements Undo
     }
     @Override
     public boolean undo() {
-
+        return true;
     }
 }

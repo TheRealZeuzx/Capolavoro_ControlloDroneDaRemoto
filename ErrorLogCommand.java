@@ -5,9 +5,9 @@ import java.io.IOException;
  */
 public class ErrorLogCommand{
 
-    private Error Elog;
+    private ErrorLog Elog;
     private String msg;
-    public ErrorLogCommand(Error Elog,String msg){
+    public ErrorLogCommand(ErrorLog Elog,String msg){
 
         this.Elog = Elog;
         this.msg = msg;

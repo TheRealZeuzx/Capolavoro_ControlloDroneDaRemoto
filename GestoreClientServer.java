@@ -8,11 +8,12 @@ public class GestoreClientServer implements Commandable{
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;
     private Terminal<GestoreClientServer> terminal;
-
-    public GestoreClientServer(Error errorLog) throws CommandException{
+    //! da capire se creare altri due terminali per Client e Server oppure se Creare un terminale apposito in ogni istanza di client e server
+    //! IMPORTANTE siccome Server Client e Gestore implementan Commandable che per ora va definita bene, è fondamentale tenere Commandable per il corretto funzionamento delle CommandFactory
+    public GestoreClientServer(ErrorLog errorLog) throws CommandException{
         this.listaServer = new ArrayList<Server>(10); 
         this.listaClient = new ArrayList<Client>(10);
-        this.terminal = new Terminal<GestoreClientServer>(this,GestoreClientServer.class);
+        this.terminal = new Terminal<GestoreClientServer>(this,errorLog);
     }
 
 
@@ -36,7 +37,10 @@ public class GestoreClientServer implements Commandable{
     public void creaServer(String nome,boolean attiva){
 
     }
-    public void creaClient(String nome,boolean attiva){
+    public void creaClient(String nome,boolean attiva) throws CommandableException{
+        if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        //!come fare ? se solo nome allora lo creo ma non lo attivo, altrimenti se specifico porta e ip remoti
+        //this.listaClient.add(new Client(nome));
         
     }
     public boolean isEmpty(boolean client){

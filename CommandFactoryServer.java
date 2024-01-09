@@ -2,7 +2,7 @@
 
  * 
  */
-public class CommandFactoryServer extends CommandFactoryI<Server>{
+public class CommandFactoryServer extends CommandFactoryI<Server> implements CommandFactory{
     public CommandFactoryServer(Server gestore) throws CommandException{
         super(gestore);
     }

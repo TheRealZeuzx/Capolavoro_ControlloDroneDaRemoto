@@ -8,9 +8,10 @@ public class Terminal<T extends Commandable>{
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
     private T gestore;
     private CommandFactory factory;
+    private ErrorLog errorLog;
 
-    public Terminal(T gestore,Class<T> tipoClasse) throws CommandException{
-        
+    public Terminal(T gestore,ErrorLog errorLog) throws CommandException{
+        this.errorLog = errorLog;
         this.storiaComandi = new CommandHistory();
         this.gestore = gestore;
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
@@ -46,6 +47,8 @@ public class Terminal<T extends Commandable>{
                     this.executeCommand(factory.getCommand(params));
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
+                }catch(ErrorLogException e){
+                    new ErrorLogCommand(this.errorLog,e.getMessage()).execute();
                 }
                 break;
             }
@@ -73,7 +76,7 @@ public class Terminal<T extends Commandable>{
      * @return true se l'esecuzione è andata a buon fine altrimenti false
      * @throws CommandException
      */
-    private void executeCommand(Command command) throws CommandException {
+    private void executeCommand(Command command) throws CommandException,ErrorLogException{
         if(command == null) return;
         command.execute();
         if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);

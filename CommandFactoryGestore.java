@@ -1,7 +1,7 @@
 /**Factory per la creazione di specifici comandi per il GestoreClientServer
  * 
  */
-public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer>{
+public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> implements CommandFactory{
 
     public CommandFactoryGestore(GestoreClientServer gestore) throws CommandException{
         super(gestore);

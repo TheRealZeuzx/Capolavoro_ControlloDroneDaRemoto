@@ -3,10 +3,10 @@
  * 
  */
 public class User {
-    private Error errorLog;
+    private ErrorLog errorLog;
     private GestoreClientServer gestore;
     public User(String pathErrorLogFile) throws CommandException{
-        this.errorLog = new Error(pathErrorLogFile);
+        this.errorLog = new ErrorLog(pathErrorLogFile);
         this.gestore = new GestoreClientServer(this.errorLog);
     }
     

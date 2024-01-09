@@ -1,7 +1,7 @@
 /**factory per la creazione di Comandi specifici per il Client
  * 
  */
-public class CommandFactoryClient extends CommandFactoryI<Client>{
+public class CommandFactoryClient extends CommandFactoryI<Client> implements CommandFactory{
   
     
     public CommandFactoryClient(Client gestore) throws CommandException {

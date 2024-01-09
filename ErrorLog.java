@@ -9,14 +9,14 @@ import java.io.PrintWriter;
     Classe Error permette di scrivere su di un file i log degli errori quando si sollevate eccezioni
     @author Mattia Bonfiglio - Tommaso Mussaldi
 */
-public class Error {
+public class ErrorLog {
     private File log;
     private FileWriter writer = null;
     private PrintWriter out = null;
 
     /**costruttore di Error di default crea un file di log errori nel path del progetto.
      */
-    public Error(){
+    public ErrorLog(){
         String fileName = "/errorLog.txt";
         this.log = new File(fileName);
     }
@@ -25,7 +25,7 @@ public class Error {
      * 
      * @param fileName path del file di log su cui scrivere i log degli errori
      */
-    public Error(String fileName){
+    public ErrorLog(String fileName){
         this.log = new File(fileName);
     }
     
