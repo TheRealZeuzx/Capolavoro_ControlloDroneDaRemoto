@@ -7,7 +7,7 @@ public class CommandNew extends CommandI<GestoreClientServer> implements Undoabl
 
     @Override
     public void execute() throws CommandException {
-        //this.getGestore().creaClient(, false);
+        //this.getGestore().creaClient();
     }
 
     @Override

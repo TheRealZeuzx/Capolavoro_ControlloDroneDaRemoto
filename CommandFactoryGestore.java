@@ -53,6 +53,18 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
+            case "n":
+            case "new":
+                switch (params == null || params.length <= 2 ? "" : params[1]) {
+                case "c":
+                case "client":
+                    // return new CommandNew();
+                case "s":
+                case "server":
+                    // return new CommandNew();
+                default:
+                    throw new CommandException("Errore, non è stato specificato cosa stampare");
+                }
                 
             default:    
                 return new CommandDefault(params);

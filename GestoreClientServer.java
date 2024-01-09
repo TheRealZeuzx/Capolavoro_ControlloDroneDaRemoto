@@ -11,7 +11,7 @@ public class GestoreClientServer implements Commandable{
     //! da capire se creare altri due terminali per Client e Server oppure se Creare un terminale apposito in ogni istanza di client e server
     //! IMPORTANTE siccome Server Client e Gestore implementan Commandable che per ora va definita bene, è fondamentale tenere Commandable per il corretto funzionamento delle CommandFactory
     public GestoreClientServer(ErrorLog errorLog) throws CommandException{
-        this.listaServer = new ArrayList<Server>(10); 
+        this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);
         this.terminal = new Terminal<GestoreClientServer>(this,errorLog);
     }
