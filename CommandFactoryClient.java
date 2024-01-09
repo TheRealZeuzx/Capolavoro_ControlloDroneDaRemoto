@@ -1,12 +1,15 @@
 /**factory per la creazione di Comandi specifici per il Client
  * 
  */
-public class CommandFactoryClient implements  CommandFactory{
+public class CommandFactoryClient extends CommandFactoryI<Client>{
+  
+    
+    public CommandFactoryClient(Client gestore) throws CommandException {
+        super(gestore);
 
+    }
 
-    public CommandFactoryClient(){}
-    @Override
-    public Command getCommand(Client gestore, String[] params) throws CommandException {
+    public Command getCommand(String[] params) throws CommandException {
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
             case "h":
@@ -16,14 +19,6 @@ public class CommandFactoryClient implements  CommandFactory{
             default:    
                 return new CommandDefault(params);
         }
-    }
-    @Override
-    public Command getCommand(GestoreClientServer gestore, String[] params) throws CommandException {
-        return null;
-    }
-    @Override
-    public Command getCommand(Server gestore, String[] params) throws CommandException {
-         return null;
     }
     
 }

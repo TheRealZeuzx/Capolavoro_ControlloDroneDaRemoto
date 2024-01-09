@@ -13,7 +13,7 @@ public class Terminal<T extends Commandable>{
         
         this.storiaComandi = new CommandHistory();
         this.gestore = gestore;
-        this.factory = CommandFactoryInstantiator.newInstance(gestore.getClass());
+        this.factory = CommandFactoryInstantiator.newInstance(gestore);
     }
 
     public void main() {
@@ -42,11 +42,8 @@ public class Terminal<T extends Commandable>{
                     break;
                 }
             default:
-                
                 try{
-                    if(this.gestore instanceof GestoreClientServer)this.executeCommand(factory.getCommand((GestoreClientServer)this.gestore,params));
-                    if(this.gestore instanceof Client)this.executeCommand(factory.getCommand((Client)this.gestore,params));
-                    if(this.gestore instanceof Server)this.executeCommand(factory.getCommand((Server)this.gestore,params));
+                    this.executeCommand(factory.getCommand(params));
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
                 }

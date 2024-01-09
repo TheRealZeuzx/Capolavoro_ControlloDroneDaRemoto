@@ -1,10 +1,12 @@
 /**Factory per la creazione di specifici comandi per il GestoreClientServer
  * 
  */
-public class CommandFactoryGestore implements CommandFactory{
-    
-    public CommandFactoryGestore(){}
-    public Command getCommand(GestoreClientServer gestore, String []params) throws CommandException {
+public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer>{
+
+    public CommandFactoryGestore(GestoreClientServer gestore) throws CommandException{
+        super(gestore);
+    }
+    public Command getCommand(String []params) throws CommandException {
 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -29,13 +31,13 @@ public class CommandFactoryGestore implements CommandFactory{
                 switch (params == null || params.length <= 1 ? "" : params[1]) {
                 case "a":
                 case "all":
-                    return new CommandShowAll(gestore);
+                    return new CommandShowAll(this.getGestore());
                 case "c":
                 case "client":
-                    return new CommandShowClient(gestore);
+                    return new CommandShowClient(this.getGestore());
                 case "s":
                 case "server":
-                    return new CommandShowServer(gestore);
+                    return new CommandShowServer(this.getGestore());
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
@@ -44,10 +46,10 @@ public class CommandFactoryGestore implements CommandFactory{
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
                 case "c":
                 case "client":
-                    return new CommandInfo(gestore,true,params[2]);
+                    return new CommandInfo(this.getGestore(),true,params[2]);
                 case "s":
                 case "server":
-                    return new CommandInfo(gestore,false,params[2]);
+                    return new CommandInfo(this.getGestore(),false,params[2]);
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
@@ -56,14 +58,6 @@ public class CommandFactoryGestore implements CommandFactory{
                 return new CommandDefault(params);
         }
 
-    }
-    @Override
-    public Command getCommand(Client gestore, String[] params) throws CommandException {
-        return null;
-    }
-    @Override
-    public Command getCommand(Server gestore, String[] params) throws CommandException {
-         return null;
     }
 
 }

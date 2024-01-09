@@ -2,10 +2,11 @@
 
  * 
  */
-public class CommandFactoryServer implements CommandFactory{
-    
-    public CommandFactoryServer(){}
-    public Command getCommand(Server gestore, String []params) throws CommandException {
+public class CommandFactoryServer extends CommandFactoryI<Server>{
+    public CommandFactoryServer(Server gestore) throws CommandException{
+        super(gestore);
+    }
+    public Command getCommand(String []params) throws CommandException {
 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -17,14 +18,6 @@ public class CommandFactoryServer implements CommandFactory{
             default:    
                 return new CommandDefault(params);
         }
-    }
-    @Override
-    public Command getCommand(GestoreClientServer gestore, String[] params) throws CommandException {
-        return null;
-    }
-    @Override
-    public Command getCommand(Client gestore, String[] params) throws CommandException {
-         return null;
     }
 
 }
