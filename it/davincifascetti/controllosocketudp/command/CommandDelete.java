@@ -1,3 +1,7 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+
 public class CommandDelete extends CommandI<GestoreClientServer> implements UndoableCommand{
 
     public CommandDelete(GestoreClientServer gestore) throws CommandException {

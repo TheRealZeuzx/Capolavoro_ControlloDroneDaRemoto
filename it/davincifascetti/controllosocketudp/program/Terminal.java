@@ -1,4 +1,16 @@
+package it.davincifascetti.controllosocketudp.program;
 import java.util.Scanner;
+
+import it.davincifascetti.controllosocketudp.command.Command;
+import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactory;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryInstantiator;
+import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.Commandable;
+import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
+import it.davincifascetti.controllosocketudp.command.UndoableCommand;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
  * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
  * 
@@ -6,7 +18,6 @@ import java.util.Scanner;
 public class Terminal<T extends Commandable>{
     
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
-    private T gestore;
     private CommandFactory factory;
     private ErrorLog errorLog;
 

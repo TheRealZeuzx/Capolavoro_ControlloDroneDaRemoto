@@ -1,3 +1,9 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
+
 /**Questo comando permette di ricercare tramite il gestoreClientServer un client o server specifico e di mostrarne il toString
  * 
  */

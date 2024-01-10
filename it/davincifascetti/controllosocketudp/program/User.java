@@ -1,3 +1,7 @@
+package it.davincifascetti.controllosocketudp.program;
+import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
  * 

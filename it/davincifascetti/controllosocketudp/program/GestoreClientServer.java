@@ -1,4 +1,11 @@
+package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
+
+import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.Commandable;
+import it.davincifascetti.controllosocketudp.command.CommandableException;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server
  * contiene al suo interno il proprio terminale che esegue i propri command
  * 
@@ -14,6 +21,7 @@ public class GestoreClientServer implements Commandable{
     private Terminal<Server> terminalS;
     private Terminal<Client> terminalC;
     public GestoreClientServer(ErrorLog errorLog) throws CommandException{
+
         this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);
         this.terminal = new Terminal<GestoreClientServer>(errorLog);
