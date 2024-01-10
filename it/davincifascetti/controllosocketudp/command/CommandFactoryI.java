@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 public abstract class CommandFactoryI<T extends Commandable> {
     private T gestore;
     public CommandFactoryI(T gestore) throws CommandException{

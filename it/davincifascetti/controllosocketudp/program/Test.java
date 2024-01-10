@@ -1,3 +1,7 @@
+package it.davincifascetti.controllosocketudp.program;
+
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+
 public class Test{
     public static void main(String[] args) throws InterruptedException {
         try{

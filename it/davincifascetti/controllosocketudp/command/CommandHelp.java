@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 /**CommandHelp permette di stampare il msg di help richiesto
  * 
  */

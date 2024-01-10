@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 /**eccezioni sollevate da classi che implementano Commandable
  * 
  */

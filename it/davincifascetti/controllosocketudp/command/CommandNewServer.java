@@ -1,3 +1,10 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Terminal;
+
 public class CommandNewServer extends CommandI<GestoreClientServer> implements UndoableCommand{
 
     private String nome;

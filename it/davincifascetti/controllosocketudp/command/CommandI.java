@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 /**questa classe astratta permette di creare un comando che necessita di un gestore (che sia Client Server o GestoreClientServer)
  * creando un costruttore comune
  */

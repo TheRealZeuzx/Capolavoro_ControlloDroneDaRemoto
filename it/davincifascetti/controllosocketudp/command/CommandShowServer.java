@@ -1,3 +1,7 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+
 /**permette di stampare la lista di server presenti nel GestoreClientServer 
  * 
  */

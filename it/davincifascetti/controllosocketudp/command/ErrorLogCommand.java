@@ -1,4 +1,8 @@
+package it.davincifascetti.controllosocketudp.command;
+
 import java.io.IOException;
+
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 //TODO cosa implementa? command o qualcos'altro?
 /**permette di stampare in modalità append il msg di errore
  * 

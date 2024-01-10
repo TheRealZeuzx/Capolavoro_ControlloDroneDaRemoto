@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 /**CommandException , tutte le eccezioni sollevate dall esecuzione dei comandi e dagli errori nella creazione
  * 
  */

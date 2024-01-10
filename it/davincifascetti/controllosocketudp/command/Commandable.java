@@ -1,3 +1,5 @@
+package it.davincifascetti.controllosocketudp.command;
+
 /**implementano questa interfaccia tutte quelle classi che hanno a disposizione un terminale
  * 
  */

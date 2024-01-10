@@ -1,3 +1,9 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
+
 /**Permette di instanziare un istanza di CommandFactory adeguata
  * 
  */

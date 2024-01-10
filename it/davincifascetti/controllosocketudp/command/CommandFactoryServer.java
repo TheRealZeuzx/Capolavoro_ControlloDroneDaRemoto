@@ -1,3 +1,7 @@
+package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.Server;
+
 /**Factory per la creazione di specifici comandi per il Server
 
  * 
