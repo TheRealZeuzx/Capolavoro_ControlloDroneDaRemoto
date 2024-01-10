@@ -11,9 +11,11 @@ public class Client implements Runnable,Commandable{
 	private static final int LunghezzaBuffer = 1024;
     private String nome;
     private boolean stato;
+	private Terminal<Client> riferimentoTerminale;
 
-    public Client(DatagramSocket socket,String nomeClient) throws Exception{
+    public Client(DatagramSocket socket,String nomeClient,Terminal<Client> t) throws Exception{
         if(!this.setNome(nomeClient)) throw new Exception("il nome inserito non è valido");
+		this.riferimentoTerminale = t;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class Client implements Runnable,Commandable{
 
     @Override
     public void startTerminal() {
-        
+        this.riferimentoTerminale.main(this);
     }
 
     public boolean getStato(){return this.stato;}
