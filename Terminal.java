@@ -10,15 +10,14 @@ public class Terminal<T extends Commandable>{
     private CommandFactory factory;
     private ErrorLog errorLog;
 
-    public Terminal(T gestore,ErrorLog errorLog) throws CommandException{
+    public Terminal(ErrorLog errorLog) throws CommandException{
         this.errorLog = errorLog;
         this.storiaComandi = new CommandHistory();
-        this.gestore = gestore;
-        this.factory = CommandFactoryInstantiator.newInstance(gestore);
     }
 
-    public void main() {
-        
+    public void main(T gestore) {
+        this.factory = CommandFactoryInstantiator.newInstance(gestore);
+
         String menu;
         Scanner input = new Scanner(System.in);
         System.out.println("Inizializzazione completata, terminale attivo");
@@ -53,7 +52,8 @@ public class Terminal<T extends Commandable>{
                 break;
             }
         }while(!menu.equalsIgnoreCase("quit"));
-        
+        input.close();
+        this.factory = null;
     }
 
 
