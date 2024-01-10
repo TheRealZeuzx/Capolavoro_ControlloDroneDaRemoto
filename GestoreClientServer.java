@@ -2,6 +2,9 @@ import java.util.ArrayList;
 /**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server
  * contiene al suo interno il proprio terminale che esegue i propri command
  * 
+ * @throws CommandableExceptio errori stampati sul terminale
+ * @throws ErrorLogException errori stampati sul file
+ *
  */
 public class GestoreClientServer implements Commandable{
 
@@ -10,8 +13,6 @@ public class GestoreClientServer implements Commandable{
     private Terminal<GestoreClientServer> terminal;
     private Terminal<Server> terminalS;
     private Terminal<Client> terminalC;
-    //! da capire se creare altri due terminali per Client e Server oppure se Creare un terminale apposito in ogni istanza di client e server
-    //! IMPORTANTE siccome Server Client e Gestore implementan Commandable che per ora va definita bene, è fondamentale tenere Commandable per il corretto funzionamento delle CommandFactory
     public GestoreClientServer(ErrorLog errorLog) throws CommandException{
         this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);
@@ -20,6 +21,7 @@ public class GestoreClientServer implements Commandable{
         this.terminalS = new Terminal<Server>(errorLog);
         
     }
+
 
     public Terminal<Client> getTerminalClient(){
         return this.terminalC;
@@ -49,12 +51,37 @@ public class GestoreClientServer implements Commandable{
     public void creaServer(String nome,boolean attiva){
 
     }
-    public void creaClient(String nome,boolean attiva) throws CommandableException{
+    public void newClient(Terminal<Client> terminale, String nome) throws CommandableException{
+        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
-        //!come fare ? se solo nome allora lo creo ma non lo attivo, altrimenti se specifico porta e ip remoti
-        //this.listaClient.add(new Client(nome));
+        Client c = new Client(nome,terminale);
+        this.listaClient.add(c);
         
     }
+    public void newClient(Terminal<Client> terminale, String nome,String ip,int porta) throws CommandableException{
+        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+        if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
+        if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        Client c = new Client(nome,ip,porta,terminale);
+        this.listaClient.add(c);
+        //TODO avvio del client appena creato
+    }
+
+    public void newServer(Terminal<Server> terminale, String nome) throws CommandableException{
+        if(ricercaServer(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        Server s = new Server(nome,terminale);
+        this.listaServer.add(s);
+        
+    }
+    public void newServer(Terminal<Server> terminale, String nome,int porta) throws CommandableException, ErrorLogException{
+        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+        if(ricercaServer(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        Server s = new Server(nome,porta,terminale);
+        this.listaServer.add(s);
+        s.iniziaAscolto();
+        
+    }
+    
     public boolean isEmpty(boolean client){
         if(client) return this.listaClient.isEmpty();
         return this.listaServer.isEmpty();
@@ -72,13 +99,13 @@ public class GestoreClientServer implements Commandable{
         lista = this.listaClient.size() == 0 && this.listaServer.size() == 0 ? "non è presente nessun client o server" : lista;
         if(client == false && server == false) return false;
         if(client && this.listaClient.size() > 0){
-            lista += "\n--- LISTA CLIENT ---";
+            lista += "\n--- LISTA CLIENT ---\n";
             for (Client c : listaClient) {
             lista += c.toString() + "\n";
             }
         }
         if(server && this.listaServer.size() > 0){
-            lista += "--- LISTA SERVER ---";
+            lista += "\n--- LISTA SERVER ---\n";
             for (Server s : listaServer) {
                 lista += s.toString() + "\n";
             }
@@ -90,11 +117,11 @@ public class GestoreClientServer implements Commandable{
 
 
     public boolean remove(String nome,String tipo){
-
+        
         return true;
     }
 
-    public void startTerminal(){
+    public void startTerminal() throws CommandException{
         this.terminal.main(this);
     }
 

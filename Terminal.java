@@ -15,12 +15,12 @@ public class Terminal<T extends Commandable>{
         this.storiaComandi = new CommandHistory();
     }
 
-    public void main(T gestore) {
+    public void main(T gestore) throws CommandException {
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
 
         String menu;
         Scanner input = new Scanner(System.in);
-        System.out.println("Inizializzazione completata, terminale attivo");
+        System.out.println("Terminale attivato");
         do{
             System.out.print(">");
             menu = input.nextLine();
@@ -38,7 +38,7 @@ public class Terminal<T extends Commandable>{
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
-                    System.out.println("Chiusura In Corso...");
+                    System.out.println("Terminale chiuso");
                     break;
                 }
             default:

@@ -7,7 +7,8 @@ public class CommandShowServer extends CommandI<GestoreClientServer>{
     }
 
     public void execute() throws CommandException{
-        if(!this.getGestore().stampaLista(false,true)) throw new CommandException("");    }
+        if(!this.getGestore().stampaLista(false,true)) throw new CommandException("Errore nella stampa");   
+    }
 
 }
 

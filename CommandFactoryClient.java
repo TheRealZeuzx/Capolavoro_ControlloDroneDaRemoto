@@ -16,6 +16,11 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
             case "?":
             case "help":
                 return new CommandHelp("inserisci help client (CommandFactoryClient)");
+            case "change":
+                //TODO change name | change remote ip port (se inserisco current allora rimane invariato uno dei due campi)
+            case "start":
+            case "interrupt":
+            case "end":
             default:    
                 return new CommandDefault(params);
         }

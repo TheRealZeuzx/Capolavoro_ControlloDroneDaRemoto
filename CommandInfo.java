@@ -10,12 +10,17 @@ public class CommandInfo extends CommandI<GestoreClientServer>{
         this.client = client;
     }
     public void execute() throws CommandException{
+
         if(client){
             if(this.getGestore().isEmpty(true)) throw new CommandException("La lista di client è vuota");
-            this.getGestore().ricercaClient(nome).toString();
+            Client temp = this.getGestore().ricercaClient(nome);
+            if(temp == null)throw new CommandException("il client ricercato non esiste"); 
+            System.out.println(temp.toString());
         }else{
             if(this.getGestore().isEmpty(false)) throw new CommandException("La lista di server è vuota");
-            this.getGestore().ricercaServer(nome).toString();
+            Server temp = this.getGestore().ricercaServer(nome);
+            if(temp == null)throw new CommandException("il server ricercato non esiste");
+            System.out.println(temp.toString());
         }
         
         

@@ -2,6 +2,6 @@
  * 
  */
 public interface Commandable {
-    public void startTerminal();
+    public void startTerminal() throws CommandException;
 
 }

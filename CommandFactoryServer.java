@@ -14,7 +14,10 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
             case "?":
             case "help":
                 return new CommandHelp( "help server");
-            case "s":
+            case "change":
+                //TODO change name | change port
+            case "start": //return new CommandAttiva();
+            case "interrupt": //return new CommandDisattiva();
             default:    
                 return new CommandDefault(params);
         }

@@ -1,10 +1,10 @@
-public class Test {
-    public static void main(String[] args) {
+public class Test{
+    public static void main(String[] args) throws InterruptedException {
         try{
-            Server server = new Server("test", 8086);
-            
+            Server server = new Server("test", 8086,new Terminal<Server>(new ErrorLog("logErrori.txt")));
+            server.startTerminal();
         }catch(Exception e){
-            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -12,6 +12,7 @@ public class Test {
         // tests
         return;
     }
+
 
 }
 

@@ -10,7 +10,7 @@ public class User {
         this.gestore = new GestoreClientServer(this.errorLog);
     }
     
-    public void start(){
+    public void start() throws CommandException{
         this.gestore.startTerminal();
     }
 
@@ -20,6 +20,7 @@ public class User {
         User u;
         try {
             u = new User("errorLog.txt");
+            System.out.println("User creato correttamente");
             u.start();
         } catch (CommandException e) {
             e.getMessage();
