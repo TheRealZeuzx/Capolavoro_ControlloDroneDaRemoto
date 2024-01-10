@@ -21,6 +21,13 @@ public class GestoreClientServer implements Commandable{
         
     }
 
+    public Terminal<Client> getTerminalClient(){
+        return this.terminalC;
+    }
+    public Terminal<Server> getTerminalServer(){
+        return this.terminalS;
+    }
+
 
     public Server ricercaServer(String nome){
         int i = 0;
