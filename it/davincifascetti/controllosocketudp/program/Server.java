@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -20,7 +21,7 @@ public class Server implements Runnable,Commandable{
     //TODO creare i seguenti metodi per eseguire le op di :
     //TODO salva su file msg client
     
-    private static final int LunghezzaBuffer = 1024;
+    public static final int LunghezzaBuffer = 1024;
     private DatagramSocket socket;
     private String nome;
     private int porta;
@@ -28,12 +29,14 @@ public class Server implements Runnable,Commandable{
     private Thread threadAscolto = null;
     private Terminal<Server> riferimentoTerminale;
     private ArrayList<String> StoriaMsg;
+    private CommandHistory storiaComandiRisposta;
 
     public Server(String nomeServer,Terminal<Server> t) throws CommandableException{
         if(t == null)throw new CommandableException("il terminale inserito non è valido");
         this.riferimentoTerminale = t;
         this.setNome(nomeServer);
         this.StoriaMsg = new ArrayList<String>();
+        this.storiaComandiRisposta = new CommandHistory();
     }
 
     public Server(String nomeServer, int porta,Terminal<Server> t) throws CommandableException,ErrorLogException{
@@ -57,7 +60,7 @@ public class Server implements Runnable,Commandable{
                 this.socket.receive(pacchetto);
                 if(!this.isAttivo()){
                     Thread threadRisposta = null;
-                    threadRisposta = new Thread(new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale));
+                    threadRisposta = new Thread(new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale, this.storiaComandiRisposta,this.getNome()));
                     threadRisposta.start(); 
                 }
             } catch (IOException e) {

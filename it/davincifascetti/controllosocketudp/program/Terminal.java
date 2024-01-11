@@ -70,7 +70,9 @@ public class Terminal<T extends Commandable>{
         this.attivo = false;
     }
 
-
+    public void errorLog(String msg){
+        new ErrorLogCommand(this.errorLog,msg).execute();
+    }
 
     /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
      * @return true se l'esecuzione è andata a buon fine altrimenti false
