@@ -20,6 +20,8 @@ public class Terminal<T extends Commandable>{
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
     private CommandFactory factory;
     private ErrorLog errorLog;
+    private static Scanner input = new Scanner(System.in);
+    private boolean attivo = false;
 
     public Terminal(ErrorLog errorLog) throws CommandException{
         this.errorLog = errorLog;
@@ -27,10 +29,10 @@ public class Terminal<T extends Commandable>{
     }
 
     public void main(T gestore) throws CommandException {
+        this.attivo = true;
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
 
         String menu;
-        Scanner input = new Scanner(System.in);
         System.out.println("Terminale attivato");
         do{
             System.out.print(">");
@@ -65,6 +67,7 @@ public class Terminal<T extends Commandable>{
         }while(!menu.equalsIgnoreCase("quit"));
         input.close();
         this.factory = null;
+        this.attivo = false;
     }
 
 
@@ -93,4 +96,6 @@ public class Terminal<T extends Commandable>{
         if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
         
     }
+
+    public boolean isAttivo(){return this.attivo;}
 }

@@ -9,7 +9,7 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
 
     private String nome;
     private Terminal<Server> terminale;
-    private int porta = -1;
+    private Integer porta = null;
     public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome) throws CommandException {
         super(gestore);
         this.nome = nome;
@@ -23,10 +23,11 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
     @Override
     public void execute() throws CommandException, ErrorLogException {
         try{
-        if(porta == -1)
-            this.getGestore().newServer(terminale,nome);
-        else
-            this.getGestore().newServer(terminale,nome,porta);
+            if(porta == null)
+                this.getGestore().newServer(terminale,nome);
+            else
+                this.getGestore().newServer(terminale,nome,porta);
+                
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }

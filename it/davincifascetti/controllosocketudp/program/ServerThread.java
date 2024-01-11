@@ -5,20 +5,30 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 
-public class ServerThread extends Thread{
+//! leggi
+//TODO possibilità da parte del client di cambiargli mod?
+/**si occupa di prendere il pacchetto ricevuto dal server e elaborare la risposta corretta
+ * ha una serie di parametri booleani: stampaVideo,stampaFile,Telecomando,
+ * di default stampaVideo è attivo quindi stampa a video tutti i msg ricevuti dal client
+ * 
+ */
+public class ServerThread implements Runnable{
     private static final int LunghezzaBuffer = 1024;
-    DatagramPacket packet;
-    DatagramSocket socketRisposta;
-
+    private DatagramPacket packet;
+    private DatagramSocket socketRisposta;
+    private ArrayList<String> StoriaMsg;
+    private Terminal<Server> riferimentoTerminal;
     //TODO creare i seguenti metodi per eseguire le op di :
-    //DONE risposta al client con stesso msg
+    //TODO stampa msg del  client sulla console (se il terminale è attivo altrimenti li salva su storiamsg)
     //TODO salva su file msg client
 
-    //TODO Cambiare da Exception a un eccezione apposita
-    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta){
+    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg, Terminal<Server> riferimentoTerminal){
         this.packet = packet;
         this.socketRisposta = socketRisposta;
+        this.StoriaMsg = StoriaMsg;
+        this.riferimentoTerminal = riferimentoTerminal;
     }
 
     @Override
@@ -29,22 +39,10 @@ public class ServerThread extends Thread{
 		msgRicevuto = msgRicevuto.substring(0, lungPacket);
 
 		byte[] bufferOUT = new byte[ServerThread.LunghezzaBuffer];
-		System.out.println("msg ricevuto: " + msgRicevuto);
-		
-
-		String daSpedire = msgRicevuto.toUpperCase();
-		bufferOUT = daSpedire.getBytes();
-        InetAddress ClientIP = this.packet.getAddress();
-        int ClientPort = this.packet.getPort();
-		DatagramPacket packetDaSpedire = new DatagramPacket(bufferOUT, bufferOUT.length,ClientIP,ClientPort);
-
-		try {
-			this.socketRisposta.send(packetDaSpedire);
-			System.out.println("risposta: " + daSpedire);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		
+        //TODO in base al tipo//TODO in base al tipo di parametro decide se stampare a video, su file o Telecomando
+        
+        if(this.riferimentoTerminal.isAttivo())System.out.println(msgRicevuto);
+		else this.StoriaMsg.add(msgRicevuto);
     }
 
     // private boolean writeToFile(String msgRicevuto){

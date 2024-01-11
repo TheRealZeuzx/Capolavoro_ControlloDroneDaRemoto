@@ -76,14 +76,14 @@ public class GestoreClientServer implements Commandable{
     }
 
     public void newServer(Terminal<Server> terminale, String nome) throws CommandableException{
-        if(ricercaServer(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,terminale);
         this.listaServer.add(s);
         
     }
     public void newServer(Terminal<Server> terminale, String nome,int porta) throws CommandableException, ErrorLogException{
         if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
-        if(ricercaServer(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
+        if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,porta,terminale);
         this.listaServer.add(s);
         s.iniziaAscolto();
