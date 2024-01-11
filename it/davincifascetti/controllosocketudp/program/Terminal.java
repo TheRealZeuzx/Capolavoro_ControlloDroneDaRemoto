@@ -46,8 +46,15 @@ public class Terminal<T extends Commandable>{
 
             switch((params == null ? "" : params[0])){
             case "undo":
-                if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
-                else System.out.println("l'ultima azione significativa è stata annullata con successo");
+                    try {
+                        if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
+                        else System.out.println("l'ultima azione significativa è stata annullata con successo");
+                    } catch (CommandException e) {
+                        System.out.println(e.getMessage());
+                    } catch (ErrorLogException e) {
+                        System.out.println(e.getMessage());
+                        new ErrorLogCommand(this.errorLog,e.getMessage()).execute();
+                    }
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
@@ -60,6 +67,7 @@ public class Terminal<T extends Commandable>{
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
                 }catch(ErrorLogException e){
+                    System.out.println(e.getMessage());
                     new ErrorLogCommand(this.errorLog,e.getMessage()).execute();
                 }
                 break;
@@ -76,8 +84,10 @@ public class Terminal<T extends Commandable>{
 
     /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
      * @return true se l'esecuzione è andata a buon fine altrimenti false
+     * @throws ErrorLogException 
+     * @throws CommandException 
      */
-    private boolean undo() {
+    private boolean undo() throws CommandException, ErrorLogException {
         if (storiaComandi.isEmpty()) return false;
         UndoableCommand command = storiaComandi.pop();
         if (command != null) {

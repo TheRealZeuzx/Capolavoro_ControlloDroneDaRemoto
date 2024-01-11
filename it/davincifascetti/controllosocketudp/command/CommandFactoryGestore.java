@@ -81,14 +81,25 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
                 case "c":
                 case "client":
-                    // return new CommandDelete(params[1],params[2]);
+                    if(params.length == 3)return new CommandDeleteClient(this.getGestore(),params[2]);
                 case "s":
                 case "server":
-                    // return new CommandDelete(params[1],params[2]);
+                    if(params.length == 3)return new CommandDeleteServer(this.getGestore(),params[2]);
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa eliminare");
                 }
-                
+            case "sel":
+            case "select":
+                switch (params == null || params.length <= 2 ? "" : params[1]) {
+                case "c":
+                case "client":                      
+                    if(params.length == 3)return new CommandSelectClient(this.getGestore(),params[2]);
+                case "s":
+                case "server":
+                    if(params.length == 3)return new CommandSelectServer(this.getGestore(),params[2]);
+                default:
+                    throw new CommandException("Errore, non è stato specificato cosa selezionare");
+                }    
             default:    
                 return new CommandDefault(params);
         }

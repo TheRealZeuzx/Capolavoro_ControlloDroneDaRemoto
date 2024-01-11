@@ -19,13 +19,16 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
             case "help":
                 return new CommandHelp( "help server");
             case "change":
-                //TODO change name | change port
+                //TODO change name
+            case "setport":
+            case "setp":
+                //TODO set della porta port
             case "en":
-            case "enable": //return new CommandAttiva();
-
+            case "enable": 
+                return new CommandAttivaServer(this.getGestore());
             case "dis":
-            case "disable": //return new CommandDisattiva();
-
+            case "disable": 
+                return new CommandDisattivaServer(this.getGestore());
             default:    
                 return new CommandDefault(params);
         }

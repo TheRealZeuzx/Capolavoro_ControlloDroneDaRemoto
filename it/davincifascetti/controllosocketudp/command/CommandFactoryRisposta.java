@@ -18,26 +18,27 @@ public class CommandFactoryRisposta implements CommandFactory{
             // l- ciao mi chiamo marco
             case "l":
             case "log":
-                
-            break;
+                if(params.length == 2){
+                    CommandHelp temp = new CommandHelp(params[1]);
+                }
+
             case "f":
             case "file": 
-                
+                if(params.length == 2){
+                    CommandFileLog temp = new CommandFileLog(params[1], this.gestore);
+                }
 
-            break;
             case "r":
             case "remote": 
 
-            break;
             case "h":
             case "help":
                 if(params.length == 1){
                     CommandHelp temp = new CommandHelp("HELP",this.gestore);
                 }
-            break;
+
             default: 
-                //TODO se è sbagliato il comando allora invia msg comando errato
-            break;
+                //TODO se è sbagliato il comando c'è ma sbagliato invia risposta altrimenti se comando non c'è stampa sul terminale
         }
         
     }

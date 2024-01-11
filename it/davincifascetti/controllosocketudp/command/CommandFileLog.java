@@ -8,13 +8,14 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
 public class CommandFileLog implements Command{
     private String msg;
     private ServerThread gestore = null;
-    public CommandFileLog(String msg){
-        this.msg = msg;
-    }
+
     public CommandFileLog(String msg,ServerThread gestore){
-        this(msg);
+        this.msg = msg;
+        this.gestore = gestore;
     }
     public void execute() {
-        // TODO
+        if(gestore == null)
+            throw new NullPointerException("gestore is null");
+        gestore.fileLog(this.msg);
     }
 }

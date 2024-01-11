@@ -34,7 +34,8 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
     }
 
     @Override
-    public boolean undo() {
+    public boolean undo() throws CommandException {
+        new CommandDeleteServer(getGestore(), nome).execute();
        return true;
     }
     

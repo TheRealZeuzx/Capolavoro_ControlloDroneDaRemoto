@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
@@ -56,9 +57,6 @@ public class GestoreClientServer implements Commandable{
 
     }
     
-    public void creaServer(String nome,boolean attiva){
-
-    }
     public void newClient(Terminal<Client> terminale, String nome) throws CommandableException{
         if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
@@ -90,6 +88,14 @@ public class GestoreClientServer implements Commandable{
         
     }
     
+    public void addServer(Server s)throws CommandableException{
+        if(s == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
+        this.listaServer.add(s);
+    }
+    public void addClient(Client c)throws CommandableException{
+        if(c == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
+        this.listaClient.add(c);
+    }
     public boolean isEmpty(boolean client){
         if(client) return this.listaClient.isEmpty();
         return this.listaServer.isEmpty();
@@ -124,13 +130,18 @@ public class GestoreClientServer implements Commandable{
     }
 
 
-    public boolean remove(String nome,String tipo){
-        
-        return true;
+    public void removeClient(Client c)throws CommandableException {
+        if(!this.listaClient.remove(c)) throw new CommandableException("il client '" + c.getNome() + "' non esiste");
+    }
+    public void removeServer(Server s)throws CommandableException {
+        if(!this.listaServer.remove(s)) throw new CommandableException("il server '" + s.getNome() + "' non esiste");
     }
 
     public void startTerminal() throws CommandException{
         this.terminal.main(this);
     }
+
+
+    
 
 }

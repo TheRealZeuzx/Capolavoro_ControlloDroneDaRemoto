@@ -17,14 +17,20 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
             case "h":
+            break;
             case "?":
+            break;
             case "help":
                 return new CommandHelp("inserisci help client (CommandFactoryClient)");
             case "change":
                 //TODO change name | change remote ip port (se inserisco current allora rimane invariato uno dei due campi)
+            break;
             case "start":
+            break;
             case "interrupt":
+            break;
             case "end":
+            break;
             default:    
                 return new CommandDefault(params);
         }

@@ -80,8 +80,10 @@ public class Server implements Runnable,Commandable{
 
     public void terminaAscolto(){
         this.statoAttivo = false;
-        if(!this.socket.isClosed())this.socket.close();
-        this.threadAscolto.interrupt();
+        if(this.socket != null){
+            if(!this.socket.isClosed())this.socket.close();
+        }
+        if(this.threadAscolto != null ) this.threadAscolto.interrupt();
         this.threadAscolto = null;
     }
 
@@ -133,5 +135,12 @@ public class Server implements Runnable,Commandable{
         this.iniziaAscolto();
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Server){
+            return ((Server)o).getNome().equals(this.getNome());
+        }
+        return false;
+    }
 
 }

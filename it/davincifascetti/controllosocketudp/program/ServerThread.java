@@ -62,8 +62,15 @@ public class ServerThread implements Runnable{
             if(this.msgRicevuto.isBlank())params = null;else params = this.msgRicevuto.toLowerCase().split("-");
             switch((params == null ? "" : params[0])){
             case "undo":
-                if(!this.undo())this.stampaVideo("non ci sono azioni significative da annullare");
-                else this.stampaVideo("l'ultima azione significativa è stata annullata con successo");
+                    try {
+                        if(!this.undo())this.stampaVideo("non ci sono azioni significative da annullare");
+                        else this.stampaVideo("l'ultima azione significativa è stata annullata con successo");
+                    }catch(CommandException e){
+                        this.stampaVideo(e.getMessage());
+                    }catch(ErrorLogException e){
+                        this.stampaVideo(e.getMessage());
+                        this.riferimentoTerminal.errorLog(e.getMessage());
+                    }
                 break;
             default:
                 //! se non torna forse è questo (deve prendere il secondo parametro che è il msg senza il comand quindi es: "log-")
@@ -74,6 +81,7 @@ public class ServerThread implements Runnable{
                 }catch(CommandException e){
                     this.stampaVideo(e.getMessage());
                 }catch(ErrorLogException e){
+                    this.stampaVideo(e.getMessage());
                     this.riferimentoTerminal.errorLog(e.getMessage());
                 }
                 break;
@@ -93,6 +101,11 @@ public class ServerThread implements Runnable{
 		}
     }
 
+
+    /**PER STAMPARE SUL TERMINALE SI USA QUESTO
+     * 
+     * @param msg
+     */
     public void stampaVideo(String msg){
         if(this.riferimentoTerminal.isAttivo())System.out.println(msg);
 		else this.StoriaMsg.add(msg);
@@ -111,8 +124,10 @@ public class ServerThread implements Runnable{
 
      /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
      * @return true se l'esecuzione è andata a buon fine altrimenti false
+     * @throws ErrorLogException 
+     * @throws CommandException 
      */
-    private boolean undo() {
+    private boolean undo() throws CommandException, ErrorLogException {
         if (storiaComandi.isEmpty()) return false;
         UndoableCommand command = storiaComandi.pop();
         if (command != null) {
@@ -136,7 +151,7 @@ public class ServerThread implements Runnable{
     
     public boolean fileLog(String message){
         try{
-            FileLogger logger = new FileLogger("");
+            FileLogger logger = new FileLogger(nomeServerOriginale);
             logger.printToFile(message, true);
             return true;
         }catch(IOException e){
