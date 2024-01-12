@@ -37,7 +37,7 @@ public class ErrorLog {
      * @throws IOException eccezione sollevata dal metodo write di PrintWriter 
      */
     public void log(String errorMessage) throws IOException{
-        this.logger.printToFile(errorMessage,true);
+        this.logger.printToFile("\n" +errorMessage + "\n",true);
     }
 
 

@@ -68,8 +68,7 @@ public class ServerThread implements Runnable{
                     }catch(CommandException e){
                         this.stampaVideo(e.getMessage());
                     }catch(ErrorLogException e){
-                        this.stampaVideo(e.getMessage());
-                        this.riferimentoTerminal.errorLog(e.getMessage());
+                        this.errorLog(e.getMessage(), true);
                     }
                 break;
             default:
@@ -81,8 +80,7 @@ public class ServerThread implements Runnable{
                 }catch(CommandException e){
                     this.stampaVideo(e.getMessage());
                 }catch(ErrorLogException e){
-                    this.stampaVideo(e.getMessage());
-                    this.riferimentoTerminal.errorLog(e.getMessage());
+                    this.errorLog(e.getMessage(), true);
                 }
                 break;
             }
@@ -109,6 +107,11 @@ public class ServerThread implements Runnable{
     public void stampaVideo(String msg){
         if(this.riferimentoTerminal.isAttivo())System.out.println(msg);
 		else this.StoriaMsg.add(msg);
+    }
+
+    private void errorLog(String msg, boolean video){
+        if(video)this.stampaVideo(msg);
+        this.riferimentoTerminal.errorLog(msg,false);
     }
 
     private String getMsgRicevuto(){

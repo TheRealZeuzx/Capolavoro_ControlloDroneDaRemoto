@@ -39,7 +39,7 @@ public class Server implements Runnable,Commandable{
         this.storiaComandiRisposta = new CommandHistory();
     }
 
-    public Server(String nomeServer, int porta,Terminal<Server> t) throws CommandableException,ErrorLogException{
+    public Server(String nomeServer, String porta,Terminal<Server> t) throws CommandableException,ErrorLogException{
         this(nomeServer,t);
         this.setPorta(porta);
         try {
@@ -58,14 +58,13 @@ public class Server implements Runnable,Commandable{
             DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
             try {
                 this.socket.receive(pacchetto);
-                if(!this.isAttivo()){
+                if(this.isAttivo()){
                     Thread threadRisposta = null;
                     threadRisposta = new Thread(new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale, this.storiaComandiRisposta,this.getNome()));
                     threadRisposta.start(); 
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (Exception e) {
+                this.riferimentoTerminale.errorLog(e.getMessage(),false);
             }
         } 
         if(!this.socket.isClosed())this.socket.close();
@@ -74,8 +73,8 @@ public class Server implements Runnable,Commandable{
     public void iniziaAscolto()throws CommandableException{
         if(this.socket == null) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
         this.statoAttivo = true;
-        this.threadAscolto = this.threadAscolto == null ? new Thread(this) : this.threadAscolto;
-        this.threadAscolto.start(); 
+        if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
+        if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
 
     public void terminaAscolto(){
@@ -89,7 +88,7 @@ public class Server implements Runnable,Commandable{
 
     @Override
     public String toString() {
-        return this.getNome() + "\t" + (this.socket == null?"Port: -":("Port: "+this.getPorta()))  +"\t"+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
     public String stampaStoriaMsg(){
@@ -118,12 +117,19 @@ public class Server implements Runnable,Commandable{
             throw new CommandableException("Errore, il nome '"+nome+"' inserito non è valido (solo lettere min, maiusc e '_')");
     }
 
-    private void setPorta(int p)throws CommandableException{
+    private void setPorta(String port)throws CommandableException{
+        int p;
+        try{
+            p = Integer.valueOf(port);
+        }catch(NumberFormatException e){
+            throw new CommandableException("Errore, '" + port + "' non è un numero, specifica il numero della porta");
+        }
         if(p < 0 || p > 65535)throw new CommandableException("Errore, la porta inserita non è valida (0-65535)");
         else this.porta = p;
     }
     public int getPorta(){return this.porta;}
-    public void setSocket(int porta) throws CommandableException, ErrorLogException{
+    public void setSocket(String porta) throws CommandableException, ErrorLogException{
+        boolean wasActive = this.isAttivo();
         if(this.isAttivo())
             this.terminaAscolto();
         this.setPorta(porta);
@@ -132,7 +138,7 @@ public class Server implements Runnable,Commandable{
         } catch (SocketException e) {
             throw new ErrorLogException(e.getMessage());
         }
-        this.iniziaAscolto();
+        if(wasActive)this.iniziaAscolto();
     }
 
     @Override

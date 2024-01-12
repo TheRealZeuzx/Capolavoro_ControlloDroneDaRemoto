@@ -34,12 +34,12 @@ public class Client implements Commandable{
 		this.riferimentoTerminale = t;
     }
 
-    public Client(String nomeClient,String ipDestinazioneDefault,int porta,Terminal<Client> t) throws CommandableException{
+    public Client(String nomeClient,String ipDestinazioneDefault,String porta,Terminal<Client> t) throws CommandableException, ErrorLogException{
         this(nomeClient, t);
         try{
             this.setIpDestinazioneDefault(ipDestinazioneDefault);
         }catch(Exception e){
-            this.riferimentoTerminale.errorLog(e.getMessage());
+            throw new ErrorLogException(e.getMessage());
         }
         this.setPorta(porta);
     }
@@ -60,7 +60,7 @@ public class Client implements Commandable{
     @Override
     public String toString() {
         //TODO stampa nome , socket remoto (ipDestinazioneDefault remoto e porta) , stato
-        return this.getNome() +"\t"+  (this.isStatoAttivo() ? "statoAttivo" : "isStatoAttivo");
+        return "Name: " + this.getNome() +"\tStatus: "+  (this.isAttivo() ? "statoAttivo" : "isStatoAttivo");
     }
 
     @Override
@@ -68,10 +68,7 @@ public class Client implements Commandable{
         this.riferimentoTerminale.main(this);
     }
 
-    public boolean isStatoAttivo(){return this.stato;}
-
-    public void setStato(boolean stato){this.stato = stato;}
-
+    public boolean isAttivo(){return this.stato;}
     public String getNome(){return this.nome;}
 
     public void setNome(String nome) throws CommandableException{
@@ -98,7 +95,13 @@ public class Client implements Commandable{
         if(temp == true)throw new CommandableException("Errore, l'ipDestinazioneDefault inserito non è valido (deve avere formato '255.255.255.255'))");
         this.ipDestinazioneDefault = InetAddress.getByName(ip);
     }
-    public void setPorta(int p)throws CommandableException{
+    private void setPorta(String port)throws CommandableException{
+        int p;
+        try{
+            p = Integer.valueOf(port);
+        }catch(NumberFormatException e){
+            throw new CommandableException("Errore, '" + port + "' non è un numero, specifica il numero della porta");
+        }
         if(p < 0 || p > 65535)throw new CommandableException("Errore, la porta inserita non è valida (0-65535)");
         else this.porta = p;
     }
@@ -115,8 +118,9 @@ public class Client implements Commandable{
         }
     }
 
-    public void setSocket(int porta,String ipDestinazioneDefault) throws CommandableException, ErrorLogException{
-        if(this.isStatoAttivo())
+    public void setSocket(String porta,String ipDestinazioneDefault) throws CommandableException, ErrorLogException{
+        boolean wasActive = this.isAttivo();
+        if(this.isAttivo())
             this.terminaAscolto();
         this.setPorta(porta);
         try {
@@ -124,7 +128,7 @@ public class Client implements Commandable{
         } catch (SocketException e) {
             throw new ErrorLogException(e.getMessage());
         }
-        this.iniziaAscolto();
+        if(wasActive)this.iniziaAscolto();
     }
 
     @Override

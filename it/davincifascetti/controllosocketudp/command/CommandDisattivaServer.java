@@ -6,7 +6,7 @@ public class CommandDisattivaServer extends CommandI<Server>{
         super(gestore);
     }
     public void execute() throws CommandException {
-            this.getGestore().terminaAscolto();
+        this.getGestore().terminaAscolto();
     }
     
 

@@ -61,18 +61,18 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
                 case "c":
                 case "client":
-                    if(params.length == 3)
-                        return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
-                    else if(params.length == 5)
-                        return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],Integer.valueOf(params[4]));
-                    else throw new CommandException("Errore, non è stato specificato cosa creare");
+                        if(params.length == 3)
+                            return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
+                        else if(params.length == 5)
+                            return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],params[4]);
+                        else throw new CommandException("Errore, non è stato specificato cosa creare");
                 case "s":
                 case "server":
                     if(params.length == 3)
                         return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2]);
                     else if(params.length == 4)
-                        return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],Integer.valueOf(params[3]));
-                    else throw new CommandException("Errore, non è stato specificato cosa creare");
+                        return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],params[3]);
+                        else throw new CommandException("Errore, non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa creare");
                 }

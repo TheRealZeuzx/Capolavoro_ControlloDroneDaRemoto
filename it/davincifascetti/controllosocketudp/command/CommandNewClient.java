@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Terminal;
@@ -8,23 +9,23 @@ public class CommandNewClient extends CommandI<GestoreClientServer> implements U
 
     private String nome;
     private Terminal<Client> terminale;
-    private int porta = -1;
+    private String porta = null;
     private String ip = "";
     public CommandNewClient(GestoreClientServer gestore,Terminal<Client> terminale, String nome) throws CommandException {
         super(gestore);
         this.nome = nome;
         this.terminale = terminale;
     }
-    public CommandNewClient(GestoreClientServer gestore,Terminal<Client> terminale, String nome,String ip,int porta) throws CommandException {
+    public CommandNewClient(GestoreClientServer gestore,Terminal<Client> terminale, String nome,String ip,String porta) throws CommandException {
         this(gestore, terminale, nome);
         this.ip = ip;
         this.porta = porta;
     }
 
     @Override
-    public void execute() throws CommandException {
+    public void execute() throws CommandException,ErrorLogException {
         try{
-        if(ip.equals("") || porta == -1)
+        if(ip.equals("") || porta == null)
             this.getGestore().newClient(terminale,nome);
         else
             this.getGestore().newClient(terminale,nome,ip,porta);

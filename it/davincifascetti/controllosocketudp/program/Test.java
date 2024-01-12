@@ -5,7 +5,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 public class Test{
     public static void main(String[] args) throws InterruptedException {
         try{
-            Server server = new Server("test", 8086,new Terminal<Server>(new ErrorLog("logErrori.txt")));
+            Server server = new Server("test", "8086",new Terminal<Server>(new ErrorLog("logErrori.txt")));
             server.startTerminal();
         }catch(Exception e){
             System.out.println(e.getMessage());

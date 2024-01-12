@@ -64,7 +64,7 @@ public class GestoreClientServer implements Commandable{
         this.listaClient.add(c);
         
     }
-    public void newClient(Terminal<Client> terminale, String nome,String ip,int porta) throws CommandableException{
+    public void newClient(Terminal<Client> terminale, String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
         if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
@@ -79,7 +79,7 @@ public class GestoreClientServer implements Commandable{
         this.listaServer.add(s);
         
     }
-    public void newServer(Terminal<Server> terminale, String nome,int porta) throws CommandableException, ErrorLogException{
+    public void newServer(Terminal<Server> terminale, String nome,String porta) throws CommandableException, ErrorLogException{
         if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,porta,terminale);

@@ -1,1 +1,10 @@
-Address already in use: Cannot bind
+
+socket closed
+
+socket closed
+
+socket closed
+
+socket closed
+
+socket closed

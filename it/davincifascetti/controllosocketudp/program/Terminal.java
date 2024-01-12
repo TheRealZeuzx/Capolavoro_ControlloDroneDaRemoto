@@ -31,11 +31,14 @@ public class Terminal<T extends Commandable>{
     public void main(T gestore) throws CommandException {
         this.attivo = true;
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
-
         String menu;
-        System.out.println("Terminale attivato");
+        if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
+        if(gestore instanceof Server) System.out.println("Vista Server attivata");
+        if(gestore instanceof Client) System.out.println("Vista Client attivata");
         do{
-            System.out.print(">");
+            if(gestore instanceof GestoreClientServer) System.out.print(">");
+            if(gestore instanceof Server) System.out.print("vs_>");
+            if(gestore instanceof Client) System.out.print("vc_>");
             menu = input.nextLine();
             
             String[] params;
@@ -52,13 +55,14 @@ public class Terminal<T extends Commandable>{
                     } catch (CommandException e) {
                         System.out.println(e.getMessage());
                     } catch (ErrorLogException e) {
-                        System.out.println(e.getMessage());
-                        new ErrorLogCommand(this.errorLog,e.getMessage()).execute();
+                        this.errorLog(e.getMessage(),true);
                     }
                 break;
             case "quit":
                 if(menu.equalsIgnoreCase("quit")){
-                    System.out.println("Terminale chiuso");
+                    if(gestore instanceof GestoreClientServer) System.out.println("Chiusura Programma ...");
+                    if(gestore instanceof Server) System.out.println("Chiusura vista Server ...\n\n" + "--- Vista generale ---");
+                    if(gestore instanceof Client) System.out.println("Chiusura vista Client ...\n\n" + "--- Vista generale ---");
                     break;
                 }
             default:
@@ -67,18 +71,17 @@ public class Terminal<T extends Commandable>{
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
                 }catch(ErrorLogException e){
-                    System.out.println(e.getMessage());
-                    new ErrorLogCommand(this.errorLog,e.getMessage()).execute();
+                    this.errorLog(e.getMessage(),true);
                 }
                 break;
             }
         }while(!menu.equalsIgnoreCase("quit"));
-        input.close();
         this.factory = null;
         this.attivo = false;
     }
 
-    public void errorLog(String msg){
+    public void errorLog(String msg,boolean video){
+        if(video)System.out.println(msg);
         new ErrorLogCommand(this.errorLog,msg).execute();
     }
 

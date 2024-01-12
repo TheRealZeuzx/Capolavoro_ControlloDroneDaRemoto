@@ -9,13 +9,13 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
 
     private String nome;
     private Terminal<Server> terminale;
-    private Integer porta = null;
+    private String porta = null;
     public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome) throws CommandException {
         super(gestore);
         this.nome = nome;
         this.terminale = terminale;
     }
-    public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome,int porta) throws CommandException {
+    public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome,String porta) throws CommandException {
         this(gestore, terminale, nome);
         this.porta = porta;
     }

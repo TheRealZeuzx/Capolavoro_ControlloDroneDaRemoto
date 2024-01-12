@@ -9,8 +9,9 @@ public class CommandDefault implements Command{
         this.msg = "";
         if(params != null && params.length != 0){
             for (String string : params) {
-                this.msg += string;
+                this.msg += string +" ";
             }
+            this.msg = this.msg.substring(0,this.msg.length()-1);
         }
     }
     public void execute() throws CommandException{
