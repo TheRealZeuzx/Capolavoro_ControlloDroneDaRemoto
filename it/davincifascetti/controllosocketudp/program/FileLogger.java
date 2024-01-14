@@ -24,7 +24,7 @@ public class FileLogger{
 
     public void printToFile(String messageToLog, boolean mode) throws IOException{
         openStream(mode);
-        this.out.write(messageToLog);
+        this.out.println(messageToLog);
         closeStream();
     }
 

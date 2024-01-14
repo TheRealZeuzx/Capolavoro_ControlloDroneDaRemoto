@@ -1,6 +1,5 @@
 package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;

@@ -1,9 +1,9 @@
 package it.davincifascetti.controllosocketudp.errorlog;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import it.davincifascetti.controllosocketudp.program.FileLogger;
 
 
@@ -37,7 +37,9 @@ public class ErrorLog {
      * @throws IOException eccezione sollevata dal metodo write di PrintWriter 
      */
     public void log(String errorMessage) throws IOException{
-        this.logger.printToFile("\n" +errorMessage + "\n",true);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now();  
+        this.logger.printToFile("[" + dtf.format(now) + "]\t"+errorMessage,true);
     }
 
 

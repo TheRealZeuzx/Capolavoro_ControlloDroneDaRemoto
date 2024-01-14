@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryRisposta;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
-import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 /**si occupa di prendere il pacchetto ricevuto dal server e elaborare la risposta corretta

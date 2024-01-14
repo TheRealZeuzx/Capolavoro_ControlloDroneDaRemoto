@@ -1,7 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
-import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
 public class CommandSetSocketServer extends CommandI<Server> implements UndoableCommand{
