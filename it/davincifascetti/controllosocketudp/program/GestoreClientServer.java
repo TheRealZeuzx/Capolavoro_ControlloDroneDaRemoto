@@ -68,8 +68,8 @@ public class GestoreClientServer implements Commandable{
         if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,ip,porta,terminale);
+        //TODO avvio del client
         this.listaClient.add(c);
-        //TODO avvio del client appena creato
     }
 
     public void newServer(Terminal<Server> terminale, String nome) throws CommandableException{

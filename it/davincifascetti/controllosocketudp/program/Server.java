@@ -108,10 +108,10 @@ public class Server implements Runnable,Commandable{
 
     public void setNome(String nome) throws CommandableException{
         //è valido solo se non ci sono spazi ed è possibile usare solo lettere e _ (deve esserci almeno una lettera e almeno 2 a 18 caratteri)
-        if(nome.matches("^(?=.*[a-zA-Z])[a-zA-Z_]{2,18}$"))
+        if(nome.matches("^(?=.*[a-zA-Z])[a-zA-Z_0-9]{1,18}$"))
             this.nome = nome;
         else 
-            throw new CommandableException("Errore, il nome '"+nome+"' inserito non è valido (solo lettere min, maiusc e '_')");
+            throw new CommandableException("Errore, il nome '"+nome+"' inserito non è valido (deve contenere almeno una lettera, può contenere numeri da 0 a 9, lettere maiusc e minusc e '_')");
     }
 
     private void setPorta(String port)throws CommandableException{
