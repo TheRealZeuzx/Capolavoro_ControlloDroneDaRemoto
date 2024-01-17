@@ -14,10 +14,14 @@ public class CommandHelp implements Command{
     public CommandHelp(String msg,ServerThread gestore){
         this(msg);
     }
-    public void execute() {
+    public void execute() throws CommandException {
         if(this.gestore == null)
             System.out.println(this.msg);
         else
-            this.gestore.inviaMsg(this.msg);
+            try {
+                this.gestore.inviaMsg(this.msg);
+            } catch (CommandableException e) {
+                throw new CommandException(e.getMessage());
+            }
     }
 }

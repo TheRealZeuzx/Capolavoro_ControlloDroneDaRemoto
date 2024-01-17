@@ -10,6 +10,7 @@ import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryRisposta;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
@@ -82,9 +83,9 @@ public class ServerThread implements Runnable{
 
     }
 
-    public void inviaMsg(String msg){
-        String daSpedire = this.getMsgRicevuto();
-		this.bufferOUT = daSpedire.getBytes();
+    public void inviaMsg(String msg) throws CommandableException{
+        if(msg == null) throw new CommandableException("Errore, il messaggio da spedire risulta null");
+		this.bufferOUT = msg.getBytes();
 		try {
 			this.socketRisposta.send(this.packetDaSpedire);
 		} catch (IOException e) {
@@ -147,7 +148,7 @@ public class ServerThread implements Runnable{
     
     public boolean fileLog(String message){
         try{
-            FileLogger logger = new FileLogger("/fileUtente/"+nomeServerOriginale+".txt");
+            FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora)
             logger.printToFile(message, true);
             return true;
         }catch(IOException e){

@@ -16,16 +16,16 @@ public class CommandFactoryRisposta implements CommandFactory{
             
             case "$l":
             case "$log"://TODo per stampare a video tutti i msg la parte client deve creare un loop che prende i msg e ci mette $log davanti
-                if(params.length == 2)return new CommandHelp(this.concatenaParams(params, 1),this.gestore);
+                if(params.length >= 2)return new CommandStampaVideoServerThread(this.concatenaParams(params, 1),this.gestore);
             case "$f":
             case "$file": //TODO con questo comando prendo quello che sta dopo file nomeFile e lo stampo sul file selezionato
-                if(params.length == 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
+                if(params.length >= 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
             case "$r":
             case "$remote": 
 
             case "$h":
             case "$help":
-                if(params.length == 1)return new CommandHelp(
+                return new CommandHelp(
                     "-------------------------------------------------------------------------------\n"+
                     "Comandi Remoti Disponibili\n\n"+
                     "$help\t\tpermette di visualizzare tutti i comandi \n" + 

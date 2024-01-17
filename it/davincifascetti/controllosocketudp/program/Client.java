@@ -59,13 +59,15 @@ public class Client implements Commandable,Runnable{
         DatagramPacket ricevuto = new DatagramPacket(bufferIN,bufferIN.length);
         //ricevo sul pacchetto di ricezione
         try {
-            this.socket.setSoTimeout(2000);//se dopo 2 secondi non ricevo risposta allora considero la risposta non valida
+            //!TODO trovare il modo per stoppare la receive dopo tipo 2sec (se il server non c'è ad esempio) es watchdog
+            // this.socket.setSoTimeout(2000);//non va non capisco perchè
             this.socket.receive(ricevuto);
         }catch(SocketTimeoutException e){
             this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), false);
         }
+        //se il ricevuto ha lung 0 allora non ho ricevuto niente
         if(ricevuto.getLength() == 0)this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
         else{
             //creo stringa ricevuta dall buffer di dati ricevuti
@@ -82,7 +84,6 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
-            this.ricevi();
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), true);
         }
