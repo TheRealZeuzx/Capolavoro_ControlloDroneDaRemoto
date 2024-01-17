@@ -54,11 +54,10 @@ public class ServerThread implements Runnable{
             this.StoriaMsg.add(e.getMessage());
         }
         if(factory != null){
-            String[] temp = new String[2];
             String[] params;
-            if(this.msgRicevuto.isBlank())params = null;else params = this.msgRicevuto.toLowerCase().split("-");
+            if(this.msgRicevuto.isBlank())params = null;else params = this.msgRicevuto.toLowerCase().split(" ");
             switch((params == null ? "" : params[0])){
-            case "undo":
+            case "$undo":
                     try {
                         if(!this.undo())this.stampaVideo("non ci sono azioni significative da annullare");
                         else this.stampaVideo("l'ultima azione significativa è stata annullata con successo");
@@ -69,11 +68,8 @@ public class ServerThread implements Runnable{
                     }
                 break;
             default:
-                //! se non torna forse è questo (deve prendere il secondo parametro che è il msg senza il comand quindi es: "log-")
-                temp[1] = this.msgRicevuto.substring(params[0].length(),this.msgRicevuto.length() - 1);
-                temp[0] = temp[1].isBlank() ? "" : params[0];
                 try{
-                    this.executeCommand(factory.getCommand(temp));
+                    this.executeCommand(factory.getCommand(params));
                 }catch(CommandException e){
                     this.stampaVideo(e.getMessage());
                 }catch(ErrorLogException e){
@@ -87,8 +83,8 @@ public class ServerThread implements Runnable{
     }
 
     public void inviaMsg(String msg){
-        String daSpedire = this.getMsgRicevuto().toUpperCase();
-		bufferOUT = daSpedire.getBytes();
+        String daSpedire = this.getMsgRicevuto();
+		this.bufferOUT = daSpedire.getBytes();
 		try {
 			this.socketRisposta.send(this.packetDaSpedire);
 		} catch (IOException e) {
@@ -151,7 +147,7 @@ public class ServerThread implements Runnable{
     
     public boolean fileLog(String message){
         try{
-            FileLogger logger = new FileLogger(nomeServerOriginale);
+            FileLogger logger = new FileLogger("/fileUtente/"+nomeServerOriginale+".txt");
             logger.printToFile(message, true);
             return true;
         }catch(IOException e){

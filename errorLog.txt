@@ -1,2 +1,5 @@
 [2024/01/15 18:20:31]	Address already in use: Cannot bind
 [2024/01/15 18:21:37]	socket closed
+[2024/01/17 21:18:36]	Errore, devi prima impostare il socket remoto
+[2024/01/17 22:27:14]	Il server non ha dato nessuna risposta
+[2024/01/17 22:29:08]	Il server non ha dato nessuna risposta

@@ -2,31 +2,34 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
-import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 
-public class CommandDeleteClient extends CommandI<GestoreClientServer> implements UndoableCommand{
+public class CommandSetNomeClient extends CommandI<Client> implements UndoableCommand{
     private String nome;
-    private Client client;
-    public CommandDeleteClient(GestoreClientServer gestore,String nome) throws CommandException {
+    private String nomePrecedente;
+    public CommandSetNomeClient(Client gestore,String nome) throws CommandException {
         super(gestore);
         this.nome = nome;
+        this.nomePrecedente = this.getGestore().getNome();
     }
+    @Override
+    /**elimina il Client e imposta lo stato a disattivo quindi se fai undo devi riattivarlo
+     * 
+     */
     public void execute() throws CommandException {
         try {
-            this.client = this.getGestore().ricercaClient(nome);
-            this.getGestore().removeClient(this.client);
+            this.getGestore().setNome(nome);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
+        
     }
     @Override
     public boolean undo() throws CommandException,ErrorLogException{
         try {
-            this.getGestore().addClient(this.client);
+            this.getGestore().setNome(nomePrecedente);
         } catch (CommandableException e) {
-            throw new ErrorLogException("Errore, impossibile ripristinare il server");
+            throw new CommandException(e.getMessage());
         }
         return true;
     }
 }
-

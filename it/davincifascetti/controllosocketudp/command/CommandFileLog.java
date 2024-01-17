@@ -9,13 +9,12 @@ public class CommandFileLog implements Command{
     private String msg;
     private ServerThread gestore = null;
 
-    public CommandFileLog(String msg,ServerThread gestore){
+    public CommandFileLog(String msg,ServerThread gestore) throws CommandException{
         this.msg = msg;
         this.gestore = gestore;
+        if(gestore == null) throw new CommandException("errore, il gestore inserito è null");
     }
     public void execute() {
-        if(gestore == null)
-            throw new NullPointerException("gestore is null");
         gestore.fileLog(this.msg);
     }
 }
