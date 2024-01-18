@@ -35,7 +35,7 @@ public class Terminal<T extends Commandable>{
         String menu;
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
         if(gestore instanceof Server){
-            System.out.println("Vista Server attivata");
+            System.out.print("--- Vista Server ---");
             try {
                 new CommandStampaMsgRicevuti((Server)gestore).execute();
             } catch (CommandException e) {
@@ -44,11 +44,11 @@ public class Terminal<T extends Commandable>{
                 this.errorLog(e.getMessage(),true);
             }
         }
-        if(gestore instanceof Client) System.out.println("Vista Client attivata");
+        if(gestore instanceof Client) System.out.print("--- Vista Client ---\n");
         do{
             if(gestore instanceof GestoreClientServer) System.out.print(">");
-            if(gestore instanceof Server) System.out.print("vs_>");
-            if(gestore instanceof Client) System.out.print("vc_>");
+            if(gestore instanceof Server) System.out.print("vs.>");
+            if(gestore instanceof Client) System.out.print("vc.>");
             menu = input.nextLine();
             
             String[] params;
@@ -69,12 +69,20 @@ public class Terminal<T extends Commandable>{
                     }
                 break;
             case "quit":
-                if(menu.equalsIgnoreCase("quit")){
-                    if(gestore instanceof GestoreClientServer) System.out.println("Chiusura Programma ...");
-                    if(gestore instanceof Server) System.out.println("Chiusura vista Server ...\n\n" + "--- Vista generale ---");
-                    if(gestore instanceof Client) System.out.println("Chiusura vista Client ...\n\n" + "--- Vista generale ---");
-                    break;
-                }
+                
+                if(gestore instanceof GestoreClientServer){
+                    String conferma="";
+                    do{
+                        System.out.print("sicuro di voler chiudere il programma? [y/n] : ");
+                        conferma = input.nextLine();
+                        if(conferma.equals("y"))System.out.println("Chiusura Programma ...");
+                        else if(conferma.equals("n"))menu = "";
+                    }while(!conferma.equals("y") && !conferma.equals("n"));
+                } 
+                if(gestore instanceof Server) System.out.println("Chiusura vista Server ...\n" + "--- Vista generale ---");
+                if(gestore instanceof Client) System.out.println("Chiusura vista Client ...\n" + "--- Vista generale ---");
+                break;
+                
             default:
                 try{
                     this.executeCommand(factory.getCommand(params));

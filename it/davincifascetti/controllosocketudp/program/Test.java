@@ -12,7 +12,7 @@ public class Test{
         }
     }
 
-    /*
+    /* msg utili per testing
      * new c c1 localhost 1212
      * new s s1 1212
      * select c c1

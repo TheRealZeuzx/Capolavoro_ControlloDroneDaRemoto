@@ -18,7 +18,6 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
             case "?":
             case "help":
                 return new CommandHelp(            
-                "-------------------------------------------------------------------------------\n"+
                 "Comandi Terminale Generale\n\n"+
                 "help\t\tpermette di visualizzare tutti i comandi \n" + 
                 "quit\t\tpermette di terminare l'esecuzione \n" + 

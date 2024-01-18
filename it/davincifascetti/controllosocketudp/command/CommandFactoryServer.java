@@ -18,7 +18,6 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
             case "?":
             case "help":
                 return new CommandHelp(          
-                    "-------------------------------------------------------------------------------\n"+
                     "Comandi Terminale Server\n\n"+
                     "help\t\tpermette di visualizzare tutti i comandi \n" + 
                     "quit\t\tpermette di tornare al Terminale Generale \n" + 

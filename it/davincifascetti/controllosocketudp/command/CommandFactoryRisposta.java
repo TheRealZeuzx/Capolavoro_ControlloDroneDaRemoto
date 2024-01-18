@@ -26,7 +26,6 @@ public class CommandFactoryRisposta implements CommandFactory{
             case "$h":
             case "$help":
                 return new CommandHelp(
-                    "-------------------------------------------------------------------------------\n"+
                     "Comandi Remoti Disponibili\n\n"+
                     "$help\t\tpermette di visualizzare tutti i comandi \n" + 
                     "$undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 

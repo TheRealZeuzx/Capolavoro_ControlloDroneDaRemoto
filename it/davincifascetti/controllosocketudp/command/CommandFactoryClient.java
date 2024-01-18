@@ -21,7 +21,6 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
             case "?":
             case "help":
                 return new CommandHelp(          
-                    "-------------------------------------------------------------------------------\n"+
                     "Comandi Terminale Client\n\n"+
                     "help\t\tpermette di visualizzare tutti i comandi \n" + 
                     "quit\t\tpermette di tornare al Terminale Generale \n" + 
