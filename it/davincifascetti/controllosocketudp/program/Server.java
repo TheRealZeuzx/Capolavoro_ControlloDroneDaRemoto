@@ -9,14 +9,14 @@ import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
-/**
+/**classe server, crea un thread che si occupa della ricezione e uno separato (ServerThread) che si occupa di rispondere
+ * 
  * @throws CommandableExceptio errori stampati sul terminale
  * @throws ErrorLogException errori stampati sul file
+ * @author Mussaldi Tommaso, Mattia Bonfiglio
+ * @version 1.0
  */
 public class Server implements Runnable,Commandable{
-
-    //TODO creare i seguenti metodi per eseguire le op di :
-    //TODO salva su file msg client
     
     public static final int LunghezzaBuffer = 1024;
     private DatagramSocket socket;
@@ -28,6 +28,13 @@ public class Server implements Runnable,Commandable{
     private ArrayList<String> StoriaMsg;
     private CommandHistory storiaComandiRisposta;
 
+
+    /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
+     * 
+     * @param nomeClient nome del server
+     * @param t terminale che verra usato da questo server
+     * @throws CommandableException
+     */
     public Server(String nomeServer,Terminal<Server> t) throws CommandableException{
         if(t == null)throw new CommandableException("il terminale inserito non è valido");
         this.riferimentoTerminale = t;
@@ -35,7 +42,14 @@ public class Server implements Runnable,Commandable{
         this.StoriaMsg = new ArrayList<String>();
         this.storiaComandiRisposta = new CommandHistory();
     }
-
+    /**se uso quest costruttore, posso attivare il server
+     * 
+     * @param nomeClient nome del server
+     * @param porta porta locale su cui aprire il socket
+     * @param t riferimento terminale che verra usato da questo server
+     * @throws CommandableException
+     * @throws ErrorLogException
+     */
     public Server(String nomeServer, String porta,Terminal<Server> t) throws CommandableException,ErrorLogException{
         this(nomeServer,t);
         this.setPorta(porta);
@@ -46,11 +60,13 @@ public class Server implements Runnable,Commandable{
         }
     }
     
+    /**implementa la logica di ricezione e attiva il thread di risposta
+     * 
+     */
     @Override
     public void run(){
         if(!this.isAttivo())return; //se provo a creare un thread di Server e avviarlo senza usare il metodo iniziaAscolto allora non eseguo
         byte[] bufferIN = new byte[Server.LunghezzaBuffer];
-        //TODO se è attivo && vivo si mette 
         while(this.isAttivo()){
             DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
             try {
@@ -67,6 +83,10 @@ public class Server implements Runnable,Commandable{
         if(!this.socket.isClosed())this.socket.close();
     }
 
+    /**permette di avviare il server (crea e avvia il thread)
+     * 
+     * @throws CommandableException
+     */
     public void iniziaAscolto()throws CommandableException{
         if(this.socket == null) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
         this.statoAttivo = true;
@@ -74,6 +94,9 @@ public class Server implements Runnable,Commandable{
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
 
+    /**permette di terminare l'ascolto del server (interrompe il thread creato in iniza ascolto)
+     * chiude la socket
+     */
     public void terminaAscolto(){
         this.statoAttivo = false;
         if(this.socket != null){
@@ -88,6 +111,10 @@ public class Server implements Runnable,Commandable{
         return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
+    /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
+     * 
+     * @return stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
+     */
     public String stampaStoriaMsg(){
         String temp = "";
         for (String string : StoriaMsg) {
@@ -104,7 +131,11 @@ public class Server implements Runnable,Commandable{
     public boolean isAttivo(){return this.statoAttivo;}
 
     public String getNome(){return this.nome;}
-
+    /**imposta il nome (deve avere almeno una lettera, può contenere numeri, lettere e _ min 1 carattere e max 18)
+     * 
+     * @param nome nuovo nome del server
+     * @throws CommandableException
+     */
     public void setNome(String nome) throws CommandableException{
         //è valido solo se non ci sono spazi ed è possibile usare solo lettere e _ (deve esserci almeno una lettera e almeno 2 a 18 caratteri)
         if(nome.matches("^(?=.*[a-zA-Z])[a-zA-Z_0-9]{1,18}$"))
@@ -112,7 +143,11 @@ public class Server implements Runnable,Commandable{
         else 
             throw new CommandableException("Errore, il nome '"+nome+"' inserito non è valido (deve contenere almeno una lettera, può contenere numeri da 0 a 9, lettere maiusc e minusc e '_')");
     }
-
+    /**imposta la porta locale
+     * 
+     * @param port porta come Stringa perchè l'utente potrebbe scrivere una lettera e mandare in crash
+     * @throws CommandableException
+     */
     private void setPorta(String port)throws CommandableException{
         int p;
         try{
@@ -124,6 +159,13 @@ public class Server implements Runnable,Commandable{
         else this.porta = p;
     }
     public int getPorta(){return this.porta;}
+
+    /**si occupa di terminare l'ascolto,modificare il socket e se era attivo riattivare la socket
+     * 
+     * @param porta nuova porta locale
+     * @throws CommandableException
+     * @throws ErrorLogException
+     */
     public void setSocket(String porta) throws CommandableException, ErrorLogException{
         boolean wasActive = this.isAttivo();
         if(this.isAttivo())

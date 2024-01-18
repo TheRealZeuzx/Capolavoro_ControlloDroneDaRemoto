@@ -4,6 +4,9 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
+/**
+    
+ */
 public class CommandDeleteServer extends CommandI<GestoreClientServer> implements UndoableCommand{
     private String nome;
     private Server server;

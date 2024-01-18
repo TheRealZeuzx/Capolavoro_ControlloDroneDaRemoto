@@ -2,17 +2,30 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.program.Client;
 
-/**factory per la creazione di Comandi specifici per il Client
- * 
- */
+/**
+    CommandFactoryClient.
+    Factory per la creazione di comandi specifici per il client.
+    @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
+*/ 
 public class CommandFactoryClient extends CommandFactoryI<Client> implements CommandFactory{
   
-    
+    /**
+        Costruttore di default di CommandFactoryClient.
+        @param gestore è l'oggetto che farà da receiver per i comandi
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public CommandFactoryClient(Client gestore) throws CommandException {
         super(gestore);
 
     }
 
+    /**
+        getCommand.
+        Metodo che, in base ai parametri, ritorna il comando corrispondente.
+        @param params Comando da eseguire in formato testuale.
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public Command getCommand(String[] params) throws CommandException {
         String scelta = params == null || params.length == 0 ? "" : params[0];
         scelta = scelta.length() > 0 && (String.valueOf(((Character)scelta.charAt(0)))).equals("$") ? "$" : scelta;
@@ -47,13 +60,28 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                     throw new CommandException("Errore, non è stato specificato cosa selezionare");
                 }
             case "$":
-                return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
+                switch (params[0]) {
+                    case "$remote":
+                    case "$r":
+                        return new CommandTelecomando(this.getGestore());
+                    default:
+                        return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
+                        
+                }
+                
+
             case "file":
             case "toFile":
             default:    
                 return new CommandDefault(params);
         }
     }
+
+    /**
+        concatenaParams.
+        Metodo privato per concatenare i parametri. 
+        Di solito utilizzato per separare i parametri del comando dalla keyword. 
+    */
     private String concatenaParams(String[] params,int startIndex){
         String msg ="";
         if(params != null && params.length != 0){

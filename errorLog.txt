@@ -1,2 +1,0 @@
-[2024/01/18 18:22:53]	socket closed
-[2024/01/18 18:23:04]	Il server non ha dato nessuna risposta

@@ -5,11 +5,19 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
 /**Questo comando permette di ricercare tramite il gestoreClientServer un client o server specifico e di mostrarne il toString
- * 
+ *  @author Mussaldi Tommaso, Mattia Bonfiglio
+    @version 1.0
  */
 public class CommandInfo extends CommandI<GestoreClientServer>{
     private String nome;  
     private boolean client;  
+    /**
+        Costruttore di CommandInfo.
+     * @param gestore GestoreClientServer su cui effettuare la riceraca
+     * @param client true se si vuole informazioni di un client false se si vogliono info di un server
+     * @param nome nome del client o server di cui stampare le info
+     * @throws CommandException
+     */
     public CommandInfo(GestoreClientServer gestore,boolean client,String nome ) throws CommandException{
         super(gestore);
         this.nome=nome;

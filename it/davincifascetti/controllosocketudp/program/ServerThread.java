@@ -15,8 +15,9 @@ import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 /**si occupa di prendere il pacchetto ricevuto dal server e elaborare la risposta corretta
- * di default stampaVideo è attivo quindi stampa a video tutti i msg ricevuti dal client
- * 
+ * Tramite la FactoryRisposta può instanziare comandi per la risposta di msg ricevuti dal client
+ * @author Mussaldi Tommaso, Mattia Bonfiglio
+ * @version 1.0
  */
 public class ServerThread implements Runnable{
     private DatagramPacket packet;
@@ -28,10 +29,16 @@ public class ServerThread implements Runnable{
     private CommandHistory storiaComandi;
     private String msgRicevuto = "";
     private String nomeServerOriginale;
-    //TODO creare i seguenti metodi per eseguire le op di :
-    //TODO stampa msg del  client sulla console (se il terminale è attivo altrimenti li salva su storiamsg)
-    //TODO salva su file msg client
 
+    /**instanzia una classe che si occupa della risposta
+     * 
+     * @param packet pacchetto ricevuto
+     * @param socketRisposta socket che verra usata per la risposta (stessa del servers)
+     * @param StoriaMsg storia dei msg ricevuti , server per instanziare 
+     * @param riferimentoTerminal riferimento al terminale di server
+     * @param storiaComandi storia dei comandi eseguiti (la salvo sul server)
+     * @param nomeServerOriginale nome del server
+     */
     public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg, Terminal<Server> riferimentoTerminal,CommandHistory storiaComandi, String nomeServerOriginale){
         this.packet = packet;
         this.socketRisposta = socketRisposta;
@@ -42,6 +49,9 @@ public class ServerThread implements Runnable{
         this.nomeServerOriginale = nomeServerOriginale;
     }
 
+    /**si occupa di instanziare la factory che si occupa di creare i comandi in base al tipo di risposta da inviare
+     * 
+     */
     @Override
     public void run() {
 
@@ -80,6 +90,11 @@ public class ServerThread implements Runnable{
 
     }
 
+    /**permette di inviare un messaggio di risposta al client (sa chi è dal pacchetto ricevuto)
+     * 
+     * @param msg messaggio da inviar al client
+     * @throws CommandableException
+     */
     public void inviaMsg(String msg) throws CommandableException{
         if(msg == null) throw new CommandableException("Errore, il messaggio da spedire risulta null");
 		this.bufferOUT = msg.getBytes();
@@ -95,19 +110,28 @@ public class ServerThread implements Runnable{
 
 
     /**PER STAMPARE SUL TERMINALE SI USA QUESTO
-     * 
-     * @param msg
+     * se voglio stampare sul terminale devo usare questo metodo perchè in base a se il terminale è attivo o no , stampa a video oppure aggiunge alla lista storiamsg
+     * @param msg messaggio da stampare
      */
     public void stampaVideo(String msg){
         if(this.riferimentoTerminal.isAttivo())System.out.println(msg);
 		else this.StoriaMsg.add(msg);
     }
 
+    /**permette di loggare un errore 
+     * 
+     * @param msg messaggio da loggare
+     * @param video true se si stampa anche a video altrimenti false  solo su file
+     */
     private void errorLog(String msg, boolean video){
         if(video)this.stampaVideo(msg);
         this.riferimentoTerminal.errorLog(msg,false);
     }
 
+    /**permette di estrapolare il messaggio ricevuto dal pacchetto ricevuto
+     * 
+     * @return stringa contenente il msg ricevuto dal client
+     */
     private String getMsgRicevuto(){
         int lungPacket = this.packet.getLength();
 		String msgRicevuto = new String(this.packet.getData());
@@ -146,6 +170,11 @@ public class ServerThread implements Runnable{
         
     }
     
+    /**permette di loggare su di un file che ha lo stesso nome del server, si occupa di aprire e terminale lo stream
+     * 
+     * @param message messaggio da loggare
+     * @return true se è andato a buonfine altrienti false
+     */
     public boolean fileLog(String message){
         try{
             FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora) (credo che i packages vadano messi in una cartella src e poi fuori la cartella fileServers)

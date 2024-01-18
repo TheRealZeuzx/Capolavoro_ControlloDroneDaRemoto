@@ -2,14 +2,29 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 
-/**Factory per la creazione di specifici comandi per il GestoreClientServer
- * 
- */
+/**
+    CommandFactoryGestore.
+    Factory per la creazione di specifici comandi per il GestoreClientServer
+    @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
+*/ 
 public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> implements CommandFactory{
 
+    /**
+        Costruttore di default di CommandFactoryGestore.
+        @param gestore è l'oggetto che farà da receiver per i comandi
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public CommandFactoryGestore(GestoreClientServer gestore) throws CommandException{
         super(gestore);
     }
+
+    /**
+        getCommand.
+        Metodo che, in base ai parametri, ritorna il comando corrispondente.
+        @param params array di string contenente i parametri da cui instanziare i comandi corretti
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public Command getCommand(String []params) throws CommandException {
 
         String scelta = params == null || params.length == 0 ? "" : params[0];

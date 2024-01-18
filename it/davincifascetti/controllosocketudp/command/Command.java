@@ -1,13 +1,17 @@
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
-/**interfaccia Command senza undo
- * 
+/**
+    Interfaccia generale Command SENZA undo.
+    Interfaccia generale che devono implementare tutti i comandi.
+    Necessaria per l'implemento del Command Design Pattern.
+    @author Tommaso Mussaldi, Bonfiglio Mattia
  */
 public interface Command {
 
-    /**execute permette di eseguire il comando
-     * @throws CommandException nel caso in cui ci sia un errore , viene sollevato CommandException contentente il msg di errore
+    /**
+        Execute: Metodo in cui verranno chiamate tutte le funzioni relative al comando.
+        @throws CommandException se un comando riscontra un errore
      */
     public void execute() throws CommandException, ErrorLogException;
     

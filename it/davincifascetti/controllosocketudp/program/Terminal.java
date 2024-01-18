@@ -14,25 +14,39 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
  * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
- * 
+ * instanzia una commandFactory corrispondente al gestore utilizzando CommandFactoryInstantiar 
+ * la command factory si occupa di creare i comandi opportuni per ogni messaggio inviato dal utente, la execute del command , attivera il receiver che eseguira effettivaemnte l'operazione richiesta
+ * utilizza il command design pattern
+ * @author Mussaldi Tommaso, Mattia Bonfiglio
+ * @version 1.0
  */
 public class Terminal<T extends Commandable>{
     
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
     private CommandFactory factory;
     private ErrorLog errorLog;
-    private static Scanner input = new Scanner(System.in);
+    public static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
     private boolean bloccato = false;
 
+    /**
+     * 
+     * @param errorLog oggetto error log che si occupera del log su file degli errori
+     * @throws CommandException
+     */
     public Terminal(ErrorLog errorLog) throws CommandException{
         this.errorLog = errorLog;
         this.storiaComandi = new CommandHistory();
     }
 
+    /**peremtte di avviare il terminale, se bloccato è true gli input sono bloccati, se attivo allora attivo = true altrimenti false , serve a capire se il terminale è attivo dall'esterno (è attivo se chiamo il metodo main)
+     * 
+     * @param gestore deve implementare Commandable
+     * @throws CommandException
+     */
     public void main(T gestore) throws CommandException {
         this.attivo = true;
-        this.factory = CommandFactoryInstantiator.newInstance(gestore);
+        this.factory = CommandFactoryInstantiator.newInstance(gestore);//cambia in base a il gestore passato
         String menu = "";
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
         if(gestore instanceof Server){
@@ -100,7 +114,7 @@ public class Terminal<T extends Commandable>{
             }else{
                 //se era bloccato allora sleep 5ms per verificare che si sblocchi
                 try {
-                    Thread.currentThread().sleep(5);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     this.errorLog(e.getMessage(), true);
                 }
@@ -110,6 +124,11 @@ public class Terminal<T extends Commandable>{
         this.attivo = false;
     }
 
+    /**permette di loggare un errore dall esterno del terminale
+     * 
+     * @param msg messaggio da loggare
+     * @param video true se si stampa anche a video altrimenti false  solo su file
+     */
     public void errorLog(String msg,boolean video){
         if(video)System.out.println(msg);
         new ErrorLogCommand(this.errorLog,msg).execute();

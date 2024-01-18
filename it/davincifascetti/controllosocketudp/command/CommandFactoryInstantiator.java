@@ -4,11 +4,20 @@ import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
-/**Permette di instanziare un istanza di CommandFactory adeguata
- * 
- */
+/**
+    CommandFactoryGestore.
+    permette di instanziare una Factory adeguata in base al gestore (che implementa Commandable) inserito
+    @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
+*/ 
 public abstract class CommandFactoryInstantiator {
     
+    /**gestore di tipo commandable da cui viene instanziato la factory corrispondente
+     * 
+     * @param gestore è l'oggetto che farà da receiver per i comandi, dalla classe di questo oggetto si deciderà cosa instanzaire
+     * @return restituisce CommandFactory (interfaccia comune a le factory che estendono CommandFactoryI<T extends Commandable>)
+     * @throws CommandException
+     */
     public static CommandFactory newInstance(Commandable gestore) throws CommandException{
 
         if(gestore.getClass().equals(GestoreClientServer.class))return (CommandFactory) new CommandFactoryGestore((GestoreClientServer)gestore);

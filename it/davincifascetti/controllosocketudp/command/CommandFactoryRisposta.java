@@ -1,15 +1,30 @@
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
-/**Factory per la creazione di specifici comandi per il Server
 
- * 
- */
+/**
+    CommandFactoryClient.
+    Factory per la creazione di specifici comandi per il Server-Thread
+    @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
+*/ 
 public class CommandFactoryRisposta implements CommandFactory{
     private ServerThread gestore;
+    /**
+        Costruttore di default di CommandFactoryRisposta.
+        @param gestore è l'oggetto che farà da receiver per i comandi
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public CommandFactoryRisposta(ServerThread gestore) throws CommandException{
         this.gestore = gestore;
     }
+
+    /**
+        getCommand.
+        Metodo che, in base ai parametri, ritorna il comando corrispondente.
+        @param params Comando da eseguire in formato testuale.
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
     public Command getCommand(String []params) throws CommandException {
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch(scelta){
@@ -22,7 +37,7 @@ public class CommandFactoryRisposta implements CommandFactory{
                 if(params.length >= 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
             case "$r":
             case "$remote": 
-
+                return new CommandHelp(this.concatenaParams(params, 1), this.gestore);
             case "$h":
             case "$help":
                 return new CommandHelp(
@@ -37,6 +52,12 @@ public class CommandFactoryRisposta implements CommandFactory{
         }
         
     }
+
+    /**
+        concatenaParams.
+        Metodo privato per concatenare i parametri. 
+        Di solito utilizzato per separare i parametri del comando dalla keyword. 
+    */
     private String concatenaParams(String[] params,int startIndex){
         String msg ="";
         if(params != null && params.length != 0){
