@@ -66,18 +66,14 @@ public class Client implements Commandable,Runnable{
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
             System.out.println("Server response: " + msgRicevuto);
+            this.riferimentoTerminale.setBloccato(false);
         }catch(SocketTimeoutException e){
+            this.riferimentoTerminale.setBloccato(false);
             this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
         } catch (Exception e) {
+            this.riferimentoTerminale.setBloccato(false);
             this.riferimentoTerminale.errorLog(e.getMessage(), false);
         }
-        // //se il ricevuto ha lung 0 allora non ho ricevuto niente
-        // if(ricevuto.getLength() == 0)this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
-        // else{
-        //     //creo stringa ricevuta dall buffer di dati ricevuti
-            
-            
-        // }
     }
 
     public void inviaMsg(String msg) throws CommandableException{
@@ -87,6 +83,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
+            this.riferimentoTerminale.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), true);
@@ -96,12 +93,6 @@ public class Client implements Commandable,Runnable{
     public void ricevi(){
         Thread temp = new Thread(this);
         temp.start();
-        // try {
-        //     temp.join();
-        // } catch (InterruptedException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
     }
 
     @Override

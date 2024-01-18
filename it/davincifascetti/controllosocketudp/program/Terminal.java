@@ -23,6 +23,7 @@ public class Terminal<T extends Commandable>{
     private ErrorLog errorLog;
     private static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
+    private boolean bloccato = false;
 
     public Terminal(ErrorLog errorLog) throws CommandException{
         this.errorLog = errorLog;
@@ -32,7 +33,7 @@ public class Terminal<T extends Commandable>{
     public void main(T gestore) throws CommandException {
         this.attivo = true;
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
-        String menu;
+        String menu = "";
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
         if(gestore instanceof Server){
             System.out.print("--- Vista Server ---");
@@ -46,52 +47,63 @@ public class Terminal<T extends Commandable>{
         }
         if(gestore instanceof Client) System.out.print("--- Vista Client ---\n");
         do{
-            if(gestore instanceof GestoreClientServer) System.out.print(">");
-            if(gestore instanceof Server) System.out.print("(server) >");
-            if(gestore instanceof Client) System.out.print("(client) >");
-            menu = input.nextLine();
-            
-            String[] params;
-            if(menu.isBlank())
-                params = null;
-                //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
-            else params = menu.toLowerCase().split(" ");
+            menu = "";
+            if(!this.isBloccato()){
+                
+                if(gestore instanceof GestoreClientServer) System.out.print(">");
+                if(gestore instanceof Server) System.out.print("(server) >");
+                if(gestore instanceof Client){ System.out.print("(client) >");}
+                menu = input.nextLine();
+                
+                String[] params;
+                if(menu.isBlank())
+                    params = null;
+                    //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
+                else params = menu.toLowerCase().split(" ");
 
-            switch((params == null ? "" : params[0])){
-            case "undo":
-                    try {
-                        if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
-                        else System.out.println("l'ultima azione significativa è stata annullata con successo");
-                    } catch (CommandException e) {
+                switch((params == null ? "" : params[0])){
+                case "undo":
+                        try {
+                            if(!this.undo())System.out.println("non ci sono azioni significative da annullare");
+                            else System.out.println("l'ultima azione significativa è stata annullata con successo");
+                        } catch (CommandException e) {
+                            System.out.println(e.getMessage());
+                        } catch (ErrorLogException e) {
+                            this.errorLog(e.getMessage(),true);
+                        }
+                    break;
+                case "quit":
+                    
+                    if(gestore instanceof GestoreClientServer){
+                        String conferma="";
+                        do{
+                            System.out.print("sicuro di voler chiudere il programma? [y/n] : ");
+                            conferma = input.nextLine();
+                            if(conferma.equals("y"))System.out.println("Chiusura Programma ...");
+                            else if(conferma.equals("n"))menu = "";
+                        }while(!conferma.equals("y") && !conferma.equals("n"));
+                    } 
+                    if(gestore instanceof Server) System.out.println("Chiusura vista Server ...\n" + "--- Vista generale ---");
+                    if(gestore instanceof Client) System.out.println("Chiusura vista Client ...\n" + "--- Vista generale ---");
+                    break;
+                    
+                default:
+                    try{
+                        this.executeCommand(factory.getCommand(params));
+                    }catch(CommandException e){
                         System.out.println(e.getMessage());
-                    } catch (ErrorLogException e) {
+                    }catch(ErrorLogException e){
                         this.errorLog(e.getMessage(),true);
                     }
-                break;
-            case "quit":
-                
-                if(gestore instanceof GestoreClientServer){
-                    String conferma="";
-                    do{
-                        System.out.print("sicuro di voler chiudere il programma? [y/n] : ");
-                        conferma = input.nextLine();
-                        if(conferma.equals("y"))System.out.println("Chiusura Programma ...");
-                        else if(conferma.equals("n"))menu = "";
-                    }while(!conferma.equals("y") && !conferma.equals("n"));
-                } 
-                if(gestore instanceof Server) System.out.println("Chiusura vista Server ...\n" + "--- Vista generale ---");
-                if(gestore instanceof Client) System.out.println("Chiusura vista Client ...\n" + "--- Vista generale ---");
-                break;
-                
-            default:
-                try{
-                    this.executeCommand(factory.getCommand(params));
-                }catch(CommandException e){
-                    System.out.println(e.getMessage());
-                }catch(ErrorLogException e){
-                    this.errorLog(e.getMessage(),true);
+                    break;
                 }
-                break;
+            }else{
+                //se era bloccato allora sleep 5ms per verificare che si sblocchi
+                try {
+                    Thread.currentThread().sleep(5);
+                } catch (InterruptedException e) {
+                    this.errorLog(e.getMessage(), true);
+                }
             }
         }while(!menu.equalsIgnoreCase("quit"));
         this.factory = null;
@@ -131,4 +143,6 @@ public class Terminal<T extends Commandable>{
     }
 
     public boolean isAttivo(){return this.attivo;}
+    public boolean isBloccato(){return this.bloccato;}
+    public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
 }
