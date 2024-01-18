@@ -91,7 +91,7 @@ public class Server implements Runnable,Commandable{
     public String stampaStoriaMsg(){
         String temp = "";
         for (String string : StoriaMsg) {
-            temp +=string;
+            temp +=string+"\n";
         }
         return temp;
     }
@@ -99,7 +99,6 @@ public class Server implements Runnable,Commandable{
     @Override
     public void startTerminal() throws CommandException {
         this.riferimentoTerminale.main(this);
-        System.out.println(this.stampaStoriaMsg());//stampo la storia di msg ricevuti dal client
     }
 
     public boolean isAttivo(){return this.statoAttivo;}

@@ -6,6 +6,7 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryInstantiator;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.CommandStampaMsgRicevuti;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
@@ -33,7 +34,16 @@ public class Terminal<T extends Commandable>{
         this.factory = CommandFactoryInstantiator.newInstance(gestore);
         String menu;
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
-        if(gestore instanceof Server) System.out.println("Vista Server attivata");
+        if(gestore instanceof Server){
+            System.out.println("Vista Server attivata");
+            try {
+                new CommandStampaMsgRicevuti((Server)gestore).execute();
+            } catch (CommandException e) {
+                System.out.println(e.getMessage());
+            } catch (ErrorLogException e) {
+                this.errorLog(e.getMessage(),true);
+            }
+        }
         if(gestore instanceof Client) System.out.println("Vista Client attivata");
         do{
             if(gestore instanceof GestoreClientServer) System.out.print(">");

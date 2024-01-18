@@ -12,6 +12,12 @@ public class Test{
         }
     }
 
+    /*
+     * new c c1 localhost 1212
+     * new s s1 1212
+     * select c c1
+     */
+
     private void testServer(Server server){
         // tests
         return;
