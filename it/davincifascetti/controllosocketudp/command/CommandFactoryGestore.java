@@ -28,19 +28,19 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
                 "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
                 );
-            case "s":
+            case "sh":
             case "show":
             
                 switch (params == null || params.length <= 1 ? "" : params[1]) {
                 case "a":
                 case "all":
-                    return new CommandShowAll(this.getGestore());
+                    if(params.length == 2)return new CommandShowAll(this.getGestore());
                 case "c":
                 case "client":
-                    return new CommandShowClient(this.getGestore());
+                    if(params.length == 2)return new CommandShowClient(this.getGestore());
                 case "s":
                 case "server":
-                    return new CommandShowServer(this.getGestore());
+                    if(params.length == 2)return new CommandShowServer(this.getGestore());
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
@@ -49,10 +49,10 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
                 case "c":
                 case "client":
-                    return new CommandInfo(this.getGestore(),true,params[2]);
+                    if(params.length == 3) return new CommandInfo(this.getGestore(),true,params[2]);
                 case "s":
                 case "server":
-                    return new CommandInfo(this.getGestore(),false,params[2]);
+                    if(params.length == 3) return new CommandInfo(this.getGestore(),false,params[2]);
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
@@ -60,18 +60,12 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
                 case "c":
                 case "client":
-                        if(params.length == 3)
-                            return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
-                        else if(params.length == 5)
-                            return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],params[4]);
-                        else throw new CommandException("Errore, non è stato specificato cosa creare");
+                    if(params.length == 3)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
+                    if(params.length == 5)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],params[4]);
                 case "s":
                 case "server":
-                    if(params.length == 3)
-                        return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2]);
-                    else if(params.length == 4)
-                        return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],params[3]);
-                        else throw new CommandException("Errore, non è stato specificato cosa creare");
+                    if(params.length == 3)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2]);
+                    if(params.length == 4)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],params[3]);
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa creare");
                 }

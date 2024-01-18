@@ -47,8 +47,8 @@ public class Terminal<T extends Commandable>{
         if(gestore instanceof Client) System.out.print("--- Vista Client ---\n");
         do{
             if(gestore instanceof GestoreClientServer) System.out.print(">");
-            if(gestore instanceof Server) System.out.print("vs.>");
-            if(gestore instanceof Client) System.out.print("vc.>");
+            if(gestore instanceof Server) System.out.print("(server) >");
+            if(gestore instanceof Client) System.out.print("(client) >");
             menu = input.nextLine();
             
             String[] params;
