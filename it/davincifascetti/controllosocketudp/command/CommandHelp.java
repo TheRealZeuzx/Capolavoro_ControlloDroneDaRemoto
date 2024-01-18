@@ -13,15 +13,17 @@ public class CommandHelp implements Command{
     }
     public CommandHelp(String msg,ServerThread gestore){
         this(msg);
+        this.gestore = gestore;
     }
     public void execute() throws CommandException {
         if(this.gestore == null)
             System.out.println(this.msg);
-        else
+        else{
             try {
                 this.gestore.inviaMsg(this.msg);
             } catch (CommandableException e) {
                 throw new CommandException(e.getMessage());
             }
+        }
     }
 }

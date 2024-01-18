@@ -38,9 +38,6 @@ public class ServerThread implements Runnable{
         this.StoriaMsg = StoriaMsg;
         this.riferimentoTerminal = riferimentoTerminal;
         this.storiaComandi = storiaComandi;
-        InetAddress ClientIP = this.packet.getAddress();
-        int ClientPort = this.packet.getPort();
-		this.packetDaSpedire = new DatagramPacket(bufferOUT, bufferOUT.length,ClientIP,ClientPort);
         this.msgRicevuto = this.getMsgRicevuto();
         this.nomeServerOriginale = nomeServerOriginale;
     }
@@ -86,9 +83,12 @@ public class ServerThread implements Runnable{
     public void inviaMsg(String msg) throws CommandableException{
         if(msg == null) throw new CommandableException("Errore, il messaggio da spedire risulta null");
 		this.bufferOUT = msg.getBytes();
+        InetAddress ClientIP = this.packet.getAddress();
+        int ClientPort = this.packet.getPort();
+        this.packetDaSpedire = new DatagramPacket(bufferOUT, bufferOUT.length,ClientIP,ClientPort);
 		try {
 			this.socketRisposta.send(this.packetDaSpedire);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
     }
@@ -148,7 +148,7 @@ public class ServerThread implements Runnable{
     
     public boolean fileLog(String message){
         try{
-            FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora)
+            FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora) (credo che i packages vadano messi in una cartella src e poi fuori la cartella fileServers)
             logger.printToFile(message, true);
             return true;
         }catch(IOException e){

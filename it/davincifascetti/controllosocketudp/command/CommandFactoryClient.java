@@ -47,7 +47,7 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                     throw new CommandException("Errore, non è stato specificato cosa selezionare");
                 }
             case "$":
-                return new CommandInviaMsgClient(this.concatenaParams(params, 0), getGestore());
+                return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
             case "file":
             case "toFile":
             default:    

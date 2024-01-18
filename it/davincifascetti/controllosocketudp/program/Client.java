@@ -58,23 +58,26 @@ public class Client implements Commandable,Runnable{
         //creo il pacchetto di ricezione
         DatagramPacket ricevuto = new DatagramPacket(bufferIN,bufferIN.length);
         //ricevo sul pacchetto di ricezione
+        String msgRicevuto = null;
         try {
-            //!TODO trovare il modo per stoppare la receive dopo tipo 2sec (se il server non c'è ad esempio) es watchdog
-            // this.socket.setSoTimeout(2000);//non va non capisco perchè
+            
+            this.socket.setSoTimeout(2000);
             this.socket.receive(ricevuto);
+            msgRicevuto = new String(ricevuto.getData());
+            msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
+            System.out.println("Server response: " + msgRicevuto);
         }catch(SocketTimeoutException e){
             this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), false);
         }
-        //se il ricevuto ha lung 0 allora non ho ricevuto niente
-        if(ricevuto.getLength() == 0)this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
-        else{
-            //creo stringa ricevuta dall buffer di dati ricevuti
-            String msgRicevuto = new String(ricevuto.getData());
-            msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
-            System.out.println("Server response: " + msgRicevuto);//TODO capire cosa fare (in base al default stampa a video oppure su file o tutti e due)
-        }
+        // //se il ricevuto ha lung 0 allora non ho ricevuto niente
+        // if(ricevuto.getLength() == 0)this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
+        // else{
+        //     //creo stringa ricevuta dall buffer di dati ricevuti
+            
+            
+        // }
     }
 
     public void inviaMsg(String msg) throws CommandableException{
@@ -84,6 +87,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
+            this.ricevi();
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), true);
         }
@@ -92,6 +96,12 @@ public class Client implements Commandable,Runnable{
     public void ricevi(){
         Thread temp = new Thread(this);
         temp.start();
+        // try {
+        //     temp.join();
+        // } catch (InterruptedException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // }
     }
 
     @Override
