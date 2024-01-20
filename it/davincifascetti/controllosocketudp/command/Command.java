@@ -6,6 +6,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
     Interfaccia generale che devono implementare tutti i comandi.
     Necessaria per l'implemento del Command Design Pattern.
     @author Tommaso Mussaldi, Bonfiglio Mattia
+    @version 1.0
  */
 public interface Command {
 

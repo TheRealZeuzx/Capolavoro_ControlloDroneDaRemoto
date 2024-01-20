@@ -9,6 +9,7 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
     È ciò occupa di eliminare un client istanziato dal terminale.
     Identifica il client da eliminare dal nome logico assegnatogli al momento della creazione.
     @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
 */
 public class CommandDeleteClient extends CommandI<GestoreClientServer> implements UndoableCommand{
     private String nome;

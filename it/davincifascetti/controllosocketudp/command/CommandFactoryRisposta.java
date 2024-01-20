@@ -30,10 +30,10 @@ public class CommandFactoryRisposta implements CommandFactory{
         switch(scelta){
             
             case "$l":
-            case "$log"://TODo per stampare a video tutti i msg la parte client deve creare un loop che prende i msg e ci mette $log davanti
+            case "$log":
                 if(params.length >= 2)return new CommandStampaVideoServerThread(this.concatenaParams(params, 1),this.gestore);
             case "$f":
-            case "$file": //TODO con questo comando prendo quello che sta dopo file nomeFile e lo stampo sul file selezionato
+            case "$file":
                 if(params.length >= 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
             case "$r":
             case "$remote": 
@@ -49,7 +49,7 @@ public class CommandFactoryRisposta implements CommandFactory{
                     "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
                     "$from\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"
                 ,this.gestore);
-            default: //TODO fare un comando per invio ?
+            default:
                 return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
         }
         

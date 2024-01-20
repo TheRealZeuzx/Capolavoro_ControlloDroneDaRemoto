@@ -1,13 +1,11 @@
 package it.davincifascetti.controllosocketudp.program;
-
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Scanner;
+
 
 import javax.swing.JFrame;
 import java.awt.event.KeyAdapter;

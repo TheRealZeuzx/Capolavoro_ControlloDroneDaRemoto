@@ -7,6 +7,11 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
  *  @version 1.0
  */
 public class CommandShowClient extends CommandI<GestoreClientServer>{
+    /**
+     * 
+     * @param gestore oggetto di cui fare la show di all
+     * @throws CommandException
+     */
     public CommandShowClient(GestoreClientServer gestore) throws CommandException{
         super(gestore);
     }

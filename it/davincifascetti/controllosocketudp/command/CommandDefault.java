@@ -4,13 +4,14 @@ package it.davincifascetti.controllosocketudp.command;
     CommandDefault. 
     È ciò occupa di stampare a video il messaggio di default dello switchcase (nel caso in cui il comando sia errato) 
     @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
 */
 public class CommandDefault implements Command{
     private String msg;
     /**
         Costruttore di default di CommandDefault.
-        Richiama al costruttore del padre (CommandI).
-        @param gestore Gestore su cui effettuare le operazioni. 
+        Questo comando viene eseguito in caso il comando inserito dall'utente non sia riconosciuto.
+        @param params comando non riconosciuto
     */
     public CommandDefault(String[] params) throws CommandException{
         this.msg = "";

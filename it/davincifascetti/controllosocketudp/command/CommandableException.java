@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 /**
     Eccezione personalizzata sollevata da classi che implementano Commandable.
     @author Tommaso Mussaldi, Mattia Bonfiglio
+    @version 1.0
  */
 public class CommandableException extends Exception{
     /**

@@ -1,8 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
 
-/**
- */
-
 /** 
     Abstract CommandI. 
     Permette di avere i comandi di tipo T sotto l'interfaccia Command.
@@ -22,8 +19,8 @@ public abstract class CommandI<T extends Commandable> implements Command{
     }
     /**
         getGestore().
-        
-        @return Il gestore della 
+        Ritorna il gestore del comando.
+        @return Il gestore del comando.
     */
     public T getGestore(){return this.gestore;}
 }
