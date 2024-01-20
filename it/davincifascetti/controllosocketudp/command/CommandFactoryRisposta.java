@@ -45,9 +45,9 @@ public class CommandFactoryRisposta implements CommandFactory{
                     "$help\t\tpermette di visualizzare tutti i comandi \n" + 
                     "$undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
                     "$log\t\tpermette di stampare sulla console del server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
-                    "$file\t\tpermette di stampare sul file(che prende nome del server) il contenuto del msg\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
+                    "$file\t\tpermette di stampare sul file(che prende nome del server) il contenuto del msg (il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
                     "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
-                    "$from\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"
+                    "$from\t\tpermette di leggere un file locale(client) e inviarlo al server\n\t\t($file nomefile) nomefile non necesseta delle ''\t"
                 ,this.gestore);
             default:
                 return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);

@@ -40,9 +40,7 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                     "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
                     "info\t\tpermette di visualizzare le informazioni di questo client\n" +
                     "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set remoto nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
-                    "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"+
-                    "file\t\tpermette di selezionare o creare un file nel quale stampare le risposte del server (di default toFile è enabled append)\n\t\t(file nomeFile.estensione)crea o seleziona il file nella cartella fileUtente, se era già stato selezionato un file,\n\t\til file precedente non viene eliminato, ma viene solo selezionato o creato il nuovo file\n"+
-                    "toFile\t\tpermette di attivare,disattivare e cambiare modalità di stampa su file\n\t\t(toFile enable modalità) modalità può essere append o overwrite\n\t\t(toFile disable) viene disattivata la scrittura su file"
+                    "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
                 );
             case "info":
             case "i":
@@ -64,14 +62,12 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                     case "$remote":
                     case "$r":
                         return new CommandTelecomando(this.getGestore());
+                    case "$from":
+                        if(params.length == 2) return new CommandFromFile(this.getGestore(),params[1]);
                     default:
                         return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
                         
                 }
-                
-
-            case "file":
-            case "toFile":
             default:    
                 return new CommandDefault(params);
         }

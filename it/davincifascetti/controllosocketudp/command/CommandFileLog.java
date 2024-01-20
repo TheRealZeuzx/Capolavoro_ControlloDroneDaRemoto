@@ -14,7 +14,7 @@ public class CommandFileLog implements Command{
 
     /**
         Costruttore di default di CommandFileLog.
-        Questo comando viene eseguito quando è necessario stampare in un file specificato un messaggio.
+        Questo comando viene eseguito quando è necessario stampare in un file specificato un messaggio. il messaggio viene stampato anche sulla console del server
         @param msg messaggio da stampare nel file
         @param gestore server thread che si occuperà di stampare nel file
     */
@@ -31,6 +31,7 @@ public class CommandFileLog implements Command{
      */
     public void execute() throws CommandException {
         gestore.fileLog(this.msg);
+        new CommandStampaVideoServerThread(this.msg,this.gestore).execute();
         new CommandHelp("operazione andata a buon fine",this.gestore).execute();
         
     }

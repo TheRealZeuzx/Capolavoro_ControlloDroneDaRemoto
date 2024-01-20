@@ -23,7 +23,7 @@ public class CommandStampaVideoServerThread implements Command{
         if(gestore == null) throw new CommandException("errore, il gestore inserito è null");
     }
     public void execute() throws CommandException {
-        this.gestore.stampaVideo(msg);
+        this.gestore.stampaVideo("il client dice: " + msg);
         new CommandHelp("operazione andata a buon fine",this.gestore).execute();
     }
 

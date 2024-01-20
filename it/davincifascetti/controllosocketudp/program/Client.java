@@ -201,13 +201,14 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
      * @throws CommandableException
      */
     public void setIpDestinazioneDefault(String ip) throws CommandableException{
+        
         boolean temp = false;
         if(!ip.equalsIgnoreCase("localhost")){ 
-            String[] valori = ip.split(".");
-            if(valori.length <= 2 || valori.length > 3) temp = true;
+            String[] valori = ip.split("[.]");
+            if(valori.length != 4) temp = true;
             else{
                 for (String string : valori){
-                    if(!string.matches("^[1-9]{1,3}$"))temp = true;
+                    if(!string.matches("^[0-9]{1,3}$"))temp = true;
                     if(Integer.valueOf(string) > 255)temp = true;
                 }
             }
