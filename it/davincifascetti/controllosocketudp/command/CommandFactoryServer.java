@@ -39,7 +39,8 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
                     "info\t\tpermette di visualizzare le informazioni di questo server\n" +
                     "enable\t\tpermette di avviare questo server\n" +
                     "disable\t\tpermette di disattivare questo server\n" +
-                    "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"
+                    "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"+
+                    "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
                 );
             case "info":
             case "i":
@@ -62,6 +63,29 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
             case "dis":
             case "disable": 
                 return new CommandDisattivaServer(this.getGestore());
+            case "file":
+            case "f":
+                if(params == null || params.length <= 1 || params.length > 3) throw new CommandException("Errore, non è stato specificato cosa selezionare");
+                if(params.length == 2){
+                    switch(params[1]){
+                        case "dis":
+                        case "disable":
+                            return new CommandDisableToFile(this.getGestore());
+                        default:  
+                            throw new CommandException("Errore, non è stato specificato cosa selezionare");
+                    }
+                }
+                switch(params[2]){
+                    case "append":
+                    case "a":
+                        return new CommandEnableToFile(this.getGestore(),params[1],true);
+                    case "overwrite":
+                    case "o":
+                        return new CommandEnableToFile(this.getGestore(),params[1],false);
+                    default:  
+                        throw new CommandException("Errore, non è stato specificato cosa selezionare");
+                }
+                
             default:    
                 return new CommandDefault(params);
         }

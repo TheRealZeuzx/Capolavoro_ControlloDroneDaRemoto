@@ -5,7 +5,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -24,10 +23,34 @@ public class Server implements Runnable,Commandable{
     private int porta;
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
+    private ServerThread threadRisposta = null;
     private Terminal<Server> riferimentoTerminale;
     private ArrayList<String> StoriaMsg;
-    private CommandHistory storiaComandiRisposta;
+    private FileLogger fileLogger = null;
 
+    /**permette di impostare la stampa su file di default
+     * 
+     * @param append true se si vuole stampare in modalità append altrimenti false
+     * @param nomeFile nome del file su cui si vuole scrivere, se ha valore "this" , il file prende il nome del server
+     * @throws CommandableException se il nome del file è vuoto oppure null
+     */
+    public void SuFile(boolean append,String nomeFile) throws CommandableException {
+        
+        if(nomeFile != null && nomeFile.equals("this")) this.fileLogger = new FileLogger(this.getNome() + ".txt");
+        else this.fileLogger = new FileLogger(nomeFile);
+        this.fileLogger.setAppend(append);
+        
+    }
+
+    /**permette di disabilitare la stampa su file di default
+     * (non avviene se il fileLogger è null a meno che non si specifichi il comando $file, in quel caso il file prende il nome del server)
+     */
+    public void disableSuFile(){this.fileLogger = null;}
+
+
+    public FileLogger getFileLogger() {
+        return fileLogger;
+    }
 
     /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
      * 
@@ -40,7 +63,6 @@ public class Server implements Runnable,Commandable{
         this.riferimentoTerminale = t;
         this.setNome(nomeServer);
         this.StoriaMsg = new ArrayList<String>();
-        this.storiaComandiRisposta = new CommandHistory();
     }
     /**se uso quest costruttore, posso attivare il server
      * 
@@ -72,9 +94,9 @@ public class Server implements Runnable,Commandable{
             try {
                 this.socket.receive(pacchetto);
                 if(this.isAttivo()){
-                    Thread threadRisposta = null;
-                    threadRisposta = new Thread(new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale, this.storiaComandiRisposta,this.getNome()));
-                    threadRisposta.start(); 
+                    this.threadRisposta = null;
+                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale,this.getNome(),this.fileLogger,this);
+                    this.threadRisposta.start(); 
                 }
             } catch (Exception e) {
                 this.riferimentoTerminale.errorLog(e.getMessage(),false);
@@ -108,7 +130,7 @@ public class Server implements Runnable,Commandable{
 
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  + (this.fileLogger == null?"ToFile: - ":("ToFile: "+this.fileLogger.getFileName())) +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
     /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
@@ -186,5 +208,7 @@ public class Server implements Runnable,Commandable{
         }
         return false;
     }
+
+    
 
 }

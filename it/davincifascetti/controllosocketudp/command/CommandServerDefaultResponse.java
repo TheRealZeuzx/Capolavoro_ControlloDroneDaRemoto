@@ -1,24 +1,24 @@
+
 package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /**
-    CommandHelp. 
-    Permette di stampare a video il messaggio di help richiesto
+    operazione di defualt che il serverThread svolge alla ricezione di un pacchetto dal client
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */
-public class CommandFileLog implements Command{
+public class CommandServerDefaultResponse implements Command{
     private String msg;
     private ServerThread gestore = null;
 
     /**
-        Costruttore di default di CommandFileLog.
-        Questo comando viene eseguito quando è necessario stampare in un file specificato un messaggio. il messaggio viene stampato anche sulla console del server
+        Costruttore di default di CommandServerDefaultResponse.
+        Questo comando viene eseguito quando è necessario utilizzare l'operazione di defualt del server
         @param msg messaggio da stampare nel file
         @param gestore server thread che si occuperà di stampare nel file
     */
-    public CommandFileLog(String msg,ServerThread gestore) throws CommandException{
+    public CommandServerDefaultResponse(ServerThread gestore,String msg) throws CommandException{
         this.msg = msg;
         this.gestore = gestore;
         if(msg == null) throw new CommandException("Errore, il msg inserito risulta essere null");
@@ -31,11 +31,10 @@ public class CommandFileLog implements Command{
      */
     public void execute() throws CommandException {
         try {
-            gestore.fileLog(this.msg);
+            gestore.defaultResponse(this.msg);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        new CommandStampaVideoServerThread(this.msg,this.gestore).execute();
         new CommandHelp("operazione andata a buon fine",this.gestore).execute();
         
     }

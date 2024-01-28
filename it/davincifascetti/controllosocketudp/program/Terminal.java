@@ -28,6 +28,7 @@ public class Terminal<T extends Commandable>{
     public static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
     private boolean bloccato = false;
+    private T gestoreAttuale = null;
 
     /**
      * 
@@ -45,6 +46,7 @@ public class Terminal<T extends Commandable>{
      * @throws CommandException
      */
     public void main(T gestore) throws CommandException {
+        this.gestoreAttuale = gestore;
         this.attivo = true;
         this.factory = CommandFactoryInstantiator.newInstance(gestore);//cambia in base a il gestore passato
         String menu = "";
@@ -62,6 +64,7 @@ public class Terminal<T extends Commandable>{
         if(gestore instanceof Client) System.out.print("--- Vista Client ---\n");
         do{
             menu = "";
+            
             if(!this.isBloccato()){
                 
                 if(gestore instanceof GestoreClientServer) System.out.print(">");
@@ -161,7 +164,17 @@ public class Terminal<T extends Commandable>{
         
     }
 
-    public boolean isAttivo(){return this.attivo;}
+    /**restituisce true se il terminale è attivo e sta usando il gestore che ha richiesto isAttivo altrimenti false
+     * 
+     * @param gestore gestore di cui si vuole sapere se è attivo il terminale 
+     * @return restituisce true se il terminale è attivo e sta usando il gestore che ha richiesto isAttivo altrimenti false
+     */
+    public boolean isAttivo(T gestore){
+        
+        if(this.gestoreAttuale.equals(gestore))
+            return this.attivo;
+        else return false;
+    }
     public boolean isBloccato(){return this.bloccato;}
     public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
 }

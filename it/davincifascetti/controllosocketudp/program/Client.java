@@ -128,7 +128,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
         try {
             if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
                 tastoPrecedente = Character.valueOf(c);
-                new CommandInviaMsgClient("$remote "+String.valueOf(c),this).execute();
+                new CommandInviaMsgClient(String.valueOf(c),this).execute();
             }
         } catch (CommandException e1) {
             

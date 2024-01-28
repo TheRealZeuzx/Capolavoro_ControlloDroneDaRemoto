@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.program.FileLogger;
 
 
@@ -16,18 +17,22 @@ public class ErrorLog {
     private FileLogger logger;
 
     /**costruttore di Error di default crea un file di log errori nel path del progetto.
+     * @throws CommandableException 
      */
-    public ErrorLog(){
+    public ErrorLog() throws CommandableException{
         String fileName = "/errorLog.txt";
         this.logger = new FileLogger(fileName);
+        this.logger.setAppend(true);
     }
 
     /**costruttore di Error che prende come parametro il path del file di log
      * 
      * @param fileName path del file di log su cui scrivere i log degli errori
+     * @throws CommandableException 
      */
-    public ErrorLog(String fileName){
+    public ErrorLog(String fileName) throws CommandableException{
         this.logger = new FileLogger(fileName);
+        this.logger.setAppend(true);
     }
     
 
@@ -39,7 +44,7 @@ public class ErrorLog {
     public void log(String errorMessage) throws IOException{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
         LocalDateTime now = LocalDateTime.now();  
-        this.logger.printToFile("[" + dtf.format(now) + "]\t"+errorMessage,true);
+        this.logger.printToFile("[" + dtf.format(now) + "]\t"+errorMessage); //stampo il msg errore + la data 
     }
 
 

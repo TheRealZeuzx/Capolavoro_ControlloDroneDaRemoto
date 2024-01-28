@@ -64,6 +64,8 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                         return new CommandTelecomando(this.getGestore());
                     case "$from":
                         if(params.length == 2) return new CommandFromFile(this.getGestore(),params[1]);
+                    case "$log":
+                        return new CommandInviaMsgClient(this.concatenaParams(params, 1), this.getGestore());
                     default:
                         return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
                         
@@ -84,7 +86,7 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
             for(int i = startIndex;i<params.length;i++){
                 msg += params[i] + " ";
             }
-            msg = msg.substring(0,msg.length()-1);
+            msg = msg.length() == 0 ? "" : msg.substring(0,msg.length()-1);
         }
         return msg.isBlank() ? "":msg;
     }

@@ -1,6 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class CommandFromFile extends CommandI<Client>{
             throw new ErrorLogException(e.getMessage());
         }
         try {
-            this.getGestore().inviaMsg("$file " + contenutoFile);
+            this.getGestore().inviaMsg(contenutoFile);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }

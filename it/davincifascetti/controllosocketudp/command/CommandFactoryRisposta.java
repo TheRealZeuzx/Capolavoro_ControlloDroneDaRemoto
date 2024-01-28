@@ -27,31 +27,32 @@ public class CommandFactoryRisposta implements CommandFactory{
     */
     public Command getCommand(String []params) throws CommandException {
         String scelta = params == null || params.length == 0 ? "" : params[0];
-        switch(scelta){
+        if(scelta.isBlank())return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
+        if(String.valueOf(scelta.charAt(0)).equals("$")){
             
+            switch (scelta) {
             case "$l":
             case "$log":
                 if(params.length >= 2)return new CommandStampaVideoServerThread(this.concatenaParams(params, 1),this.gestore);
             case "$f":
             case "$file":
                 if(params.length >= 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
-            case "$r":
-            case "$remote": 
-                return new CommandHelp(this.concatenaParams(params, 1), this.gestore);
             case "$h":
             case "$help":
                 return new CommandHelp(
                     "Comandi Remoti Disponibili\n\n"+
                     "$help\t\tpermette di visualizzare tutti i comandi \n" + 
-                    "$undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
-                    "$log\t\tpermette di stampare sulla console del server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
-                    "$file\t\tpermette di stampare sul file(che prende nome del server) il contenuto del msg (il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
+                    "$log\t\tpermette di inviare al server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
+                    "$file\t\tpermette di stampare sul file(che prende nome del server se non è selezionato dal server) il contenuto del msg\n\t\t(il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
                     "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
                     "$from\t\tpermette di leggere un file locale(client) e inviarlo al server\n\t\t($file nomefile) nomefile non necesseta delle ''\t"
                 ,this.gestore);
             default:
                 return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
+            }
         }
+        return new CommandServerDefaultResponse(this.gestore,this.concatenaParams(params,0));
+        
         
     }
 
@@ -66,7 +67,7 @@ public class CommandFactoryRisposta implements CommandFactory{
             for(int i = startIndex;i<params.length;i++){
                 msg += params[i] + " ";
             }
-            msg = msg.substring(0,msg.length()-1);
+            msg = msg.length() == 0 ? "" : msg.substring(0,msg.length()-1);
         }
         return msg.isBlank() ? "":msg;
     }

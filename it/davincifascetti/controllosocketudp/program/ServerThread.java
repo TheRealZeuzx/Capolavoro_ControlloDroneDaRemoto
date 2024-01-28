@@ -19,7 +19,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public class ServerThread implements Runnable{
+public class ServerThread extends Thread{
     private DatagramPacket packet;
     private DatagramSocket socketRisposta;
     private ArrayList<String> StoriaMsg;
@@ -29,24 +29,27 @@ public class ServerThread implements Runnable{
     private CommandHistory storiaComandi;
     private String msgRicevuto = "";
     private String nomeServerOriginale;
-
+    private FileLogger fileLogger = null;
+    private Server riferimentoServer = null;
     /**instanzia una classe che si occupa della risposta
      * 
      * @param packet pacchetto ricevuto
      * @param socketRisposta socket che verra usata per la risposta (stessa del servers)
      * @param StoriaMsg storia dei msg ricevuti , server per instanziare 
      * @param riferimentoTerminal riferimento al terminale di server
-     * @param storiaComandi storia dei comandi eseguiti (la salvo sul server)
      * @param nomeServerOriginale nome del server
+     * @param fileLogger riferimento al file logger che si trova nel Server, serve per stampare su file
+     * @param riferimentoServer riferimento all server che ha creato ServerThread
      */
-    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg, Terminal<Server> riferimentoTerminal,CommandHistory storiaComandi, String nomeServerOriginale){
+    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg, Terminal<Server> riferimentoTerminal,String nomeServerOriginale, FileLogger fileLogger,Server riferimentoServer){
         this.packet = packet;
         this.socketRisposta = socketRisposta;
         this.StoriaMsg = StoriaMsg;
         this.riferimentoTerminal = riferimentoTerminal;
-        this.storiaComandi = storiaComandi;
         this.msgRicevuto = this.getMsgRicevuto();
         this.nomeServerOriginale = nomeServerOriginale;
+        this.fileLogger = fileLogger;
+        this.riferimentoServer = riferimentoServer;
     }
 
     /**si occupa di instanziare la factory che si occupa di creare i comandi in base al tipo di risposta da inviare
@@ -59,35 +62,20 @@ public class ServerThread implements Runnable{
         try {
             factory = new CommandFactoryRisposta(this);
         } catch (CommandException e) {
-            this.StoriaMsg.add(e.getMessage());
+            this.stampaVideo(e.getMessage());
         }
         if(factory != null){
             String[] params;
             if(this.msgRicevuto.isBlank())params = null;else params = this.msgRicevuto.toLowerCase().split(" ");
-            switch((params == null ? "" : params[0])){
-            case "$undo":
-                    try {
-                        if(!this.undo())this.stampaVideo("non ci sono azioni significative da annullare");
-                        else this.stampaVideo("l'ultima azione significativa è stata annullata con successo");
-                    }catch(CommandException e){
-                        this.stampaVideo(e.getMessage());
-                    }catch(ErrorLogException e){
-                        this.errorLog(e.getMessage(), true);
-                    }
-                break;
-            default:
-                try{
-                    this.executeCommand(factory.getCommand(params));
-                }catch(CommandException e){
-                    this.stampaVideo(e.getMessage());
-                }catch(ErrorLogException e){
-                    this.errorLog(e.getMessage(), true);
-                }
-                break;
+            try{
+                this.executeCommand(factory.getCommand(params));
+            }catch(CommandException e){
+                this.stampaVideo(e.getMessage());
+            }catch(ErrorLogException e){
+                this.errorLog(e.getMessage(), true);
             }
         }
         
-
     }
 
     /**permette di inviare un messaggio di risposta al client (sa chi è dal pacchetto ricevuto)
@@ -114,7 +102,7 @@ public class ServerThread implements Runnable{
      * @param msg messaggio da stampare
      */
     public void stampaVideo(String msg){
-        if(this.riferimentoTerminal.isAttivo())System.out.println(msg);
+        if(this.riferimentoTerminal.isAttivo(this.riferimentoServer))System.out.println(msg);
 		else this.StoriaMsg.add(msg);
     }
 
@@ -143,20 +131,6 @@ public class ServerThread implements Runnable{
         return this.packet;
     }
 
-     /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
-     * @return true se l'esecuzione è andata a buon fine altrimenti false
-     * @throws ErrorLogException 
-     * @throws CommandException 
-     */
-    private boolean undo() throws CommandException, ErrorLogException {
-        if (storiaComandi.isEmpty()) return false;
-        UndoableCommand command = storiaComandi.pop();
-        if (command != null) {
-            return command.undo();
-        }
-        return false;
-    }
-
     /**esegue il comando e restituisce true se l'esec è riuscita altrimenti false, se il comando implementa undoable command, viene inserito nella storia comandi
      * 
      * @param command comando da eseguire (deve implementare Command)
@@ -171,19 +145,36 @@ public class ServerThread implements Runnable{
     }
     
     /**permette di loggare su di un file che ha lo stesso nome del server, si occupa di aprire e terminale lo stream
-     * 
+     * se specificato non è specificato un file stampa sul file che prende il nome del server in modalità append
      * @param message messaggio da loggare
      * @return true se è andato a buonfine altrienti false
+     * @throws CommandableException 
      */
-    public boolean fileLog(String message){
+    public boolean fileLog(String message) throws CommandableException{
         try{
-            FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora) (credo che i packages vadano messi in una cartella src e poi fuori la cartella fileServers)
-            logger.printToFile(message, true);
+            if(this.fileLogger == null){
+                FileLogger logger = new FileLogger(nomeServerOriginale+".txt"); //TODO farglielo stampare dentro un apposita cartella (non funziona ora) (credo che i packages vadano messi in una cartella src e poi fuori la cartella fileServers)
+                logger.setAppend(true);
+                logger.printToFile(message);
+                return true;
+            }
+            this.fileLogger.printToFile(message);
             return true;
         }catch(IOException e){
             return false;
         }
 
+    }
+
+    /** operazione da eseguire in caso venga ricevuta una stringa senza comando (senza '$')
+     * 
+     * @param message messaggio ricevuto
+     * @throws CommandableException
+     */
+    public void defaultResponse(String message) throws CommandableException{
+        if(this.fileLogger != null)
+            this.fileLog(msgRicevuto);
+        this.stampaVideo("il client dice: " + message);
     }
 }
 
