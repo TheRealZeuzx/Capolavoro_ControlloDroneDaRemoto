@@ -39,7 +39,7 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                     "quit\t\tpermette di tornare al Terminale Generale \n" + 
                     "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
                     "info\t\tpermette di visualizzare le informazioni di questo client\n" +
-                    "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set remoto nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
+                    "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set socket nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
                     "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
                 );
             case "info":
@@ -51,9 +51,11 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                 case "name":
                 case "n":                      
                     if(params.length == 3)return new CommandSetNomeClient(this.getGestore(),params[2]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "socket":
                 case "s":
                     if(params.length == 4)return new CommandSetSocketClient(this.getGestore(),params[2],params[3]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa selezionare");
                 }
@@ -64,6 +66,7 @@ public class CommandFactoryClient extends CommandFactoryI<Client> implements Com
                         return new CommandTelecomando(this.getGestore());
                     case "$from":
                         if(params.length == 2) return new CommandFromFile(this.getGestore(),params[1]);
+                        throw new CommandException("Errore,non è stato specificato cosa creare");
                     case "$log":
                         return new CommandInviaMsgClient(this.concatenaParams(params, 1), this.getGestore());
                     default:

@@ -49,7 +49,10 @@ public class CommandDeleteServer extends CommandI<GestoreClientServer> implement
     @Override
     public boolean undo() throws CommandException,ErrorLogException{
         try {
-            this.getGestore().addServer(this.server);
+            if(this.server != null){ 
+                this.server.iniziaAscolto();
+                this.getGestore().addServer(this.server);
+            }
         } catch (CommandableException e) {
             throw new ErrorLogException("Errore, impossibile ripristinare il server");
         }

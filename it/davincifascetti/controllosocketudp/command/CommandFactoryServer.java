@@ -51,9 +51,11 @@ public class CommandFactoryServer extends CommandFactoryI<Server> implements Com
                 case "name":
                 case "n":                      
                     if(params.length == 3)return new CommandSetNomeServer(this.getGestore(),params[2]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "port":
                 case "p":
                     if(params.length == 3)return new CommandSetSocketServer(this.getGestore(),params[2]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa selezionare");
                 }

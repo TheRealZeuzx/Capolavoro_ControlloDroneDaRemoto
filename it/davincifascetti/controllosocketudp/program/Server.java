@@ -87,7 +87,7 @@ public class Server implements Runnable,Commandable{
      */
     @Override
     public void run(){
-        if(!this.isAttivo())return; //se provo a creare un thread di Server e avviarlo senza usare il metodo iniziaAscolto allora non eseguo
+        if(!this.isAttivo())return;
         byte[] bufferIN = new byte[Server.LunghezzaBuffer];
         while(this.isAttivo()){
             DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
@@ -108,9 +108,16 @@ public class Server implements Runnable,Commandable{
     /**permette di avviare il server (crea e avvia il thread)
      * 
      * @throws CommandableException
+     * @throws ErrorLogException 
      */
-    public void iniziaAscolto()throws CommandableException{
+    public void iniziaAscolto()throws CommandableException, ErrorLogException{
         if(this.socket == null) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
+        if(this.socket.isClosed())
+            try {
+                this.socket = new DatagramSocket(this.porta);
+            } catch (SocketException e) {
+                throw new ErrorLogException(e.getMessage());
+            }
         this.statoAttivo = true;
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
@@ -130,7 +137,7 @@ public class Server implements Runnable,Commandable{
 
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  + (this.fileLogger == null?"ToFile: - ":("ToFile: "+this.fileLogger.getFileName())) +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  + "\t" +  (this.fileLogger == null?"ToFile: - ":("ToFile: "+this.fileLogger.getFileName())) +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
     /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)

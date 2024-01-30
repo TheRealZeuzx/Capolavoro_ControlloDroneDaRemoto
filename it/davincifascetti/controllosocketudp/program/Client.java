@@ -62,6 +62,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
      */
     public Client(String nomeClient,String ipDestinazioneDefault,String porta,Terminal<Client> t) throws CommandableException, ErrorLogException{
         this(nomeClient, t);
+        if(porta == null || porta.isBlank() || ipDestinazioneDefault == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
         try{
             this.setIpDestinazioneDefault(ipDestinazioneDefault);
         }catch(Exception e){
@@ -244,6 +245,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
      * @throws ErrorLogException
      */
     public void setSocket(String ipDestinazioneDefault,String porta) throws CommandableException, ErrorLogException{
+        if(porta == null || porta.isBlank() || ipDestinazioneDefault == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
         this.setPorta(porta);
         this.setIpDestinazioneDefault(ipDestinazioneDefault);
     }

@@ -1,4 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Server;
 /**
     Command Attiva Server.
@@ -19,8 +20,9 @@ public class CommandAttivaServer extends CommandI<Server>{
 
     /**
         Attiva la funzione "iniziaAscolto" del gestore corrispondente.
+     * @throws ErrorLogException 
      */
-    public void execute() throws CommandException {
+    public void execute() throws CommandException, ErrorLogException {
             try {
                 this.getGestore().iniziaAscolto();
             } catch (CommandableException e) {

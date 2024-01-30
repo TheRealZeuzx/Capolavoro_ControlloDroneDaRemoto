@@ -50,9 +50,11 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 case "a":
                 case "all":
                     if(params.length == 2)return new CommandShowAll(this.getGestore());
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "c":
                 case "client":
                     if(params.length == 2)return new CommandShowClient(this.getGestore());
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "s":
                 case "server":
                     if(params.length == 2)return new CommandShowServer(this.getGestore());
@@ -65,9 +67,11 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 case "c":
                 case "client":
                     if(params.length == 3) return new CommandInfo(this.getGestore(),true,params[2]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "s":
                 case "server":
                     if(params.length == 3) return new CommandInfo(this.getGestore(),false,params[2]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
                 }
@@ -77,10 +81,12 @@ public class CommandFactoryGestore extends CommandFactoryI<GestoreClientServer> 
                 case "client":
                     if(params.length == 3)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
                     if(params.length == 5)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],params[4]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 case "s":
                 case "server":
                     if(params.length == 3)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2]);
                     if(params.length == 4)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],params[3]);
+                    throw new CommandException("Errore,non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa creare");
                 }

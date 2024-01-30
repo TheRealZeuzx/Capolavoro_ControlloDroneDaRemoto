@@ -170,10 +170,9 @@ public class Terminal<T extends Commandable>{
      * @return restituisce true se il terminale è attivo e sta usando il gestore che ha richiesto isAttivo altrimenti false
      */
     public boolean isAttivo(T gestore){
-        
-        if(this.gestoreAttuale.equals(gestore))
-            return this.attivo;
-        else return false;
+        if(this.gestoreAttuale == null || gestore == null) return false;
+        if(this.gestoreAttuale.equals(gestore))return this.attivo;
+        return false;
     }
     public boolean isBloccato(){return this.bloccato;}
     public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
