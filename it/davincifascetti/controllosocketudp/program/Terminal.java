@@ -4,6 +4,7 @@ import java.util.Scanner;
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactory;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryInstantiator;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.CommandStampaMsgRicevuti;
@@ -23,7 +24,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class Terminal<T extends Commandable>{
     
     private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
-    private CommandFactory factory;
+    private CommandFactoryI<T> factory;
     private ErrorLog errorLog;
     public static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
@@ -48,7 +49,7 @@ public class Terminal<T extends Commandable>{
     public void main(T gestore) throws CommandException {
         this.gestoreAttuale = gestore;
         this.attivo = true;
-        this.factory = CommandFactoryInstantiator.newInstance(gestore);//cambia in base a il gestore passato
+        this.factory = new CommandFactoryI<T> (gestore);
         String menu = "";
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
         if(gestore instanceof Server){
@@ -106,7 +107,7 @@ public class Terminal<T extends Commandable>{
                     
                 default:
                     try{
-                        this.executeCommand(factory.getCommand(params));
+                        this.executeCommand(factory.getCommand(menu));
                     }catch(CommandException e){
                         System.out.println(e.getMessage());
                     }catch(ErrorLogException e){

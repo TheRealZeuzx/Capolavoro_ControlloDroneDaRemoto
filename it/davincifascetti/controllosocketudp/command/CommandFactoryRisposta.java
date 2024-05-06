@@ -1,4 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
+import java.util.HashMap;
+import java.util.Map;
+
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 
@@ -8,15 +11,26 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */ 
-public class CommandFactoryRisposta implements CommandFactory{
+//! la sto trasformando in una factory generale , utilizzando una HashMap, la HashMap non è synchronized
+//!K è il gestore, T è il tipo di comando (il gestore definisce il tipo di comando che può essere inserito)
+//TODO delegare la separazione dei parametri ecc ad una classe apposita in modo da separarla dal comando che poi in base ai parametri agirà differentemente? oppure comandi diversi per parametri diversi?
+//TODO quando registro il comando gli passo solo il gestore, all'esecuzione gli passero i parametri necessari.
+
+//! la classe CommandFactoryRisposta va joinata a server
+public class CommandFactoryRisposta<K extends Commandable,T extends CommandI<K>> implements CommandFactory{
     private ServerThread gestore;
+    private HashMap<String,Command> arrayAssociativo = null;
     /**
         Costruttore di default di CommandFactoryRisposta.
         @param gestore è l'oggetto che farà da receiver per i comandi
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryRisposta(ServerThread gestore) throws CommandException{
+    public CommandFactoryRisposta() throws CommandException{
         this.gestore = gestore;
+        this.arrayAssociativo = new HashMap<String,Command>();
+        
+        this.registraComando( "$l",(Command)new CommandStampaVideoServerThread());
+
     }
 
     /**
@@ -26,10 +40,17 @@ public class CommandFactoryRisposta implements CommandFactory{
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
     public Command getCommand(String []params) throws CommandException {
+        
         String scelta = params == null || params.length == 0 ? "" : params[0];
         if(scelta.isBlank())return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
         if(String.valueOf(scelta.charAt(0)).equals("$")){
             
+            for (Map.Entry<String, Command> entry : this.arrayAssociativo.entrySet()) {
+                String key = entry.getKey();
+                Command value = entry.getValue();
+                System.out.println("Key=" + key + ", Value=" + value);
+            }
+
             switch (scelta) {
             case "$l":
             case "$log":
@@ -70,5 +91,9 @@ public class CommandFactoryRisposta implements CommandFactory{
             msg = msg.length() == 0 ? "" : msg.substring(0,msg.length()-1);
         }
         return msg.isBlank() ? "":msg;
+    }
+
+    public void registraComando(String call,T comando){
+        this.arrayAssociativo.put(call, comando);
     }
 }

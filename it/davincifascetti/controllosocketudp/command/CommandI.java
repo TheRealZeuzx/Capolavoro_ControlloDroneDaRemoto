@@ -7,15 +7,18 @@ package it.davincifascetti.controllosocketudp.command;
     @version 1.0
  */
 public abstract class CommandI<T extends Commandable> implements Command{
-    private T gestore;
-    /**
-        Costruttore generale di CommandI
-        @param gestore è l'oggetto che farà da receiver per i comandi
-        @throws CommandException in caso di errori
-     */
-    public CommandI(T gestore) throws CommandException{
+    private T gestore = null;
+    private String []params = null;
+
+    
+    public CommandI() throws CommandException{
+        super();
+    }
+    public void setParameters(T gestore,String []params) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
+        if(params == null) throw new CommandException("Errore, non ci sono parametri");
+        this.params = params;
     }
     /**
         getGestore().

@@ -41,6 +41,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
      * @param t terminale che verra usato da questo client
      * @throws CommandableException
      */
+    //!probabilmente la parte di telecomando (modTelecomando e Keytyped vanno messi in un comando o qualcosa, il client si occuperà solo di invio e ricezione mentre il comando deciderà come farli agire)
     public Client(String nomeClient,Terminal<Client> t) throws CommandableException{
         if(t == null)throw new CommandableException("il terminale inserito non è valido");
         this.riferimentoTerminale = t;

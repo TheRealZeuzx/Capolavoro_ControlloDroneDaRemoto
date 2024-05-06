@@ -12,12 +12,10 @@ public class CommandSetNomeServer extends CommandI<Server> implements UndoableCo
     private String nomePrecedente;
     /**
      * 
-     * @param gestore Server a cui cambiare il nome
-     * @param nome nuovo nome 
      * @throws CommandException
      */
-    public CommandSetNomeServer(Server gestore,String nome) throws CommandException {
-        super(gestore);
+    public CommandSetNomeServer() throws CommandException {
+
         this.nome = nome;
         this.nomePrecedente = this.getGestore().getNome();
     }
