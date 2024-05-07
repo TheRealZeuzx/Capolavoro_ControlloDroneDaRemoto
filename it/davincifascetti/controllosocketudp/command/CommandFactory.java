@@ -17,5 +17,6 @@ public interface CommandFactory {
         @param params array di string contenente i parametri da cui instanziare i comandi corretti
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public abstract Command getCommand(String[] params)  throws CommandException;
+    public abstract Command getCommand(String params)  throws CommandException;
+    public abstract void registraComando(String call,String CommandClass) throws CommandException;
 }

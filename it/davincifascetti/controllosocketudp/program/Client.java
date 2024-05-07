@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.CommandInviaMsgClient;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
@@ -257,6 +258,18 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
             return ((Client)o).getNome().equals(this.getNome());
         }
         return false;
+    }
+
+    //possibilmente impostarlo da file xml?
+    public void registraComandi(CommandFactory factory) throws CommandException{
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        //normali
+        factory.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
+        factory.registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
+        //set
+        factory.registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeClient");
+        factory.registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketClient");
+
     }
 
 }

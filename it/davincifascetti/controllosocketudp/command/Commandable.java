@@ -12,5 +12,5 @@ public interface Commandable {
         @throws CommandException se il terminale non riesce a partire.
     */
     public void startTerminal() throws CommandException;
-
+    public void registraComandi(CommandFactory factory) throws CommandException;
 }

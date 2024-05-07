@@ -8,8 +8,10 @@ import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryRisposta;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -19,7 +21,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public class ServerThread extends Thread{
+public class ServerThread extends Thread implements Commandable{
     private DatagramPacket packet;
     private DatagramSocket socketRisposta;
     private ArrayList<String> StoriaMsg;
@@ -176,6 +178,8 @@ public class ServerThread extends Thread{
             this.fileLog(msgRicevuto);
         this.stampaVideo("il client dice: " + message);
     }
+
+
 }
 
 

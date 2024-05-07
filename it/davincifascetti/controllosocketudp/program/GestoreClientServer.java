@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
@@ -215,6 +216,15 @@ public class GestoreClientServer implements Commandable{
     }
 
 
-    
+    //!possibilmente impostarlo da file xml?
+    //TODO fixare i comandi CommandHelp in modo da renderli utilizzabili (paramtri giusti gestore.class(),String)
+    public void registraComandi(CommandFactory factory) throws CommandException{
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        //normali
+        factory.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
+        factory.registraComando( "^\\bin?f?o?[ ]*$",path +"CommandHelp");
+        factory.registraComando( "^\\bne?w?[ ]*cl?i?e?n?t?[ ]*.*$",path +"CommandNewClient");
+
+    }
 
 }

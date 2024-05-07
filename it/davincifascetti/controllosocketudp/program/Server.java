@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -216,6 +217,17 @@ public class Server implements Runnable,Commandable{
         return false;
     }
 
-    
+    //possibilmente impostarlo da file xml?
+    public void registraComandi(CommandFactory factory) throws CommandException{
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        //normali
+        factory.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
+        factory.registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
+        //set
+        factory.registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeServer");
+        factory.registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketServer");
+        //$
+        factory.registraComando( "^\b\\$lo?g?[ ]*$",path + "CommandStampaVideoServerThread");
+    }
 
 }

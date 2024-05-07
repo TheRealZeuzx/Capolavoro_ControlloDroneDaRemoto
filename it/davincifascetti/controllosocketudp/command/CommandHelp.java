@@ -8,26 +8,20 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
     @author Mussaldi Tommaso, Mattia Bonfiglio
     @version 1.0
  */
-public class CommandHelp implements Command{
+public class CommandHelp extends CommandI<ServerThread>{
     private String msg;
     private ServerThread gestore = null;
 
-    /** 
-        Costruttore di CommandHelp.
-        @param msg Messaggio da stampare
-    */
-    public CommandHelp(String msg){
-        this.msg = msg;
-    }
+
 
     /** 
         Costruttore di CommandHelp, permette di invaire il messaggio di help o un messaggio in generale
         @param msg Messaggio da stampare
         @param gestore se è null, non viene inviato al client il messaggio altrimenti se passo ServerThread viene invaito al client il msg
+     * @throws CommandException 
     */
-    public CommandHelp(String msg,ServerThread gestore){
-        this(msg);
-        this.gestore = gestore;
+    public CommandHelp(ServerThread gestore,String msg) throws CommandException{
+        super(gestore, msg);
     }
     public void execute() throws CommandException {
         if(this.gestore == null)

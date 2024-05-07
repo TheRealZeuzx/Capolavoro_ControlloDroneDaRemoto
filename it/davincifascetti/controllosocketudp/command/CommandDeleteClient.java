@@ -21,8 +21,8 @@ public class CommandDeleteClient extends CommandI<GestoreClientServer> implement
         @param nome Nome logico del client da eliminare.
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandDeleteClient(GestoreClientServer gestore,String nome) throws CommandException {
-        super(gestore);
+    public CommandDeleteClient(GestoreClientServer gestore,String []params) throws CommandException {
+        super(gestore, params);
         this.nome = nome;
     }
 

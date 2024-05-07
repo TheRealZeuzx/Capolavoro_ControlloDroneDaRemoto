@@ -1,11 +1,9 @@
 package it.davincifascetti.controllosocketudp.command;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import it.davincifascetti.controllosocketudp.program.Server;
 
 /**
     CommandFactoryClient.
@@ -16,11 +14,10 @@ import it.davincifascetti.controllosocketudp.program.Server;
 //! la sto trasformando in una factory generale , utilizzando una HashMap, la HashMap non è synchronized
 //!T è il gestore
 //TODO delegare la separazione dei parametri ecc ad una classe apposita in modo da separarla dal comando che poi in base ai parametri agirà differentemente? oppure comandi diversi per parametri diversi?
-//TODO quando registro il comando gli passo solo il gestore, all'esecuzione gli passero i parametri necessari.
+
 
 //! la classe CommandFactoryRisposta va joinata a server
-//! è singleton (devo registrarli una sola volta i comandi quindi è plausibile)(poi posso registrarli anche da fuori però creo una sola hashtable)?
-public class CommandFactoryI<T extends Commandable>{
+public class CommandFactoryI<T extends Commandable> implements CommandFactory{
 
     private HashMap<String,String> arrayAssociativo = null;
     private T gestore = null; 
@@ -32,47 +29,39 @@ public class CommandFactoryI<T extends Commandable>{
     public CommandFactoryI(T gestore) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
-        this.arrayAssociativo = new HashMap<String,String>();
+        this.arrayAssociativo = new HashMap<String,String>();//! forse da cambiare con Pattern al posto della chiave String
+        //i comandi sono registrati dalla classe gestore
+        gestore.registraComandi((CommandFactory)this);
         
-        //normali
-        this.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$","CommandHelp",false);
-        this.registraComando( "^\bin?f?o?[ ]*$","CommandHelp",false);
-        //set
-        this.registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$","CommandSetNomeServer",false);
-        this.registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$","CommandSetSocketServer",false);
-        //$
-        this.registraComando( "^\b\\$lo?g?[ ]*$","CommandStampaVideoServerThread",false);
-        //default
-        this.registraComando("default","CommandDefault",true);
         
     }
 
     /**
         getCommand.
-        Metodo che, in base ai parametri, ritorna il comando corrispondente.
-        @param params array di string contenente i parametri da cui instanziare i comandi corretti
+        Metodo che, in base ai parametri, ritorna il comando corrispondente.Utilizza una hashmap per salvare i comandi che andranno registrati dall esterno della classe
+        @param params stringa contenente i parametri da cui instanziare i comandi corretti
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
     public Command getCommand(String params) throws CommandException {
         Vector<Object> arguments = new Vector<>();
         arguments.add(this.gestore);
         arguments.add(params);
+        Command temp = null;
         //TODO cambiare con un while
-        //TODO capire come fare a dargli i parametri al comando (penso in esecuzione)
         for(Map.Entry<String, String> entry : this.arrayAssociativo.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            Command temp = null;
+            
             if(params.matches(key)){
                 try {
-                    temp = (Command)Class.forName(value).getConstructor().newInstance(arguments);
+                    temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments);
                 } catch (Exception e){
                     throw new CommandException(e.getMessage());
                 }
             }
-            return temp;
+
         }
-        return null;
+        return temp;
         /* 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -141,16 +130,22 @@ public class CommandFactoryI<T extends Commandable>{
         }
         */
     }
-    public void registraComando(String call,String CommandClass,boolean defualt) throws CommandException{
 
-        if(call == null || CommandClass == null || call.isBlank() || CommandClass.isBlank()){
-            try {
-                if(Command.class.asSubclass(Class.forName(CommandClass)) != null)
-                    if(defualt) this.arrayAssociativo.getOrDefault(call, CommandClass); else this.arrayAssociativo.put(call, CommandClass);
+    /**permette la registrazione di un comando, viene fatto dal gestore stesso che si occuperà di registrare tutti i comandi di cui necessita
+     * @param call stringa con la quale viene identificato il comando (usare una regexp)
+     * @param CommandClass la classe del comando deve extendere CommandI<T extends Commandable> (deve avere il costruttore con parametri Commandable,String)
+     * @throws CommandException
+     */
+    //TODO nel caso in cui venga inserita una GUI , si può inserire un riferimento ad un bottone o simile come chiave idk
+    public void registraComando(String call,String CommandClass) throws CommandException{
+        if(call != null && CommandClass != null && !call.isBlank() && !CommandClass.isBlank()){
+            try { System.out.println(CommandClass);
+                if(CommandI.class.isAssignableFrom(Class.forName(CommandClass)))
+                    this.arrayAssociativo.put(call, CommandClass);
                 else
-                    throw new CommandException("La classe inserita implementa 'Command'");
+                    throw new CommandException("La classe inserita non implementa 'Command'");
             } catch (ClassNotFoundException e) {
-                throw new CommandException(e.getMessage());
+                throw new CommandException("errore, la classe inserita non è stata trovata ('" + e.getMessage() + "')");
             }
         }else{
             throw new CommandException("Una delle stringhe inserite non è valida!");
@@ -158,5 +153,4 @@ public class CommandFactoryI<T extends Commandable>{
 
     }
 
-    
 }

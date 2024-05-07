@@ -51,6 +51,7 @@ public class Terminal<T extends Commandable>{
         this.attivo = true;
         this.factory = new CommandFactoryI<T> (gestore);
         String menu = "";
+        //TODO fare la stessa cosa della commandFactory usando hashmap e levare lo switchcase
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
         if(gestore instanceof Server){
             System.out.print("--- Vista Server ---");
