@@ -221,9 +221,10 @@ public class GestoreClientServer implements Commandable{
     public void registraComandi(CommandFactory factory) throws CommandException{
         String path = "it.davincifascetti.controllosocketudp.command.";
         //normali
-        factory.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
+        //!le regex sono errate (se metto new cle funziona)
+        factory.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
         factory.registraComando( "^\\bin?f?o?[ ]*$",path +"CommandHelp");
-        factory.registraComando( "^\\bne?w?[ ]*cl?i?e?n?t?[ ]*.*$",path +"CommandNewClient");
+        factory.registraComando( "ne?w?[ ]+cl?i?e?n?t?[ ]+",path +"CommandNewClient");
 
     }
 

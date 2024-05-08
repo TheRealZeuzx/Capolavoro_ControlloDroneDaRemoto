@@ -17,8 +17,8 @@ public class CommandInviaMsgClient extends CommandI<Client>{
         @param msg Messaggio da inviare
         @param gestore Gestore da cui inviare il messaggio
     */
-    public CommandInviaMsgClient(String msg, Client gestore) throws CommandException {
-        super(gestore);
+    public CommandInviaMsgClient(Client gestore,String msg) throws CommandException {
+        super(gestore,msg);
         this.msg = msg;
     }
 

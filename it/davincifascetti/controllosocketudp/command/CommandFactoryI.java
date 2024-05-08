@@ -3,6 +3,8 @@ package it.davincifascetti.controllosocketudp.command;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -20,6 +22,7 @@ import java.util.Vector;
 public class CommandFactoryI<T extends Commandable> implements CommandFactory{
 
     private HashMap<String,String> arrayAssociativo = null;
+    private String comandoDefault = null;
     private T gestore = null; 
     /**
         Costruttore di default di CommandFactoryServer.
@@ -29,7 +32,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     public CommandFactoryI(T gestore) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
-        this.arrayAssociativo = new HashMap<String,String>();//! forse da cambiare con Pattern al posto della chiave String
+        this.arrayAssociativo = new HashMap<String,String>();
         //i comandi sono registrati dalla classe gestore
         gestore.registraComandi((CommandFactory)this);
         
@@ -45,23 +48,35 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     public Command getCommand(String params) throws CommandException {
         Vector<Object> arguments = new Vector<>();
         arguments.add(this.gestore);
-        arguments.add(params);
         Command temp = null;
         //TODO cambiare con un while
         for(Map.Entry<String, String> entry : this.arrayAssociativo.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            
-            if(params.matches(key)){
+            Pattern pattern = Pattern.compile(key);
+            Matcher matcher = pattern.matcher(params);
+            String tempP = matcher.find() ? matcher.group() : null;
+            //controllo che non tempP non sia null, non sia empty non ci siano parole prima del match (caso errato: ciao new client c1 dove new client è il comando e c1 sarà il parametro)
+            if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {
-                    temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments);
+                    arguments.add(params.substring(tempP.length(),params.length()));
+                    temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
                 } catch (Exception e){
                     throw new CommandException(e.getMessage());
                 }
             }
 
         }
-        return temp;
+        //se ho impostato il comando di default lo istanzio altrimenti uso CommandDefault
+        try {
+            if(temp == null && this.comandoDefault != null){
+                arguments.add(params);
+                temp = (Command)Class.forName(this.comandoDefault).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
+            }
+        } catch (Exception e){
+            throw new CommandException(e.getMessage());
+        }
+        return temp == null ? new CommandDefault(params) : temp;
         /* 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -132,16 +147,19 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     }
 
     /**permette la registrazione di un comando, viene fatto dal gestore stesso che si occuperà di registrare tutti i comandi di cui necessita
-     * @param call stringa con la quale viene identificato il comando (usare una regexp)
+     * @param call stringa con la quale viene identificato il comando (usare una regexp che identifichi la parte necessaria a richiamare il comando)
      * @param CommandClass la classe del comando deve extendere CommandI<T extends Commandable> (deve avere il costruttore con parametri Commandable,String)
+     * @param default valore booleano che indica se il comando verrà impostato come comando di default (c'è un solo comando di default), nel caso in cui sia impostato a true, la stringa call verrà ignorata
+     * inizialmente il comando di default è impostato su CommandDefault
      * @throws CommandException
      */
-    //TODO nel caso in cui venga inserita una GUI , si può inserire un riferimento ad un bottone o simile come chiave idk
-    public void registraComando(String call,String CommandClass) throws CommandException{
-        if(call != null && CommandClass != null && !call.isBlank() && !CommandClass.isBlank()){
+    //?nel caso in cui venga inserita una GUI , si può inserire un riferimento ad un bottone o simile come chiave idk
+    //!IMPORTANTE, fare in modo che la registrazione dei comandi avvenga una sola volta da parte delle classi commandable (ci posso essere più istanze)
+    public void registraComando(String call,String CommandClass,boolean defaultCommand) throws CommandException{
+        if(((call == null && defaultCommand) || call != null) && CommandClass != null && !call.isBlank() && !CommandClass.isBlank()){
             try { System.out.println(CommandClass);
                 if(CommandI.class.isAssignableFrom(Class.forName(CommandClass)))
-                    this.arrayAssociativo.put(call, CommandClass);
+                    if(!defaultCommand)this.arrayAssociativo.put(call, CommandClass); else this.comandoDefault = CommandClass;
                 else
                     throw new CommandException("La classe inserita non implementa 'Command'");
             } catch (ClassNotFoundException e) {
@@ -151,6 +169,14 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
             throw new CommandException("Una delle stringhe inserite non è valida!");
         }
 
+    }
+    /**permette la registrazione di un comando, viene fatto dal gestore stesso che si occuperà di registrare tutti i comandi di cui necessita
+     * @param call stringa con la quale viene identificato il comando (usare una regexp)
+     * @param CommandClass la classe del comando deve extendere CommandI<T extends Commandable> (deve avere il costruttore con parametri Commandable,String)
+     * @throws CommandException
+     */
+    public void registraComando(String call,String CommandClass) throws CommandException{
+        this.registraComando(call,CommandClass,false);
     }
 
 }

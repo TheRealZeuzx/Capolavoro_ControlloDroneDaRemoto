@@ -131,7 +131,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
         try {
             if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
                 tastoPrecedente = Character.valueOf(c);
-                new CommandInviaMsgClient(String.valueOf(c),this).execute();
+                new CommandInviaMsgClient(this,String.valueOf(c)).execute();
             }
         } catch (CommandException e1) {
             
@@ -192,7 +192,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
      */
     public void setNome(String nome) throws CommandableException{
         //è valido solo se non ci sono spazi ed è possibile usare solo lettere e _ (deve esserci almeno una lettera e almeno 2 a 18 caratteri)
-        if(nome.matches("^(?=.*[a-zA-Z])[a-zA-Z_0-9]{1,18}$"))
+        if(nome != null && nome.matches("^(?=.*[a-zA-Z])[a-zA-Z_0-9]{1,18}$"))
             this.nome = nome;
         else 
             throw new CommandableException("Errore, il nome '"+nome+"' inserito non è valido (deve contenere almeno una lettera, può contenere numeri da 0 a 9, lettere maiusc e minusc e '_')");

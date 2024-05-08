@@ -13,14 +13,11 @@ public class CommandDefault implements Command{
         Questo comando viene eseguito in caso il comando inserito dall'utente non sia riconosciuto.
         @param params comando non riconosciuto
     */
-    public CommandDefault(String[] params) throws CommandException{
-        this.msg = "";
-        if(params != null && params.length != 0){
-            for (String string : params) {
-                this.msg += string +" ";
-            }
-            this.msg = this.msg.substring(0,this.msg.length()-1);
-        }
+    public CommandDefault(String params) throws CommandException{
+        if(params != null)
+        this.msg = params;
+        else throw new CommandException("Errore, i parametri passati sono null!");
+        
     }
 
     /**

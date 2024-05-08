@@ -3,9 +3,7 @@ import java.util.Scanner;
 
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandFactory;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
-import it.davincifascetti.controllosocketudp.command.CommandFactoryInstantiator;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.CommandStampaMsgRicevuti;
 import it.davincifascetti.controllosocketudp.command.Commandable;
@@ -108,7 +106,7 @@ public class Terminal<T extends Commandable>{
                     
                 default:
                     try{
-                        this.executeCommand(factory.getCommand(menu));
+                        this.executeCommand(factory.getCommand(menu.toLowerCase()));
                     }catch(CommandException e){
                         System.out.println(e.getMessage());
                     }catch(ErrorLogException e){
