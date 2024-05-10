@@ -218,13 +218,13 @@ public class GestoreClientServer implements Commandable{
 
     //!possibilmente impostarlo da file xml?
     //TODO fixare i comandi CommandHelp in modo da renderli utilizzabili (paramtri giusti gestore.class(),String)
-    public void registraComandi(CommandFactory factory) throws CommandException{
+    public void registraComandi() throws CommandException{
         String path = "it.davincifascetti.controllosocketudp.command.";
         //normali
         //!le regex sono errate (se metto new cle funziona)
-        factory.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
-        factory.registraComando( "^\\bin?f?o?[ ]*$",path +"CommandHelp");
-        factory.registraComando( "ne?w?[ ]+cl?i?e?n?t?[ ]+",path +"CommandNewClient");
+        GestoreClientServer.comandi.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
+        GestoreClientServer.comandi.registraComando( "^\\bin?f?o?[ ]*$",path +"CommandHelp");
+        GestoreClientServer.comandi.registraComando( "ne?w?[ ]+cl?i?e?n?t?[ ]+",path +"CommandNewClient");
 
     }
 

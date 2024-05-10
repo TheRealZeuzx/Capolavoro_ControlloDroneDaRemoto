@@ -1,8 +1,10 @@
 package it.davincifascetti.controllosocketudp.command;
 
 import java.util.Arrays;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
@@ -28,29 +30,15 @@ public class CommandNewClient extends CommandI<GestoreClientServer> implements U
     public CommandNewClient(GestoreClientServer gestore, String nomeIpPorta) throws CommandException {
         super(gestore,nomeIpPorta);
         this.terminale = this.getGestore().getTerminalClient();
-
-
-        //TODO farla funzionare e poi portarla in una classe apposita
-        Pattern pattern = Pattern.compile("(\\b[^\\s]+\\b)");
-        Matcher matcher = pattern.matcher(nomeIpPorta);
-        String [] temp  = matcher.results().toArray(String[]::new);
-        // String [] temp = nomeIpPorta != null && !nomeIpPorta.isBlank() && matcher.find() ? nomeIpPorta.split() : new String[0];
-        // Remove empty strings from the array
-        System.out.println(nomeIpPorta); //new client c1 localhost 1212
-        System.out.println(temp[0]); //new client c1 localhost 1212
-        System.out.println(temp[1]); //new client c1 localhost 1212
-        System.out.println(temp[2]); //new client c1 localhost 1212
-        if(temp.length == 0) 
+        String []temp =  nomeIpPorta.split("[ ]+");
         if(temp.length == 1)
-        this.nome = temp[0];
+            this.nome = temp[0]; //new c c1 localhost 1212
         else if(temp.length == 3){
             this.nome = temp[0];
             this.ip = temp[1];
             this.porta = temp[2];
         }else
-        throw new CommandException("I parametri passati non sono validi!");
-        
-        
+            throw new CommandException("I parametri passati non sono validi!");
     }
 
     @Override

@@ -18,6 +18,5 @@ public interface CommandFactory {
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
     public abstract Command getCommand(String params)  throws CommandException;
-    public abstract void registraComando(String call,String CommandClass,boolean defaultCommand) throws CommandException;
-    public abstract void registraComando(String call,String CommandClass) throws CommandException;
+
 }
