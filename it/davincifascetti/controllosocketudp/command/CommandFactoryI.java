@@ -34,7 +34,6 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
         //i comandi sono registrati dalla classe gestore
-        gestore.registraComandi();
         this.comandoDefault = T.comandi.getCommandDefault();
         //usando Map.copyOf viene restituita una Map non modificabile
         this.arrayAssociativo = Map.copyOf(T.comandi.getComandi());

@@ -18,12 +18,13 @@ public class CommandList {
      */
     //?nel caso in cui venga inserita una GUI , si può inserire un riferimento ad un bottone o simile come chiave idk
     public void registraComando(String call,String CommandClass,boolean defaultCommand) throws CommandException{
+        System.out.println("Debug: " + CommandClass + " | registrazione...");
         if(((call == null && defaultCommand) || call != null) && CommandClass != null && !call.isBlank() && !CommandClass.isBlank()){
             try { 
                 if(CommandI.class.isAssignableFrom(Class.forName(CommandClass)))
                     if(!defaultCommand)this.arrayAssociativo.put(call, CommandClass); else this.comandoDefault = CommandClass;
                 else
-                    throw new CommandException("La classe inserita non implementa 'Command'");
+                    throw new CommandException("La classe inserita non implementa 'CommandI'");
             } catch (ClassNotFoundException e) {
                 throw new CommandException("errore, la classe inserita non è stata trovata ('" + e.getMessage() + "')");
             }
