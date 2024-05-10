@@ -1,7 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -52,11 +51,11 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         Command temp = null;
         //TODO cambiare con un while
         for(Map.Entry<String, String> entry : this.arrayAssociativo.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            Pattern pattern = Pattern.compile(key);
-            Matcher matcher = pattern.matcher(params);
-            String tempP = matcher.find() ? matcher.group() : null;
+            String key = entry.getKey(); // regex
+            String value = entry.getValue(); // comando di riferimento
+            Pattern pattern = Pattern.compile(key); // compile della regex
+            Matcher matcher = pattern.matcher(params);  // match tra regex e parametro
+            String tempP = matcher.find() ? matcher.group() : null; // find == risultati di matcher, group crea la substring per il risultato
             //controllo che non tempP non sia null, non sia empty non ci siano parole prima del match (caso errato: ciao new client c1 dove new client è il comando e c1 sarà il parametro)
             if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {
@@ -68,7 +67,6 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
                     throw new CommandException(e.getMessage());
                 }
             }
-
         }
         //se ho impostato il comando di default lo istanzio altrimenti uso CommandDefault
         try {

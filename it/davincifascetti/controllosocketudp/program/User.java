@@ -57,11 +57,14 @@ public class User {
        
     }
 
+    //TODO Divisione dei comandi in pacchetti dedicati  
     //TODO fixare ServerThread e capire se funziona normalmente cambiando la factory o se ci sono problemi
-    //TODO Fixare le regex
     //TODO fixare i comandi CommandHelp in modo da renderli utilizzabili (paramtri giusti gestore.class(),String)
     //TODO fixare i comandi che non funzionano (risolvere problemi riguardanti switch interni ecc)
     //TODO possibilmente fare le registrazioni prendendo i file da xml, decidere se farlo o no
+    //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
+    //TODO Fixare le regex
+    //TODO switch a xml per i comandi e regex vv
     //!le regex sono errate (se metto new cle funziona)
     //!per ora solo la registrazione dei comandi gestore Client Server è usata perchè non da errori, vanno terminate tutte le registrazioni e comandi
     private void registraComandiClient() throws CommandException{
