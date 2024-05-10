@@ -15,5 +15,4 @@ public interface Commandable {
     */
     public void startTerminal() throws CommandException;
     public static final CommandList comandi = new CommandList();
-    public void registraComandi() throws CommandException;
 }

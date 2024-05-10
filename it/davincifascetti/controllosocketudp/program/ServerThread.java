@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandFactory;
-import it.davincifascetti.controllosocketudp.command.CommandFactoryRisposta;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
