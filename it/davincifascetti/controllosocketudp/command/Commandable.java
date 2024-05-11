@@ -1,6 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
     Interface Commandable.

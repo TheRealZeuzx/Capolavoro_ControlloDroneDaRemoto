@@ -1,4 +1,6 @@
 package it.davincifascetti.controllosocketudp.program;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
@@ -11,6 +13,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 public class User {
     private ErrorLog errorLog;
     private GestoreClientServer gestore;
+    private static final AtomicBoolean inizialized = new AtomicBoolean();
     /**
      * 
      * @param pathErrorLogFile path del file errori
@@ -22,39 +25,25 @@ public class User {
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        //this.registraComandiClient();
-        this.registraComandiGestoreCS();
-        //this.registraComandiServer();
-        //this.registraComandiServerThread();
+        this.init();
         this.gestore = new GestoreClientServer(this.errorLog);
     }
     
+    private void init(){
+        if(User.inizialized.compareAndSet(false, true)){
+            //this.registraComandiClient();
+            this.registraComandiGestoreCS();
+            //this.registraComandiServer();
+            //this.registraComandiServerThread();
+        }
+    }
+
     /**avvia il terminale di gestoreclientserver di conseguenza il programma in se
      * 
      * @throws CommandException
      */
     public void start() throws CommandException{
         this.gestore.startTerminal();
-    }
-
-
-    //! MAIN
-    public static void main(String[] args) {
-        /* msg utili per testing
-        * new c c1 localhost 1212
-        * new s s1 1212
-        * select c c1
-        */
-        User u;
-        try {
-            u = new User("errorLog.txt");
-            System.out.println("User creato correttamente");
-            u.start();
-        } catch (CommandException e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println("Programma Terminato");
-       
     }
 
     //TODO Divisione dei comandi in pacchetti dedicati  
@@ -67,7 +56,7 @@ public class User {
     //TODO switch a xml per i comandi e regex vv
     //!le regex sono errate (se metto new cle funziona)
     //!per ora solo la registrazione dei comandi gestore Client Server è usata perchè non da errori, vanno terminate tutte le registrazioni e comandi
-    private void registraComandiClient() throws CommandException{
+    private void registraComandiClient(){
         String path = "it.davincifascetti.controllosocketudp.command.";
         //normali
         Client.comandi.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
@@ -127,7 +116,7 @@ public class User {
         */
     }
    
-    private void registraComandiServer() throws CommandException{
+    private void registraComandiServer(){
         String path = "it.davincifascetti.controllosocketudp.command.";
         //normali
         Server.comandi.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
@@ -207,13 +196,12 @@ public class User {
     }
     
     
-    private void registraComandiGestoreCS() throws CommandException{
+    private void registraComandiGestoreCS(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        
-        GestoreClientServer.comandi.registraComando( "^\\b(he?l?p?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
-        GestoreClientServer.comandi.registraComando( "^\\bin?f?o?[ ]*$",path +"CommandHelp");
-        GestoreClientServer.comandi.registraComando( "ne?w?[ ]+cl?i?e?n?t?[ ]+",path +"CommandNewClient");
-        //! di seguito il vecchio switch case 
+        GestoreClientServer.comandi.registraComando( "^\\b(h(?:e(?:l(?:p)?)?)?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
+        GestoreClientServer.comandi.registraComando( "^\\bi(?:n(?:f(?:o)?)?)?)?[ ]*$",path +"CommandHelp");            
+        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandNewClient"); 
+        //! di seguito il vecchio switch case                                                                 
         /* 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -307,7 +295,7 @@ public class User {
         }
         */
     }
-    private void registraComandiServerThread() throws CommandException{
+    private void registraComandiServerThread(){
         String path = "it.davincifascetti.controllosocketudp.command.";
 
         /* 
@@ -338,5 +326,24 @@ public class User {
         }
         return new CommandServerDefaultResponse(this.gestore,this.concatenaParams(params,0));
         */
+    }
+
+    //! MAIN
+    public static void main(String[] args) {
+        /* msg utili per testing
+        * new c c1 localhost 1212
+        * new s s1 1212
+        * select c c1
+        */
+        User u;
+        try {
+            u = new User("errorLog.txt");
+            System.out.println("User creato correttamente");
+            u.start();
+        } catch (CommandException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Programma Terminato");
+       
     }
 }
