@@ -23,4 +23,5 @@ public abstract class CommandI<T extends Commandable> implements Command{
         @return Il gestore del comando.
     */
     public T getGestore(){return this.gestore;}
+    public String getParams(){return this.params;}
 }

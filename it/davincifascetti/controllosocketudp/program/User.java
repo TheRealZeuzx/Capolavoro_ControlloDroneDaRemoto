@@ -199,9 +199,15 @@ public class User {
     private void registraComandiGestoreCS(){
         String path = "it.davincifascetti.controllosocketudp.command.";
         GestoreClientServer.comandi.registraComando( "^\\b(h(?:e(?:l(?:p)?)?)?[ ]*)|[?][ ]*$//i",path + "CommandHelp");
-        GestoreClientServer.comandi.registraComando( "^\\bi(?:n(?:f(?:o)?)?)?)?[ ]*$",path +"CommandHelp");            
-        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandNewClient"); 
-        //! di seguito il vecchio switch case                                                                 
+        GestoreClientServer.comandi.registraComando( "^\\bi(?:n(?:f(?:o)?)?)?[ ]*$",path +"CommandHelp");  
+        
+        //!funzionanti
+        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandNewClient"); //regex brutta da vedere e probabilmente slow as hell ma funziona
+        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandNewServer");
+        GestoreClientServer.comandi.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandDeleteClient");
+        GestoreClientServer.comandi.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandDeleteServer");
+        GestoreClientServer.comandi.registraComando( "s(?:h(?:o(?:w)?)?)?[ ]+",path +"CommandShow");
+                                                                     
         /* 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
@@ -219,24 +225,6 @@ public class User {
                 "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
                 "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
                 );
-            case "sh":
-            case "show":
-            
-                switch (params == null || params.length <= 1 ? "" : params[1]) {
-                case "a":
-                case "all":
-                    if(params.length == 2)return new CommandShowAll(this.getGestore());
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                case "c":
-                case "client":
-                    if(params.length == 2)return new CommandShowClient(this.getGestore());
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                case "s":
-                case "server":
-                    if(params.length == 2)return new CommandShowServer(this.getGestore());
-                default:
-                    throw new CommandException("Errore, non è stato specificato cosa stampare");
-                }
             case "i":
             case "info":
                 switch (params == null || params.length <= 2 ? "" : params[1]) {
@@ -250,21 +238,6 @@ public class User {
                     throw new CommandException("Errore,non è stato specificato cosa creare");
                 default:
                     throw new CommandException("Errore, non è stato specificato cosa stampare");
-                }
-            case "new":
-                switch (params == null || params.length <= 2 ? "" : params[1]) {
-                case "c":
-                case "client":
-                    if(params.length == 3)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2]);
-                    if(params.length == 5)return new CommandNewClient(this.getGestore(),this.getGestore().getTerminalClient(),params[2],params[3],params[4]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                case "s":
-                case "server":
-                    if(params.length == 3)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2]);
-                    if(params.length == 4)return new CommandNewServer(this.getGestore(),this.getGestore().getTerminalServer(),params[2],params[3]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                default:
-                    throw new CommandException("Errore, non è stato specificato cosa creare");
                 }
             case "del":
             case "delete":

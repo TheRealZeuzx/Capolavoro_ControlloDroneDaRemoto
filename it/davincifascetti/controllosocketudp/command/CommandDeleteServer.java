@@ -22,7 +22,7 @@ public class CommandDeleteServer extends CommandI<GestoreClientServer> implement
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
     public CommandDeleteServer(GestoreClientServer gestore,String nome) throws CommandException {
-        super(gestore);
+        super(gestore,nome);
         this.nome = nome;
     }
     @Override

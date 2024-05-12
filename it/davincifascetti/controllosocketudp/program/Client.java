@@ -260,11 +260,6 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
         return false;
     }
 
-    //possibilmente impostarlo da file xml?
-    public void registraComandi() throws CommandException{
-
-
-    }
 
 }
 

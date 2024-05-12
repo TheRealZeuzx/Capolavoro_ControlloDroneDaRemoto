@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
@@ -58,17 +59,16 @@ public class ServerThread extends Thread implements Commandable{
     @Override
     public void run() {
 
-        CommandFactoryRisposta factory = null; 
+        CommandFactoryI<ServerThread> factory = null; 
         try {
-            factory = new CommandFactoryRisposta(this);
+            factory = new CommandFactoryI<ServerThread>(this);
         } catch (CommandException e) {
             this.stampaVideo(e.getMessage());
         }
         if(factory != null){
-            String[] params;
-            if(this.msgRicevuto.isBlank())params = null;else params = this.msgRicevuto.toLowerCase().split(" ");
+    
             try{
-                this.executeCommand(factory.getCommand(params));
+                this.executeCommand(factory.getCommand(this.msgRicevuto));
             }catch(CommandException e){
                 this.stampaVideo(e.getMessage());
             }catch(ErrorLogException e){
@@ -175,6 +175,11 @@ public class ServerThread extends Thread implements Commandable{
         if(this.fileLogger != null)
             this.fileLog(msgRicevuto);
         this.stampaVideo("il client dice: " + message);
+    }
+
+    @Override
+    public void startTerminal() throws CommandException {
+        throw new CommandException("Questo gestore non ha un terminale!");
     }
 
 

@@ -46,6 +46,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
     public Command getCommand(String params) throws CommandException {
+        if(params == null) new CommandDefault("null");
         Vector<Object> arguments = new Vector<>();
         arguments.add(this.gestore);
         Command temp = null;
@@ -53,14 +54,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         for(Map.Entry<String, String> entry : this.arrayAssociativo.entrySet()) {
             String key = entry.getKey(); // regex
             String value = entry.getValue(); // comando di riferimento
-            Pattern pattern = null;
-            try {
-                pattern = Pattern.compile(key); // compile della regex
-            } catch (Exception e) {
-                throw new CommandException("Errore, la regex non è valida!");
-            }
-            Matcher matcher = pattern.matcher(params);  // match tra regex e parametro
-            String tempP = matcher.find() ? matcher.group() : null; // find == risultati di matcher, group crea la substring per il risultato
+            String tempP = CommandFactoryI.controllaRegexGruppo(key, params);
             //controllo che non tempP non sia null, non sia empty non ci siano parole prima del match (caso errato: ciao new client c1 dove new client è il comando e c1 sarà il parametro)
             if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {
@@ -86,6 +80,37 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
 
     }
 
- 
+    /**restiuisce solo la parte che fa match con la regex (la prima se ce ne fossero più di una)
+     * per creare la regex omettere ^ e $
+     * @param regex
+     * @param valore stringa su cui applicare la regex
+     * @return la prima sottostringa che corrisponde alla regex se non ce ne sono restiuisce null
+     * @throws CommandException
+     */
+    public static String controllaRegexGruppo(String regex,String valore) throws CommandException{
+        Pattern pattern = null;
+        try {
+            pattern = Pattern.compile(regex); // compile della regex
+        } catch (Exception e) {
+            throw new CommandException("Errore, la regex non è valida!");
+        }
+        Matcher matcher = pattern.matcher(valore);  // match tra regex e parametro 
+        return  matcher.find() ? matcher.group() : null; // find == risultati di matcher, group crea la substring per il risultato
+    } 
+
+    /**controlla che tutta la stringa sia verificata dalla regex 
+     * per creare la regex usare ^ come primo carattere e $ come ultimo
+     * @param regex
+     * @param valore stringa su cui applicare la regex
+     * @return true se tutta la stringa corrisponde alla regex altrimenti false
+     * @throws CommandException
+     */
+    public static boolean controllaRegexAssoluta(String regex,String valore) throws CommandException{
+        try {
+            return Pattern.matches(regex,valore); // compile della regex
+        } catch (Exception e) {
+            throw new CommandException("Errore, la regex non è valida!");
+        }
+    } 
 
 }

@@ -20,23 +20,19 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
      * @param nome nome del server
      * @throws CommandableException
      */
-    public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome) throws CommandException {
-        super(gestore);
-        this.nome = nome;
-        this.terminale = terminale;
+    public CommandNewServer(GestoreClientServer gestore,String nomePorta) throws CommandException {
+        super(gestore, nomePorta);
+        this.terminale = gestore.getTerminalServer();
+        String []temp =  nomePorta.split("[ ]+");
+        if(temp.length == 1)
+            this.nome = temp[0]; //new c c1 localhost 1212
+        else if(temp.length == 2){
+            this.nome = temp[0];
+            this.porta = temp[1];
+        }else
+            throw new CommandException("I parametri passati non sono validi!");
     }
-    /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server 
-     * @param gestore GestoreClientServer che farà da reciever e quindi instanziera e inserira il server
-     * @param terminale terminale da di server da passare al costruttore di server
-     * @param nome nome del server
-     * @param porta porta locale del server
-     * @throws CommandableException
-     * @throws ErrorLogException
-     */
-    public CommandNewServer(GestoreClientServer gestore,Terminal<Server> terminale, String nome,String porta) throws CommandException {
-        this(gestore, terminale, nome);
-        this.porta = porta;
-    }
+
 
     /**utilizza il metodo newServer 
      * 
@@ -48,7 +44,6 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
                 this.getGestore().newServer(terminale,nome);
             else
                 this.getGestore().newServer(terminale,nome,porta);
-                
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }

@@ -74,8 +74,8 @@ public class CommandList {
 
 
    
-    //TODO Elimina Comando?
     public void eliminaComando(){
+        //TODO Elimina Comando?
         throw new UnsupportedOperationException("Unimplemented method 'eliminaComando'");
     }
 
