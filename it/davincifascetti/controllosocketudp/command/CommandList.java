@@ -9,7 +9,7 @@ public class CommandList {
 
     private Map<String,String> arrayAssociativo = Collections.synchronizedMap(new HashMap<String,String>());
     private String comandoDefault = null;
-
+    private String help = null;
    /** permette la registrazione di un comando, viene fatto dal gestore stesso che si occuperà di registrare tutti i comandi di cui necessita
      * @param call stringa con la quale viene identificato il comando (usare una regexp che identifichi la parte necessaria a richiamare il comando)
      * @param CommandClass la classe del comando deve extendere CommandI<T extends Commandable> (deve avere il costruttore con parametri Commandable,String)
@@ -85,5 +85,7 @@ public class CommandList {
         return this.arrayAssociativo;
     }
     public String getCommandDefault(){return this.comandoDefault;}
+    public String getStringaHelp(){if(this.help == null || this.help.isBlank()) return "Non è stata definita una stringa di help"; else return this.help;}
+    public void setStringaHelp(String help){this.help = help;}
 
 }

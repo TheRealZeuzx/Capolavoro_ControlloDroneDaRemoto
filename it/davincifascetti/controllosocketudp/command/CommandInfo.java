@@ -10,32 +10,43 @@ import it.davincifascetti.controllosocketudp.program.Server;
  */
 public class CommandInfo extends CommandI<GestoreClientServer>{
     private String nome;  
-    private boolean client;  
+    private boolean client = false;  
+    private boolean server = false;  
     /**
         Costruttore di CommandInfo.
      * @param gestore GestoreClientServer su cui effettuare la riceraca
-     * @param client true se si vuole informazioni di un client false se si vogliono info di un server
-     * @param nome nome del client o server di cui stampare le info
+     * @param params nome del client o server di cui stampare le info
      * @throws CommandException
      */
-    public CommandInfo(GestoreClientServer gestore,boolean client,String nome ) throws CommandException{
-        super(gestore);
-        this.nome=nome;
-        this.client = client;
+    public CommandInfo(GestoreClientServer gestore,String params) throws CommandException{
+        super(gestore,params);
+        String[] temp = params.split("[ ]+");
+        if(temp.length == 2)
+            this.nome = temp[1];
+        else 
+            throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (client | server) (nome)");
+
+        if(CommandFactoryI.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",temp[0]))
+            this.server = true;
+        else if(CommandFactoryI.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",temp[0]))
+            this.client = true;
+        else{
+            throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (server | client) (nome)");
+        }
     }
     public void execute() throws CommandException{
-
+        if(client && server) throw new CommandException("Errore, non è stato specificato che gestore stampare!");
         if(client){
             if(this.getGestore().isEmpty(true)) throw new CommandException("La lista di client è vuota");
             Client temp = this.getGestore().ricercaClient(nome);
             if(temp == null)throw new CommandException("il client ricercato non esiste"); 
             System.out.println(temp.toString());
-        }else{
+        }else if(server){
             if(this.getGestore().isEmpty(false)) throw new CommandException("La lista di server è vuota");
             Server temp = this.getGestore().ricercaServer(nome);
             if(temp == null)throw new CommandException("il server ricercato non esiste");
             System.out.println(temp.toString());
-        }
+        }else  throw new CommandException("Errore, non è stato specificato che gestore stampare!");
         
         
     }

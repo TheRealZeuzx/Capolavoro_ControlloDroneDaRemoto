@@ -8,10 +8,7 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
     @author Mussaldi Tommaso, Mattia Bonfiglio
     @version 1.0
  */
-public class CommandHelp extends CommandI<ServerThread>{
-    private String msg;
-    private ServerThread gestore = null;
-
+public class CommandHelp<T extends Commandable> extends CommandI<T>{
 
 
     /** 
@@ -20,18 +17,22 @@ public class CommandHelp extends CommandI<ServerThread>{
         @param gestore se è null, non viene inviato al client il messaggio altrimenti se passo ServerThread viene invaito al client il msg
      * @throws CommandException 
     */
-    public CommandHelp(ServerThread gestore,String msg) throws CommandException{
+    public CommandHelp(T gestore,String msg) throws CommandException{
         super(gestore, msg);
     }
     public void execute() throws CommandException {
-        if(this.gestore == null)
-            System.out.println(this.msg);
-        else{
-            try {
-                this.gestore.inviaMsg(this.msg);
-            } catch (CommandableException e) {
-                throw new CommandException(e.getMessage());
-            }
-        }
+
+        System.out.println(T.comandi.getStringaHelp());
+
+        //TODO aggiungere il codice di sotto ad un comando per inviare msg dal serverthread
+        // if(this.getGestore() == null)
+        //     System.out.println(this.getParams());
+        // else{
+        //     try {
+        //         this.getGestore().inviaMsg(this.getParams());
+        //     } catch (CommandableException e) {
+        //         throw new CommandException(e.getMessage());
+        //     }
+        // }
     }
 }

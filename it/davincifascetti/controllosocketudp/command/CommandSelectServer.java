@@ -6,7 +6,6 @@ import it.davincifascetti.controllosocketudp.program.Server;
  *  @version 1.0
  */
 public class CommandSelectServer extends CommandI<GestoreClientServer>{
-    private String nome;
     /**
      * 
      * @param gestore gestoreclientserver che si occupera di ricercare il server
@@ -14,12 +13,11 @@ public class CommandSelectServer extends CommandI<GestoreClientServer>{
      * @throws CommandException
      */
     public CommandSelectServer(GestoreClientServer gestore,String nome) throws CommandException {
-        super(gestore);
-        this.nome = nome;
+        super(gestore,nome);
     }
     public void execute() throws CommandException {
-        Server temp = this.getGestore().ricercaServer(this.nome);
-        if(temp == null) throw new CommandException("il server '" + this.nome + "' non esiste");
+        Server temp = this.getGestore().ricercaServer(this.getParams());
+        if(temp == null) throw new CommandException("il server '" + this.getParams() + "' non esiste");
         temp.startTerminal();
     }
     

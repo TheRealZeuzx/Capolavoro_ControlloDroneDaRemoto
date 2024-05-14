@@ -6,6 +6,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+
 
 /**
     CommandFactoryClient.
@@ -13,12 +15,7 @@ import java.util.regex.Pattern;
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */ 
-//! la sto trasformando in una factory generale , utilizzando una HashMap, la HashMap non è synchronized
-//!T è il gestore
-//TODO delegare la separazione dei parametri ecc ad una classe apposita in modo da separarla dal comando che poi in base ai parametri agirà differentemente? oppure comandi diversi per parametri diversi?
 
-
-//! la classe CommandFactoryRisposta va joinata a server
 public class CommandFactoryI<T extends Commandable> implements CommandFactory{
 
     private Map<String,String> arrayAssociativo = null;
@@ -44,9 +41,10 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         Metodo che, in base ai parametri, ritorna il comando corrispondente.Utilizza una hashmap per salvare i comandi che andranno registrati dall esterno della classe
         @param params stringa contenente i parametri da cui instanziare i comandi corretti
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+     * @throws ErrorLogException 
     */
-    public Command getCommand(String params) throws CommandException {
-        if(params == null) new CommandDefault("null");
+    public Command getCommand(String params) throws CommandException{
+        if(params == null) new CommandDefault("Parametri sono null!");
         Vector<Object> arguments = new Vector<>();
         arguments.add(this.gestore);
         Command temp = null;
@@ -59,7 +57,10 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
             if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {
                     arguments.add(params.substring(tempP.length(),params.length()));
-                    temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
+                    if(Class.forName(value).getDeclaredConstructors()[0].getParameterTypes()[0].isInterface())//nel caso in cui sia generale
+                        temp = (Command)Class.forName(value).getDeclaredConstructor(Commandable.class,String.class).newInstance(arguments.toArray());
+                    else
+                        temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
                 } catch (InvocationTargetException e){
                     throw new CommandException(e.getTargetException().getMessage());
                 }catch (Exception e){
@@ -77,7 +78,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
             throw new CommandException(e.getMessage());
         }
         return temp == null ? new CommandDefault(params) : temp;
-
+        
     }
 
     /**restiuisce solo la parte che fa match con la regex (la prima se ce ne fossero più di una)
@@ -88,6 +89,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
      * @throws CommandException
      */
     public static String controllaRegexGruppo(String regex,String valore) throws CommandException{
+        if(valore == null) throw new CommandException("Errore, il valore è null!");
         Pattern pattern = null;
         try {
             pattern = Pattern.compile(regex); // compile della regex
@@ -106,6 +108,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
      * @throws CommandException
      */
     public static boolean controllaRegexAssoluta(String regex,String valore) throws CommandException{
+        if(valore == null) throw new CommandException("Errore, il valore è null!");
         try {
             return Pattern.matches(regex,valore); // compile della regex
         } catch (Exception e) {

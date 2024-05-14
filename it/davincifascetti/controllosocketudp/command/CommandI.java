@@ -1,5 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+
 /** 
     Abstract CommandI. 
     Permette di avere i comandi di tipo T sotto l'interfaccia Command.

@@ -14,8 +14,8 @@ public class CommandAttivaServer extends CommandI<Server>{
         Richiama al costruttore del padre (CommandI).
         @param gestore Gestore su cui effettuare le operazioni. 
     */
-    public CommandAttivaServer(Server gestore) throws CommandException {
-        super(gestore);
+    public CommandAttivaServer(Server gestore,String params) throws CommandException {
+        super(gestore,"");
     }
 
     /**

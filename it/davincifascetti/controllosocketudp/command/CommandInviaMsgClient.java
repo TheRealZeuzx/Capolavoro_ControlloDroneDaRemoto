@@ -10,7 +10,6 @@ import it.davincifascetti.controllosocketudp.program.Client;
     @version 1.0
  */
 public class CommandInviaMsgClient extends CommandI<Client>{
-    private String msg;
 
     /** 
         Costruttore di CommandInviaMsgClient
@@ -19,7 +18,6 @@ public class CommandInviaMsgClient extends CommandI<Client>{
     */
     public CommandInviaMsgClient(Client gestore,String msg) throws CommandException {
         super(gestore,msg);
-        this.msg = msg;
     }
 
     /**
@@ -28,7 +26,7 @@ public class CommandInviaMsgClient extends CommandI<Client>{
     @Override
     public void execute() throws CommandException, ErrorLogException {
         try {
-            this.getGestore().inviaMsg(this.msg);
+            this.getGestore().inviaMsg(this.getParams());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
