@@ -1,6 +1,8 @@
 
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /**
@@ -8,9 +10,7 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */
-public class CommandServerDefaultResponse implements Command{
-    private String msg;
-    private ServerThread gestore = null;
+public class CommandServerDefaultResponse extends CommandI<ServerThread>{
 
     /**
         Costruttore di default di CommandServerDefaultResponse.
@@ -19,23 +19,21 @@ public class CommandServerDefaultResponse implements Command{
         @param gestore server thread che si occuperà di stampare nel file
     */
     public CommandServerDefaultResponse(ServerThread gestore,String msg) throws CommandException{
-        this.msg = msg;
-        this.gestore = gestore;
-        if(msg == null) throw new CommandException("Errore, il msg inserito risulta essere null");
-        if(gestore == null) throw new CommandException("errore, il gestore inserito è null");
+        super(gestore, msg);
     }
 
     /**
         Si occupa di chiamare le funzioni corrispondenti al fine del comando.
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+     * @throws ErrorLogException 
      */
-    public void execute() throws CommandException {
+    public void execute() throws CommandException, ErrorLogException {
         try {
-            gestore.defaultResponse(this.msg);
+            this.getGestore().defaultResponse(this.getParams());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        new CommandHelp("operazione andata a buon fine",this.gestore).execute();
+        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine").execute();
         
     }
 }

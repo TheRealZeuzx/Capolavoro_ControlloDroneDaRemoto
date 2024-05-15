@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /**
@@ -8,9 +9,7 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */
-public class CommandFileLog implements Command{
-    private String msg;
-    private ServerThread gestore = null;
+public class CommandFileLog extends CommandI<ServerThread>{
 
     /**
         Costruttore di default di CommandFileLog.
@@ -18,25 +17,23 @@ public class CommandFileLog implements Command{
         @param msg messaggio da stampare nel file
         @param gestore server thread che si occuperà di stampare nel file
     */
-    public CommandFileLog(String msg,ServerThread gestore) throws CommandException{
-        this.msg = msg;
-        this.gestore = gestore;
-        if(msg == null) throw new CommandException("Errore, il msg inserito risulta essere null");
-        if(gestore == null) throw new CommandException("errore, il gestore inserito è null");
+    public CommandFileLog(ServerThread gestore,String msg) throws CommandException{
+        super(gestore,msg);
     }
 
     /**
         Si occupa di chiamare le funzioni corrispondenti al fine del comando.
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+     * @throws ErrorLogException 
      */
-    public void execute() throws CommandException {
+    public void execute() throws CommandException, ErrorLogException {
         try {
-            gestore.fileLog(this.msg);
+            this.getGestore().fileLog(this.getParams());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        new CommandStampaVideoServerThread(this.msg,this.gestore).execute();
-        new CommandHelp("operazione andata a buon fine",this.gestore).execute();
+        new CommandStampaVideoServerThread(this.getGestore(),this.getParams()).execute();
+        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine").execute();
         
     }
 }

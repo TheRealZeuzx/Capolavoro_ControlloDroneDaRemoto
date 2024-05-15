@@ -12,7 +12,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**
     CommandFactoryClient.
     Factory per la creazione di comandi specifici per il server.
-    @author Tommaso Mussaldi, Mattia Bonfiglio
+    @author Tommaso Mussaldi
     @version 1.0
 */ 
 
@@ -29,10 +29,11 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     public CommandFactoryI(T gestore) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
+        Class<? extends Commandable> gestoreClass = gestore.getClass();
         //i comandi sono registrati dalla classe gestore
-        this.comandoDefault = T.comandi.getCommandDefault();
+        this.comandoDefault = Commandable.ListeComandi.getCommandList(gestoreClass).getCommandDefault();
         //usando Map.copyOf viene restituita una Map non modificabile
-        this.arrayAssociativo = Map.copyOf(T.comandi.getComandi());
+        this.arrayAssociativo = Map.copyOf(Commandable.ListeComandi.getCommandList(gestoreClass).getComandi());
         if(this.arrayAssociativo == null) throw new CommandException("Errore, il gestore non ha comandi registrati");
     }
 

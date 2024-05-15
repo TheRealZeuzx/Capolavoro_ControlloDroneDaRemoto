@@ -2,6 +2,8 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandList;
+import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 
@@ -31,10 +33,10 @@ public class User {
     
     private void init(){
         if(User.inizialized.compareAndSet(false, true)){
-            //this.registraComandiClient();
             this.registraComandiGestoreCS();
-            //this.registraComandiServer();
-            //this.registraComandiServerThread();
+            this.registraComandiClient();
+            this.registraComandiServer();
+            this.registraComandiServerThread();
         }
     }
 
@@ -54,31 +56,32 @@ public class User {
     //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
     //TODO Fixare le regex
     //TODO switch a xml per i comandi e regex vv
-    //!le regex sono errate (se metto new cle funziona)
+    //!la lista è unica per tutti i commandable, deve essere univoca per ognuno!
     //!per ora solo la registrazione dei comandi gestore Client Server è usata perchè non da errori, vanno terminate tutte le registrazioni e comandi
     private void registraComandiClient(){
+        System.out.println("Debug: | Registrazione comandi Client |");
         String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = Commandable.ListeComandi.getCommandList(Client.class);
         //normali
-        Client.comandi.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
-        Client.comandi.registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
-        //set
-        Client.comandi.registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeClient");
-        Client.comandi.registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketClient");
+        temp.setStringaHelp(
+            "Comandi Terminale Client\n\n"+
+            "help\t\tpermette di visualizzare tutti i comandi \n" + 
+            "quit\t\tpermette di tornare al Terminale Generale \n" + 
+            "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
+            "info\t\tpermette di visualizzare le informazioni di questo client\n" +
+            "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set socket nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
+            "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
+        );
+        temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+        temp.registraComando( "\\$l(?:o(?:g)?)?[ ]+",path + "CommandInviaMsgClient");
+        //!non funzionanti
+        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
+        // //set
+        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeClient");
+        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketClient");
 
         /* 
         switch (scelta) {
-            case "h":
-            case "?":
-            case "help":
-                return new CommandHelp(          
-                    "Comandi Terminale Client\n\n"+
-                    "help\t\tpermette di visualizzare tutti i comandi \n" + 
-                    "quit\t\tpermette di tornare al Terminale Generale \n" + 
-                    "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
-                    "info\t\tpermette di visualizzare le informazioni di questo client\n" +
-                    "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set socket nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
-                    "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
-                );
             case "info":
             case "i":
                 return new CommandHelp(this.getGestore().toString());
@@ -117,32 +120,35 @@ public class User {
     }
    
     private void registraComandiServer(){
+        System.out.println("Debug: | Registrazione comandi Server |");
         String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = Commandable.ListeComandi.getCommandList(Server.class);
+        temp.setStringaHelp(
+            "Comandi Terminale Server\n\n"+
+            "help\t\tpermette di visualizzare tutti i comandi \n" + 
+            "quit\t\tpermette di tornare al Terminale Generale \n" + 
+            "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
+            "info\t\tpermette di visualizzare le informazioni di questo server\n" +
+            "enable\t\tpermette di avviare questo server\n" +
+            "disable\t\tpermette di disattivare questo server\n" +
+            "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"+
+            "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
+        );
+        temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+
+
         //normali
-        Server.comandi.registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
-        Server.comandi.registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
-        //set
-        Server.comandi.registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeServer");
-        Server.comandi.registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketServer");
-        //$
-        Server.comandi.registraComando( "^\b\\$lo?g?[ ]*$",path + "CommandStampaVideoServerThread");
+        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
+        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
+        // //set
+        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeServer");
+        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketServer");
+        // //$
+        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\b\\$lo?g?[ ]*$",path + "CommandStampaVideoServerThread");
                 /* 
         String scelta = params == null || params.length == 0 ? "" : params[0];
         switch (scelta) {
-            case "h":
-            case "?":
-            case "help":
-                return new CommandHelp(          
-                    "Comandi Terminale Server\n\n"+
-                    "help\t\tpermette di visualizzare tutti i comandi \n" + 
-                    "quit\t\tpermette di tornare al Terminale Generale \n" + 
-                    "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
-                    "info\t\tpermette di visualizzare le informazioni di questo server\n" +
-                    "enable\t\tpermette di avviare questo server\n" +
-                    "disable\t\tpermette di disattivare questo server\n" +
-                    "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"+
-                    "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
-                );
+
             case "info":
             case "i":
                 return new CommandHelp(this.getGestore().toString());
@@ -198,7 +204,10 @@ public class User {
     
     private void registraComandiGestoreCS(){
         //!fatto
-        GestoreClientServer.comandi.setStringaHelp(
+        System.out.println("Debug: | Registrazione comandi GestoreClientServer |");
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = Commandable.ListeComandi.getCommandList(GestoreClientServer.class);
+        temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
             "quit\t\tpermette di terminare l'esecuzione \n" + 
@@ -209,50 +218,37 @@ public class User {
             "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
         );
-        String path = "it.davincifascetti.controllosocketudp.command.";
-        GestoreClientServer.comandi.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
-        GestoreClientServer.comandi.registraComando( "^[?][ ]*$",path + "CommandHelp");
-        GestoreClientServer.comandi.registraComando( "se(?:l(?:e(?:c(?:t)?)?)?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandSelectClient");
-        GestoreClientServer.comandi.registraComando( "se(?:l(?:e(?:c(?:t)?)?)?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandSelectServer");
-        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandNewClient"); //regex brutta da vedere e probabilmente slow as hell ma funziona
-        GestoreClientServer.comandi.registraComando( "n(?:ew?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandNewServer");
-        GestoreClientServer.comandi.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandDeleteClient");
-        GestoreClientServer.comandi.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandDeleteServer");
-        GestoreClientServer.comandi.registraComando( "sh(?:o(?:w)?)?[ ]+",path +"CommandShow");
-        GestoreClientServer.comandi.registraComando( "i(?:n(?:f(?:o)?)?)?[ ]+",path +"CommandInfo");
+        temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+        temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
+        temp.registraComando( "se(?:l(?:e(?:c(?:t)?)?)?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandSelectClient");
+        temp.registraComando( "se(?:l(?:e(?:c(?:t)?)?)?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandSelectServer");
+        temp.registraComando( "n(?:ew?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandNewClient"); //regex brutta da vedere e probabilmente slow as hell ma funziona
+        temp.registraComando( "n(?:ew?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandNewServer");
+        temp.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]+",path +"CommandDeleteClient");
+        temp.registraComando( "d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?[ ]+s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]+",path +"CommandDeleteServer");
+        temp.registraComando( "sh(?:o(?:w)?)?[ ]+",path +"CommandShow");
+        temp.registraComando( "i(?:n(?:f(?:o)?)?)?[ ]+",path +"CommandInfo");
 
     }
     private void registraComandiServerThread(){
+        System.out.println("Debug: | Registrazione comandi ServerThread |");
         String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = Commandable.ListeComandi.getCommandList(ServerThread.class);
+        //TODO rimuovere il comando $remote in modo da farlo essere appartenente al client
+        temp.setStringaHelp(
+            "Comandi Remoti Disponibili\n\n"+
+            "$help\t\tpermette di visualizzare tutti i comandi \n" + 
+            "$log\t\tpermette di inviare al server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
+            "$file\t\tpermette di stampare sul file(che prende nome del server se non è selezionato dal server) il contenuto del msg\n\t\t(il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
+            "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
+            "$from\t\tpermette di leggere un file locale(client) e inviarlo al server\n\t\t($file nomefile) nomefile non necesseta delle ''\t"
+        );
+        temp.registraComando( "^\\$f(?:i(?:l(?:e)?)?)?[ ]*$",path + "CommandFileLog");
+        temp.registraComando( "^\\$h(?:e(?:l(?:p)?)?)?[ ]*$",path + "CommandInviaHelpToClient");
+        temp.registraComando( "\\$l(?:o(?:g)?)?[ ]+",path + "CommandServerDefaultResponse");
+        //comando default
+        temp.registraComando( null,path + "CommandInviaMsgDefaultToClient",true);
 
-        /* 
-        String scelta = params == null || params.length == 0 ? "" : params[0];
-        if(scelta.isBlank())return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
-        if(String.valueOf(scelta.charAt(0)).equals("$")){
-            
-            switch (scelta) {
-            case "$l":
-            case "$log":
-                if(params.length >= 2)return new CommandStampaVideoServerThread(this.concatenaParams(params, 1),this.gestore);
-            case "$f":
-            case "$file":
-                if(params.length >= 2)return new CommandFileLog(this.concatenaParams(params, 1), this.gestore);
-            case "$h":
-            case "$help":
-                return new CommandHelp(
-                    "Comandi Remoti Disponibili\n\n"+
-                    "$help\t\tpermette di visualizzare tutti i comandi \n" + 
-                    "$log\t\tpermette di inviare al server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
-                    "$file\t\tpermette di stampare sul file(che prende nome del server se non è selezionato dal server) il contenuto del msg\n\t\t(il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
-                    "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
-                    "$from\t\tpermette di leggere un file locale(client) e inviarlo al server\n\t\t($file nomefile) nomefile non necesseta delle ''\t"
-                ,this.gestore);
-            default:
-                return new CommandHelp("errore, il comando '" + this.concatenaParams(params,0) +"' non è riconosciuto" ,this.gestore);
-            }
-        }
-        return new CommandServerDefaultResponse(this.gestore,this.concatenaParams(params,0));
-        */
     }
 
     //! MAIN

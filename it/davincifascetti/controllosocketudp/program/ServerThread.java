@@ -32,6 +32,7 @@ public class ServerThread extends Thread implements Commandable{
     private String nomeServerOriginale;
     private FileLogger fileLogger = null;
     private Server riferimentoServer = null;
+    private CommandFactoryI<ServerThread> factory = null; 
     /**instanzia una classe che si occupa della risposta
      * 
      * @param packet pacchetto ricevuto
@@ -51,22 +52,19 @@ public class ServerThread extends Thread implements Commandable{
         this.nomeServerOriginale = nomeServerOriginale;
         this.fileLogger = fileLogger;
         this.riferimentoServer = riferimentoServer;
+        try {
+            this.factory = new CommandFactoryI<ServerThread>(this);
+        } catch (CommandException e) {
+            this.stampaVideo(e.getMessage());
+        }
     }
-
+    
     /**si occupa di instanziare la factory che si occupa di creare i comandi in base al tipo di risposta da inviare
      * 
      */
     @Override
     public void run() {
-
-        CommandFactoryI<ServerThread> factory = null; 
-        try {
-            factory = new CommandFactoryI<ServerThread>(this);
-        } catch (CommandException e) {
-            this.stampaVideo(e.getMessage());
-        }
         if(factory != null){
-    
             try{
                 this.executeCommand(factory.getCommand(this.msgRicevuto));
             }catch(CommandException e){

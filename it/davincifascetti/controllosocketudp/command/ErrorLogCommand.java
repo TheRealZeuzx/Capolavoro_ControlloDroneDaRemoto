@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 /**permette di stampare in modalità append il msg di errore; non implementa command perchè il suo execute restituisce un bool
- * @author Mussaldi Tommaso, Mattia Bonfiglio
+ * @author Mattia Bonfiglio
  * @version 1.0
  */
 public class ErrorLogCommand{

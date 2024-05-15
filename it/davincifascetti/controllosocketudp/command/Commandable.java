@@ -1,10 +1,9 @@
 package it.davincifascetti.controllosocketudp.command;
 
-
 /**
     Interface Commandable.
     Interfaccia implementata da tutte le classi che hanno a disposizione un terminale.
-    @author Mussaldi Tommaso, Bonfiglio Mattia
+    @author Tommaso Mussaldi
     @version 1.0
  */
 public interface Commandable {
@@ -13,5 +12,6 @@ public interface Commandable {
         @throws CommandException se il terminale non riesce a partire.
     */
     public void startTerminal() throws CommandException;
-    public static final CommandList comandi = new CommandList();
+    public static final CommandListManager ListeComandi = new CommandListManager();
+    
 }

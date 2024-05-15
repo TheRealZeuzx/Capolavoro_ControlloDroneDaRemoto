@@ -22,17 +22,7 @@ public class CommandHelp<T extends Commandable> extends CommandI<T>{
     }
     public void execute() throws CommandException {
 
-        System.out.println(T.comandi.getStringaHelp());
+        System.out.println(Commandable.ListeComandi.getCommandList(this.getGestore().getClass()).getStringaHelp());
 
-        //TODO aggiungere il codice di sotto ad un comando per inviare msg dal serverthread
-        // if(this.getGestore() == null)
-        //     System.out.println(this.getParams());
-        // else{
-        //     try {
-        //         this.getGestore().inviaMsg(this.getParams());
-        //     } catch (CommandableException e) {
-        //         throw new CommandException(e.getMessage());
-        //     }
-        // }
     }
 }

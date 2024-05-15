@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+/**
+ * @author Tommaso Mussaldi
+ */
 public class CommandList {
 
     private Map<String,String> arrayAssociativo = Collections.synchronizedMap(new HashMap<String,String>());

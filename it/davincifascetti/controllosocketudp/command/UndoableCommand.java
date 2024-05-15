@@ -3,7 +3,8 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 /**interfaccia Command con metodo undo
- * @author Mussaldi Tommaso, Mattia Bonfiglio
+ * @author Tommaso Mussaldi
+ * @autor Mattia Bonfiglio
    @version 1.0
  */
 public interface UndoableCommand extends Command{
