@@ -13,22 +13,20 @@ import it.davincifascetti.controllosocketudp.program.Client;
  *  @version 1.0
  */
 public class CommandFromFile extends CommandI<Client>{
-    private String nomeFile;
     /**
      * @param nomeFile nome del file da cui leggere i dati
      * @param gestore client receiver
      * @throws CommandException
      */
     public CommandFromFile(Client gestore,String nomeFile) throws CommandException {
-        super(gestore);
-        this.nomeFile = nomeFile;
+        super(gestore,nomeFile);
     }
 
     @Override
     public void execute() throws CommandException, ErrorLogException{
         FileReader fileTesto;
         try{
-            fileTesto = new FileReader(nomeFile);
+            fileTesto = new FileReader(this.getParams());
         }catch(FileNotFoundException e){
             throw new ErrorLogException(e.getMessage());
         }
@@ -45,7 +43,7 @@ public class CommandFromFile extends CommandI<Client>{
             throw new ErrorLogException(e.getMessage());
         }
         try {
-            this.getGestore().inviaMsg(contenutoFile);
+            this.getGestore().inviaMsg("print " + contenutoFile);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }

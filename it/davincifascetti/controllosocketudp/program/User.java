@@ -73,50 +73,13 @@ public class User {
             "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
-        temp.registraComando( "\\$l(?:o(?:g)?)?[ ]+",path + "CommandInviaMsgClient");
+        temp.registraComando( "\\$",path + "CommandInviaMsgClient");//qualsiasi cosa scritta dopo '$' verrà inviata al server
+        temp.registraComando( "(f(?:r(?:o(?:m)?)?)?[ ]*)",path + "CommandFromFile");
+        temp.registraComando( "^(r(?:e(?:m(?:o(?:t(?:e)?)?)?)?)?[ ]*)$",path + "CommandTelecomando");
         //!non funzionanti
-        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
-        // //set
-        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeClient");
-        // Commandable.ListeComandi.getCommandList(Client.class).registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketClient");
-
-        /* 
-        switch (scelta) {
-            case "info":
-            case "i":
-                return new CommandHelp(this.getGestore().toString());
-            case "s":
-            case "set":
-                switch (params == null || params.length <= 2 ? "" : params[1]) {
-                case "name":
-                case "n":                      
-                    if(params.length == 3)return new CommandSetNomeClient(this.getGestore(),params[2]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                case "socket":
-                case "s":
-                    if(params.length == 4)return new CommandSetSocketClient(this.getGestore(),params[2],params[3]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                default:
-                    throw new CommandException("Errore, non è stato specificato cosa selezionare");
-                }
-            case "$":
-                switch (params[0]) {
-                    case "$remote":
-                    case "$r":
-                        return new CommandTelecomando(this.getGestore());
-                    case "$from":
-                        if(params.length == 2) return new CommandFromFile(this.getGestore(),params[1]);
-                        throw new CommandException("Errore,non è stato specificato cosa creare");
-                    case "$log":
-                        return new CommandInviaMsgClient(this.concatenaParams(params, 1), this.getGestore());
-                    default:
-                        return new CommandInviaMsgClient(this.concatenaParams(params, 0), this.getGestore());
-                        
-                }
-            default:    
-                return new CommandDefault(params);
-        }
-        */
+        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*)$",path + "CommandInfoClient");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+p(?:o(?:r(?:t)?)?)?[ ]+",path + "CommandSetSocketClient");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
     }
    
     private void registraComandiServer(){
@@ -234,21 +197,19 @@ public class User {
         System.out.println("Debug: | Registrazione comandi ServerThread |");
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp = Commandable.ListeComandi.getCommandList(ServerThread.class);
-        //TODO rimuovere il comando $remote in modo da farlo essere appartenente al client
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
-            "$help\t\tpermette di visualizzare tutti i comandi \n" + 
-            "$log\t\tpermette di inviare al server un msg\n\t\t($log msgStampare) il messaggio può contenere spazi\n" + 
-            "$file\t\tpermette di stampare sul file(che prende nome del server se non è selezionato dal server) il contenuto del msg\n\t\t(il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"+
-            "$remote\t\tpermette di attivare la modalità telecomando (invia un char su pressione tasti diversi)\n"+
-            "$from\t\tpermette di leggere un file locale(client) e inviarlo al server\n\t\t($file nomefile) nomefile non necesseta delle ''\t"
+            "help\t\tpermette di visualizzare tutti i comandi \n" + 
+            "print\t\tpermette di inviare al server un msg\n\t\t(print msgStampare) il messaggio può contenere spazi\n" + 
+            "file\t\tpermette di stampare sul file(che prende nome del server se non è selezionato dal server) il contenuto del msg\n\t\t(il msg è stampato anche sulla console del server)\n\t\t($file msgStampare) il messaggio può comprendere spazi\n"
         );
-        temp.registraComando( "^\\$f(?:i(?:l(?:e)?)?)?[ ]*$",path + "CommandFileLog");
-        temp.registraComando( "^\\$h(?:e(?:l(?:p)?)?)?[ ]*$",path + "CommandInviaHelpToClient");
-        temp.registraComando( "\\$l(?:o(?:g)?)?[ ]+",path + "CommandServerDefaultResponse");
+        //risponde ai comandi come fossero comandi locali del client o server ecc, quindi se scrivo help manda msh help, se voglio stampare scriverò print msgDaStampare
+        temp.registraComando( "^f(?:i(?:l(?:e)?)?)?[ ]*$",path + "CommandFileLog");
+        temp.registraComando( "^h(?:e(?:l(?:p)?)?)?[ ]*$",path + "CommandInviaHelpToClient");
+        temp.registraComando( "p(?:r(?:i(?:n(?:t)?)?)?)?[ ]+",path + "CommandStampaVideoServerThread");
         //comando default
         temp.registraComando( null,path + "CommandInviaMsgDefaultToClient",true);
-
+        
     }
 
     //! MAIN

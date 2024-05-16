@@ -13,8 +13,11 @@ public class CommandTelecomando extends CommandI<Client>{
      * @param gestore client receiver
      * @throws CommandException
      */
+    public CommandTelecomando(Client gestore,String params) throws CommandException {
+        super(gestore,"");
+    }
     public CommandTelecomando(Client gestore) throws CommandException {
-        super(gestore);
+        super(gestore,"");
     }
 
     @Override

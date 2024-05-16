@@ -8,7 +8,6 @@ import it.davincifascetti.controllosocketudp.program.Client;
  *  @version 1.0
  */
 public class CommandSetNomeClient extends CommandI<Client> implements UndoableCommand{
-    private String nome;
     private String nomePrecedente;
     /**
      * @param gestore Client a cui cambiare il nome
@@ -16,15 +15,13 @@ public class CommandSetNomeClient extends CommandI<Client> implements UndoableCo
      * @throws CommandException
      */
     public CommandSetNomeClient(Client gestore,String nome) throws CommandException {
-        super(gestore);
-        this.nome = nome;
+        super(gestore,nome);
         this.nomePrecedente = this.getGestore().getNome();
     }
     @Override
-
     public void execute() throws CommandException {
         try {
-            this.getGestore().setNome(nome);
+            this.getGestore().setNome(this.getParams());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }

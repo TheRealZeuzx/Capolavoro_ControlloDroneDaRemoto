@@ -20,6 +20,7 @@ public class CommandStampaVideoServerThread extends CommandI<ServerThread>{
         super(gestore, msg);
     }
     public void execute() throws CommandException, ErrorLogException {
+        if(this.getParams().isBlank()) new CommandInviaMsgDefaultToClient(this.getGestore(),this.getParams()).execute();
         this.getGestore().stampaVideo("il client dice: " + this.getParams());
         new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine").execute();
 
