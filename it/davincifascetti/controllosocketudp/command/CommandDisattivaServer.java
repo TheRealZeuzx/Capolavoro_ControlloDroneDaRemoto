@@ -15,11 +15,10 @@ public class CommandDisattivaServer extends CommandI<Server>{
         Costruttore di default di CommandDisattivaServer.
         Richiama al costruttore del padre (CommandI).
         @param gestore Gestore su cui effettuare le operazioni. 
-        @param nome Nome logico del server da disattivare.
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandDisattivaServer(Server gestore) throws CommandException {
-        super(gestore);
+    public CommandDisattivaServer(Server gestore,String params) throws CommandException {
+        super(gestore,"");
     }
 
     /**

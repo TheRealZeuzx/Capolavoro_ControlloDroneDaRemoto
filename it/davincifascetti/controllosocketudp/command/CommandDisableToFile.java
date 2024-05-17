@@ -16,8 +16,8 @@ public class CommandDisableToFile extends CommandI<Server> implements UndoableCo
         Richiama al costruttore del padre (CommandI).
         @param gestore Gestore su cui effettuare le operazioni. 
     */
-    public CommandDisableToFile(Server gestore) throws CommandException {
-        super(gestore);
+    public CommandDisableToFile(Server gestore,String params) throws CommandException {
+        super(gestore,"");
         this.nomeFile = this.getGestore().getFileLogger().getFileName();
         this.append = this.getGestore().getFileLogger().isAppend();
     }
@@ -31,7 +31,7 @@ public class CommandDisableToFile extends CommandI<Server> implements UndoableCo
 
     @Override
     public boolean undo() throws CommandException{
-        new CommandEnableToFile(this.getGestore(),this.nomeFile,this.append).execute();
+        new CommandEnableToFile(this.getGestore(),this.nomeFile + " " + append).execute();
         return true;
     }
     

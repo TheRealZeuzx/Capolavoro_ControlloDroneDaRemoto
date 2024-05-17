@@ -8,7 +8,6 @@ import it.davincifascetti.controllosocketudp.program.Server;
  *  @version 1.0
  */
 public class CommandSetSocketServer extends CommandI<Server> implements UndoableCommand{
-    private String porta;
     private String portaPrecedente;
     /**
      * 
@@ -17,8 +16,7 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      * @throws CommandException
      */
     public CommandSetSocketServer(Server gestore,String porta) throws CommandException {
-        super(gestore);
-        this.porta = porta;
+        super(gestore,porta);
         this.portaPrecedente = String.valueOf(this.getGestore().getPorta());
     }
     @Override
@@ -27,26 +25,10 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      */
     public void execute() throws CommandException,ErrorLogException {
         try {
-            this.getGestore().setSocket(porta);
+            this.getGestore().setSocket(this.getParams());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-
-        //TODO sistemare
-        switch (params == null || params.length <= 2 ? "" : params[1]) {
-        case "name":
-        case "n":                      
-            if(params.length == 3)return new CommandSetNomeServer(this.getGestore(),params[2]);
-            throw new CommandException("Errore,non è stato specificato cosa creare");
-        case "port":
-        case "p":
-            if(params.length == 3)return new CommandSetSocketServer(this.getGestore(),params[2]);
-            throw new CommandException("Errore,non è stato specificato cosa creare");
-        default:
-            throw new CommandException("Errore, non è stato specificato cosa selezionare");
-        }
-
-
     }
     @Override
     public boolean undo() throws CommandException,ErrorLogException{

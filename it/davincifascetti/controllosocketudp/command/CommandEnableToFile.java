@@ -21,10 +21,18 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
         @param nomeFile nome del file su cui stampare
         @param append true se si vuole la modalita append altrimenti false
     */
-    public CommandEnableToFile(Server gestore, String nomeFile,boolean append) throws CommandException {
-        super(gestore);
-        this.append = append;
-        this.nomeFile = nomeFile;
+    public CommandEnableToFile(Server gestore, String nomeFileAppend) throws CommandException {
+        super(gestore,nomeFileAppend);
+        String[] temp = this.getParams().split("[ ]+");
+        if(temp.length != 2)throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (nomeFile) (append | overwrite)");
+        this.nomeFile = temp[0];
+        if(CommandFactoryI.controllaRegexAssoluta("^a(?:p(?:p(?:e(?:n(?:d)?)?)?)?)?[ ]*$",temp[1]))
+            this.append = true;
+        else if(CommandFactoryI.controllaRegexAssoluta("^o(?:v(?:e(?:r(?:w(?:r(?:i(?:t(?:e)?)?)?)?)?)?)?)?[ ]*$",temp[1]))
+            this.append = false;
+        else{
+            throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (nomeFile) (append | overwrite)");
+        }
     }
 
     /**
@@ -41,7 +49,7 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
 
     @Override
     public boolean undo() throws CommandException{
-        new CommandDisableToFile(this.getGestore()).execute();
+        new CommandDisableToFile(this.getGestore(),"").execute();
         return true;
     }
     

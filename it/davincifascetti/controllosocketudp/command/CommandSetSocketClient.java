@@ -19,11 +19,13 @@ public class CommandSetSocketClient extends CommandI<Client> implements Undoable
      * @param porta nuova porta di destinazione
      * @throws CommandException
      */
-    public CommandSetSocketClient(Client gestore,String ip,String porta) throws CommandException {
-        super(gestore);
-        this.ip = ip;
+    public CommandSetSocketClient(Client gestore,String ipPorta) throws CommandException {
+        super(gestore,ipPorta);
+        String []temp =  this.getParams().split("[ ]+");
+        if(temp.length != 2) throw new CommandException("Errore, il numero di parametri è errato!");
+        this.ip = temp[0];
         this.ipPrecedente = this.getGestore().getIp();
-        this.porta = porta;
+        this.porta = temp[1];
         this.portaPrecedente = String.valueOf(this.getGestore().getPorta());
     }
     @Override
@@ -38,6 +40,7 @@ public class CommandSetSocketClient extends CommandI<Client> implements Undoable
     @Override
     public boolean undo() throws CommandException,ErrorLogException{
         try {
+            if(portaPrecedente.equals("-1")) this.portaPrecedente = null;
             this.getGestore().setSocket(ipPrecedente,portaPrecedente);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());

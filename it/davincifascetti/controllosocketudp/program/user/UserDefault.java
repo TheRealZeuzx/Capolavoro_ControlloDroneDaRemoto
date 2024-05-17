@@ -35,7 +35,7 @@ public final class UserDefault extends User{
     //TODO Divisione dei comandi in pacchetti dedicati ?
     //TODO possibilmente fare le registrazioni prendendo i file da xml, decidere se farlo o no
     //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
-    
+    //!
     //TODO terminale come classe generale e quindi usare static? si può fare con Class<> ecc come per le altre, da decidere
     protected void registraComandiClient(){
         
@@ -49,15 +49,17 @@ public final class UserDefault extends User{
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
             "info\t\tpermette di visualizzare le informazioni di questo client\n" +
             "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set socket nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
+            "from\t\tserve a prendere l'input da spedire da un file(from nomeFile)\n"+
+            "remote\t\tattiva la modalità telecomando ('e' per uscire)\n"+
             "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+        temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
         temp.registraComando( "\\$",path + "CommandInviaMsgClient");//qualsiasi cosa scritta dopo '$' verrà inviata al server
-        temp.registraComando( "(f(?:r(?:o(?:m)?)?)?[ ]*)",path + "CommandFromFile");
+        temp.registraComando( "(f(?:r(?:o(?:m)?)?)?[ ]+)",path + "CommandFromFile");
         temp.registraComando( "^(r(?:e(?:m(?:o(?:t(?:e)?)?)?)?)?[ ]*)$",path + "CommandTelecomando");
-        //!non funzionanti
-        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*)$",path + "CommandInfoClient");
-        temp.registraComando( "s(?:e(?:t?)?)?[ ]+p(?:o(?:r(?:t)?)?)?[ ]+",path + "CommandSetSocketClient");
+        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+s(?:o(?:c(?:k(?:e(?:t)?)?)?)?)?[ ]+",path + "CommandSetSocketClient");
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
     }
    
@@ -77,76 +79,19 @@ public final class UserDefault extends User{
             "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
-
-
-        //normali
-        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\b(he?l?p?[ ]*)|[?][ ]*$",path + "CommandHelp");
-        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bin?f?o?[ ]*$",path + "CommandHelp");
-        // //set
-        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bse?t?[ ]+po?r?t?[ ]+.*$",path + "CommandSetNomeServer");
-        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\bse?t?[ ]+na?m?e?[ ]+.*$",path + "CommandSetSocketServer");
-        // //$
-        // Commandable.ListeComandi.getCommandList(Server.class).registraComando( "^\b\\$lo?g?[ ]*$",path + "CommandStampaVideoServerThread");
-                /* 
-        String scelta = params == null || params.length == 0 ? "" : params[0];
-        switch (scelta) {
-
-            case "info":
-            case "i":
-                return new CommandHelp(this.getGestore().toString());
-            case "s":
-            case "set":
-                switch (params == null || params.length <= 2 ? "" : params[1]) {
-                case "name":
-                case "n":                      
-                    if(params.length == 3)return new CommandSetNomeServer(this.getGestore(),params[2]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                case "port":
-                case "p":
-                    if(params.length == 3)return new CommandSetSocketServer(this.getGestore(),params[2]);
-                    throw new CommandException("Errore,non è stato specificato cosa creare");
-                default:
-                    throw new CommandException("Errore, non è stato specificato cosa selezionare");
-                }
-            case "en":
-            case "enable": 
-                return new CommandAttivaServer(this.getGestore());
-            case "dis":
-            case "disable": 
-                return new CommandDisattivaServer(this.getGestore());
-            case "file":
-            case "f":
-                if(params == null || params.length <= 1 || params.length > 3) throw new CommandException("Errore, non è stato specificato cosa selezionare");
-                if(params.length == 2){
-                    switch(params[1]){
-                        case "dis":
-                        case "disable":
-                            return new CommandDisableToFile(this.getGestore());
-                        default:  
-                            throw new CommandException("Errore, non è stato specificato cosa selezionare");
-                    }
-                }
-                switch(params[2]){
-                    case "append":
-                    case "a":
-                        return new CommandEnableToFile(this.getGestore(),params[1],true);
-                    case "overwrite":
-                    case "o":
-                        return new CommandEnableToFile(this.getGestore(),params[1],false);
-                    default:  
-                        throw new CommandException("Errore, non è stato specificato cosa selezionare");
-                }
-                
-            default:    
-                return new CommandDefault(params);
-        }
-        */
+        temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
+        temp.registraComando( "^d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisattivaServer");
+        temp.registraComando( "^e(?:n(?:a(?:b(?:l(?:e)?)?)?)?)?[ ]*$",path + "CommandAttivaServer");
+        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+p(?:o(?:r(?:t)?)?)?[ ]+",path + "CommandSetSocketServer");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeServer");
+        temp.registraComando( "f(?:i(?:l(?:e)?)?)?[ ]+",path + "CommandEnableToFile");
+        temp.registraComando( "^f(?:i(?:l(?:e)?)?)?[ ]+d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisableToFile");
     }
     
     
     protected void registraComandiGestoreCS(){
-        //!fatto
-        
+
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp = User.getManager(UserDefault.class).getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
@@ -184,6 +129,7 @@ public final class UserDefault extends User{
         //risponde ai comandi come fossero comandi locali del client o server ecc, quindi se scrivo help manda msh help, se voglio stampare scriverò print msgDaStampare
         temp.registraComando( "^f(?:i(?:l(?:e)?)?)?[ ]*$",path + "CommandFileLog");
         temp.registraComando( "^h(?:e(?:l(?:p)?)?)?[ ]*$",path + "CommandInviaHelpToClient");
+        temp.registraComando( "^[?][ ]*$",path + "CommandInviaHelpToClient");
         temp.registraComando( "p(?:r(?:i(?:n(?:t)?)?)?)?[ ]+",path + "CommandStampaVideoServerThread");
         //comando default
         temp.registraComando( null,path + "CommandInviaMsgDefaultToClient",true);
