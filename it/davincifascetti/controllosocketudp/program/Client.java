@@ -259,6 +259,10 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
         }
         return false;
     }
+    @Override
+    public Terminal<Client> getTerminal() {
+        return this.riferimentoTerminale;
+    }
 
 
 }

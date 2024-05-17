@@ -215,5 +215,8 @@ public class Server implements Runnable,Commandable{
         }
         return false;
     }
-
+    @Override
+    public Terminal<Server> getTerminal() {
+        return this.riferimentoTerminale;
+    }
 }

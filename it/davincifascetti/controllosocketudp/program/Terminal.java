@@ -5,6 +5,7 @@ import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.CommandStampaMsgRicevuti;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
@@ -28,14 +29,19 @@ public class Terminal<T extends Commandable>{
     private boolean attivo = false;
     private boolean bloccato = false;
     private T gestoreAttuale = null;
+    private CommandListManager manager = null;
+
+
 
     /**
      * 
      * @param errorLog oggetto error log che si occupera del log su file degli errori
      * @throws CommandException
      */
-    public Terminal(ErrorLog errorLog) throws CommandException{
+    public Terminal(ErrorLog errorLog,CommandListManager manager) throws CommandException{
+        if(errorLog == null || manager == null) throw new CommandException("Errore, qualcosa è andato storto!");
         this.errorLog = errorLog;
+        this.manager = manager;
         this.storiaComandi = new CommandHistory();
     }
 
@@ -45,9 +51,10 @@ public class Terminal<T extends Commandable>{
      * @throws CommandException
      */
     public void main(T gestore) throws CommandException {
+        if(gestore == null) throw new CommandException("Errore, il gestore è null!");
         this.gestoreAttuale = gestore;
         this.attivo = true;
-        this.factory = new CommandFactoryI<T> (gestore);
+        this.factory = new CommandFactoryI<T> (gestore,manager);
         String menu = "";
         //TODO fare la stessa cosa della commandFactory usando hashmap e levare lo switchcase
         if(gestore instanceof GestoreClientServer) System.out.println("Terminale attivato \n\n--- Vista generale ---");
@@ -176,4 +183,7 @@ public class Terminal<T extends Commandable>{
     }
     public boolean isBloccato(){return this.bloccato;}
     public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
+    public CommandListManager getManager() {
+        return manager;
+    }
 }

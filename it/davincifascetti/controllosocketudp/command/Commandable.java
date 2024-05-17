@@ -1,5 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.program.Terminal;
+
 /**
  * GENERALE
     Interface Commandable.
@@ -13,6 +15,5 @@ public interface Commandable {
         @throws CommandException se il terminale non riesce a partire.
     */
     public void startTerminal() throws CommandException;
-    public static final CommandListManager ListeComandi = new CommandListManager();
-    
+    public Terminal<? extends Commandable> getTerminal();
 }

@@ -53,7 +53,7 @@ public class ServerThread extends Thread implements Commandable{
         this.fileLogger = fileLogger;
         this.riferimentoServer = riferimentoServer;
         try {
-            this.factory = new CommandFactoryI<ServerThread>(this);
+            this.factory = new CommandFactoryI<ServerThread>(this,this.getTerminal().getManager());
         } catch (CommandException e) {
             this.stampaVideo(e.getMessage());
         }
@@ -178,6 +178,11 @@ public class ServerThread extends Thread implements Commandable{
     @Override
     public void startTerminal() throws CommandException {
         throw new CommandException("Questo gestore non ha un terminale!");
+    }
+
+    @Override
+    public Terminal<Server> getTerminal() {
+        return this.riferimentoTerminal;
     }
 
 

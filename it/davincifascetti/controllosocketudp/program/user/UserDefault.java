@@ -1,67 +1,46 @@
-package it.davincifascetti.controllosocketudp.program;
+package it.davincifascetti.controllosocketudp.program.user;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
-import it.davincifascetti.controllosocketudp.command.Commandable;
-import it.davincifascetti.controllosocketudp.command.CommandableException;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.ServerThread;
+
 
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public class User {
-    private ErrorLog errorLog;
-    private GestoreClientServer gestore;
-    private static final AtomicBoolean inizialized = new AtomicBoolean();
+public final class UserDefault extends User{
+    
     /**
-     * 
      * @param pathErrorLogFile path del file errori
      * @throws CommandException
      */
-    public User(String pathErrorLogFile) throws CommandException{
-        try {
-            this.errorLog = new ErrorLog(pathErrorLogFile);
-        } catch (CommandableException e) {
-            throw new CommandException(e.getMessage());
-        }
-        this.init();
-        this.gestore = new GestoreClientServer(this.errorLog);
-    }
-    
-    private void init(){
-        if(User.inizialized.compareAndSet(false, true)){
-            this.registraComandiGestoreCS();
-            this.registraComandiClient();
-            this.registraComandiServer();
-            this.registraComandiServerThread();
-        }
+    public UserDefault(String pathErrorLogFile) throws CommandException{
+        super(pathErrorLogFile, UserDefault.class);
     }
 
     /**avvia il terminale di gestoreclientserver di conseguenza il programma in se
      * 
      * @throws CommandException
      */
-    public void start() throws CommandException{
-        this.gestore.startTerminal();
+    public void logicaStart() throws CommandException{
+        this.getGestore().startTerminal();
     }
 
-    //TODO Divisione dei comandi in pacchetti dedicati  
-    //TODO fixare ServerThread e capire se funziona normalmente cambiando la factory o se ci sono problemi
-    //TODO fixare i comandi CommandHelp in modo da renderli utilizzabili (paramtri giusti gestore.class(),String)
-    //TODO fixare i comandi che non funzionano (risolvere problemi riguardanti switch interni ecc)
+    //TODO Divisione dei comandi in pacchetti dedicati ?
     //TODO possibilmente fare le registrazioni prendendo i file da xml, decidere se farlo o no
     //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
-    //// to do Fixare le regex
-    //TODO switch a xml per i comandi e regex vv
-    //!la lista è unica per tutti i commandable, deve essere univoca per ognuno!
-    //!per ora solo la registrazione dei comandi gestore Client Server è usata perchè non da errori, vanno terminate tutte le registrazioni e comandi
-    private void registraComandiClient(){
-        System.out.println("Debug: | Registrazione comandi Client |");
+    
+    //TODO terminale come classe generale e quindi usare static? si può fare con Class<> ecc come per le altre, da decidere
+    protected void registraComandiClient(){
+        
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(Client.class);
+        CommandList temp = User.getManager(UserDefault.class).getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Client\n\n"+
@@ -82,10 +61,10 @@ public class User {
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
     }
    
-    private void registraComandiServer(){
-        System.out.println("Debug: | Registrazione comandi Server |");
+    protected void registraComandiServer(){
+        
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(Server.class);
+        CommandList temp = User.getManager(UserDefault.class).getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale Server\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -165,11 +144,11 @@ public class User {
     }
     
     
-    private void registraComandiGestoreCS(){
+    protected void registraComandiGestoreCS(){
         //!fatto
-        System.out.println("Debug: | Registrazione comandi GestoreClientServer |");
+        
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(GestoreClientServer.class);
+        CommandList temp = User.getManager(UserDefault.class).getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -193,10 +172,9 @@ public class User {
         temp.registraComando( "i(?:n(?:f(?:o)?)?)?[ ]+",path +"CommandInfo");
 
     }
-    private void registraComandiServerThread(){
-        System.out.println("Debug: | Registrazione comandi ServerThread |");
+    protected void registraComandiServerThread(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(ServerThread.class);
+        CommandList temp = User.getManager(UserDefault.class).getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -212,22 +190,7 @@ public class User {
         
     }
 
-    //! MAIN
-    public static void main(String[] args) {
-        /* msg utili per testing
-        * new c c1 localhost 1212
-        * new s s1 1212
-        * select c c1
-        */
-        User u;
-        try {
-            u = new User("errorLog.txt");
-            System.out.println("User creato correttamente");
-            u.start();
-        } catch (CommandException e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println("Programma Terminato");
-       
-    }
+ 
+
+
 }

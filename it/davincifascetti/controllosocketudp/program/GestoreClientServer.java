@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
@@ -26,13 +27,13 @@ public class GestoreClientServer implements Commandable{
      * @param errorLog oggetto error log
      * @throws CommandException
      */
-    public GestoreClientServer(ErrorLog errorLog) throws CommandException{
-
+    public GestoreClientServer(ErrorLog errorLog,CommandListManager manager) throws CommandException{
+        if(errorLog == null || manager == null) throw new CommandException("Errore, qualcosa è andato storto!");
         this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);
-        this.terminal = new Terminal<GestoreClientServer>(errorLog);
-        this.terminalC = new Terminal<Client>(errorLog);
-        this.terminalS = new Terminal<Server>(errorLog);
+        this.terminal = new Terminal<GestoreClientServer>(errorLog,manager);
+        this.terminalC = new Terminal<Client>(errorLog,manager);
+        this.terminalS = new Terminal<Server>(errorLog,manager);
         
     }
 
@@ -51,6 +52,7 @@ public class GestoreClientServer implements Commandable{
         return this.terminalS;
     }
 
+    public Terminal<GestoreClientServer> getTerminal(){return this.terminal;}
 
     /**ricerca nella lista di server
      * 

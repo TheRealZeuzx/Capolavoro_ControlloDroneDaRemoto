@@ -22,19 +22,22 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     private Map<String,String> arrayAssociativo = null;
     private String comandoDefault = null;
     private T gestore = null; 
+    private CommandListManager manager = null;
     /**
         Costruttore di default di CommandFactoryServer.
         @param gestore è l'oggetto che farà da receiver per i comandi 
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryI(T gestore) throws CommandException{
+    public CommandFactoryI(T gestore,CommandListManager manager) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
+        if(manager == null) throw new CommandException("Errore, hai inserito un manager null");
         this.gestore = gestore;
+        this.manager = manager;
         Class<? extends Commandable> gestoreClass = gestore.getClass();
         //i comandi sono registrati dalla classe gestore
-        this.comandoDefault = Commandable.ListeComandi.getCommandList(gestoreClass).getCommandDefault();
+        this.comandoDefault = manager.getCommandList(gestoreClass).getCommandDefault();
         //usando Map.copyOf viene restituita una Map non modificabile
-        this.arrayAssociativo = Map.copyOf(Commandable.ListeComandi.getCommandList(gestoreClass).getComandi());
+        this.arrayAssociativo = Map.copyOf(manager.getCommandList(gestoreClass).getComandi());
         if(this.arrayAssociativo == null) throw new CommandException("Errore, il gestore non ha comandi registrati");
     }
 

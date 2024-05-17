@@ -11,7 +11,7 @@ public class CommandListManager {
 
     private Map<Class<? extends Commandable>,CommandList> listeComandi = null;
     public CommandListManager(){
-        this.listeComandi = Collections.synchronizedMap(new HashMap<Class<? extends Commandable>,CommandList>());;
+        this.listeComandi = Collections.synchronizedMap(new HashMap<Class<? extends Commandable>,CommandList>());
     }
     /**permette di recuperare una lista di comandi a partire da una classe che estende Commandable
      * 

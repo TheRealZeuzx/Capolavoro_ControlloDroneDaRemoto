@@ -1,57 +1,29 @@
-package it.davincifascetti.controllosocketudp.program;
+package it.davincifascetti.controllosocketudp.program.user;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
 import it.davincifascetti.controllosocketudp.command.Commandable;
-import it.davincifascetti.controllosocketudp.command.CommandableException;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public class UserDrone {
-    private ErrorLog errorLog;
-    private GestoreClientServer gestore;
-    private static final AtomicBoolean inizialized = new AtomicBoolean();
-    /**
-     * 
-     * @param pathErrorLogFile path del file errori
-     * @throws CommandException
-     */
+public final class UserDrone extends User{
+
     public UserDrone(String pathErrorLogFile) throws CommandException{
-        try {
-            this.errorLog = new ErrorLog(pathErrorLogFile);
-        } catch (CommandableException e) {
-            throw new CommandException(e.getMessage());
-        }
-        this.init();
-        this.gestore = new GestoreClientServer(this.errorLog);
-    }
-    
-    private void init(){
-        if(UserDrone.inizialized.compareAndSet(false, true)){
-            this.registraComandiGestoreCS();
-            this.registraComandiClient();
-            this.registraComandiServer();
-            this.registraComandiServerThread();
-        }
+        super(pathErrorLogFile, UserDrone.class);
     }
 
-    /**avvia il terminale di gestoreclientserver di conseguenza il programma in se
-     * 
-     * @throws CommandException
-     */
-    public void start() throws CommandException{
-        this.gestore.startTerminal();
-    }
-
-    private void registraComandiClient(){
-        System.out.println("Debug: | Registrazione comandi Client |");
+    protected void registraComandiClient(){
+        
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(Client.class);
+        CommandList temp =  User.getManager(UserDrone.class).getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Client\n\n"+
@@ -72,10 +44,9 @@ public class UserDrone {
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
     }
    
-    private void registraComandiServer(){
-        System.out.println("Debug: | Registrazione comandi Server |");
+    protected void registraComandiServer(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(Server.class);
+        CommandList temp =  User.getManager(UserDrone.class).getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale Server\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -91,11 +62,10 @@ public class UserDrone {
     }
     
     
-    private void registraComandiGestoreCS(){
+    protected void registraComandiGestoreCS(){
         //!fatto
-        System.out.println("Debug: | Registrazione comandi GestoreClientServer |");
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(GestoreClientServer.class);
+        CommandList temp =  User.getManager(UserDrone.class).getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -122,10 +92,9 @@ public class UserDrone {
         // drone1.CommandInviaMsgClient("streamoff") 
         
     }
-    private void registraComandiServerThread(){
-        System.out.println("Debug: | Registrazione comandi ServerThread |");
+    protected void registraComandiServerThread(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = Commandable.ListeComandi.getCommandList(ServerThread.class);
+        CommandList temp = User.getManager(UserDrone.class).getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -141,22 +110,9 @@ public class UserDrone {
         
     }
 
-    //! MAIN
-    public static void main(String[] args) {
-        /* msg utili per testing
-        * new c c1 localhost 1212
-        * new s s1 1212
-        * select c c1
-        */
-        User u;
-        try {
-            u = new User("errorLog.txt");
-            System.out.println("User creato correttamente");
-            u.start();
-        } catch (CommandException e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println("Programma Terminato");
-       
+    @Override
+    protected void logicaStart() throws CommandException {
+        this.getGestore().startTerminal();
     }
+
 }

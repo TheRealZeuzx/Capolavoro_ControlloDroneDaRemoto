@@ -23,7 +23,7 @@ public class CommandHelp<T extends Commandable> extends CommandI<T>{
     }
     public void execute() throws CommandException {
 
-        System.out.println(Commandable.ListeComandi.getCommandList(this.getGestore().getClass()).getStringaHelp());
+        System.out.println(getGestore().getTerminal().getManager().getCommandList(this.getGestore().getClass()).getStringaHelp());
 
     }
 }

@@ -14,7 +14,7 @@ public class CommandInviaHelpToClient extends CommandI<ServerThread>{
     public void execute() throws CommandException, ErrorLogException {
 
         try {
-            this.getGestore().inviaMsg(Commandable.ListeComandi.getCommandList(this.getGestore().getClass()).getStringaHelp());
+            this.getGestore().inviaMsg(getGestore().getTerminal().getManager().getCommandList(this.getGestore().getClass()).getStringaHelp());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
