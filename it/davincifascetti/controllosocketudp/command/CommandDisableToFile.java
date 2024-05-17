@@ -2,6 +2,7 @@
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.Server;
 /**
+ * SERVER
     Command Disable To File Server.
     Si occupa di gestire la disattivazione della stampa dei msg su file
     @author Mussaldi Tommaso, Bonfiglio mattia

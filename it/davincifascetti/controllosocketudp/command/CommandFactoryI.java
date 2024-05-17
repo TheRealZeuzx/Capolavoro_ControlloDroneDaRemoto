@@ -10,6 +10,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
 /**
+ * FACTORY
     CommandFactoryClient.
     Factory per la creazione di comandi specifici per il server.
     @author Tommaso Mussaldi

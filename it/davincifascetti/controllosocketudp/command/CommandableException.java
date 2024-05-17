@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 /**
+ * GENERALE
     Eccezione personalizzata sollevata da classi che implementano Commandable.
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0

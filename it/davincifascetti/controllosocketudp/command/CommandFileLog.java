@@ -4,8 +4,8 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /**
-    CommandHelp. 
-    Permette di stampare a video il messaggio di help richiesto
+ * GENERALE
+    COMMAND FILE LOG. 
     @author Tommaso Mussaldi, Mattia Bonfiglio
     @version 1.0
 */

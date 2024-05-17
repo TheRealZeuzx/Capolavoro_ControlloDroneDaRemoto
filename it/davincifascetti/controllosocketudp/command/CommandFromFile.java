@@ -8,7 +8,9 @@ import java.util.Scanner;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
 
-/** permette di avviare leggere un file dal client e inviarre il contenuto al server
+/**
+ * CLIENT 
+ * permette di avviare leggere un file dal client e inviarre il contenuto al server
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
  *  @version 1.0
  */

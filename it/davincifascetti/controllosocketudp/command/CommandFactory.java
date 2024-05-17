@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 /**
+ * FACTORY
     Interface CommandFactory
     Interfaccia per la generalizzazione delle factory.
     @author Tommaso Mussaldi

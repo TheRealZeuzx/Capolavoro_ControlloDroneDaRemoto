@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 import java.util.Stack;
 
 /** 
+ * GESTORI
     CommandHistory. 
     Permette di salvare in uno stack i comandi che implementano UndoableCommand, 
     e che quindi dispongono del metodo undo.

@@ -5,6 +5,7 @@ import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 
 /**
+ * CLIENT
     CommandDeleteClient. 
     È ciò occupa di eliminare un client istanziato dal terminale.
     Identifica il client da eliminare dal nome logico assegnatogli al momento della creazione.

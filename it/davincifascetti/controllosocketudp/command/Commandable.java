@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 /**
+ * GENERALE
     Interface Commandable.
     Interfaccia implementata da tutte le classi che hanno a disposizione un terminale.
     @author Tommaso Mussaldi

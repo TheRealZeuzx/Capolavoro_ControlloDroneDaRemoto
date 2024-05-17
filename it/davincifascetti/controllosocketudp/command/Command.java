@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 /**
+ * GENERALE
     Interfaccia generale Command SENZA undo.
     Interfaccia generale che devono implementare tutti i comandi.
     Necessaria per l'implemento del Command Design Pattern.

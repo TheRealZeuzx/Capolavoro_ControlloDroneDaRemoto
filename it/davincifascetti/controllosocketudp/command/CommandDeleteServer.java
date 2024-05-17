@@ -5,6 +5,7 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
 /**
+ * SERVER
     CommandDeleteServer. 
     È ciò occupa di eliminare un server istanziato dal terminale.
     Identifica il server da eliminare dal nome logico assegnatogli al momento della creazione.

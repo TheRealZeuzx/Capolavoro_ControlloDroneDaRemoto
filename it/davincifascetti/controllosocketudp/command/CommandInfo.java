@@ -4,7 +4,9 @@ import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 
-/**Questo comando permette di ricercare tramite il gestoreClientServer un client o server specifico e di mostrarne il toString
+/**
+ * TODO FIX server/client
+ * Questo comando permette di ricercare tramite il gestoreClientServer un client o server specifico e di mostrarne il toString
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
     @version 1.0
  */

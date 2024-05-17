@@ -19,7 +19,7 @@ import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**classe client si occupa di inviare msg al server e aspettare la risposta, se non arriva entro WAIT_TIME allora si termina la receive
  * @author Mattia Bonfiglio - Tommaso Mussaldi
- * @throws CommandableExceptio errori stampati sul terminale
+ * @throws CommandableException errori stampati sul terminale
  * @throws ErrorLogException errori stampati sul file
  */
 public class Client extends KeyAdapter implements Commandable,Runnable{

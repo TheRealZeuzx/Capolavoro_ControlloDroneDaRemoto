@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 /**
+ *  GENERALE
     CommandDefault. 
     È ciò occupa di stampare a video il messaggio di default dello switchcase (nel caso in cui il comando sia errato) 
     @author Tommaso Mussaldi, Mattia Bonfiglio

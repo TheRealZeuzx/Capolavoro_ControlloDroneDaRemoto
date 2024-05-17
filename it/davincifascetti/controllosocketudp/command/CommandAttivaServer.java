@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Server;
 /**
+    SERVER
     Command Attiva Server.
     Si occupa di gestire l'attivazione del server.
     @author Mussaldi Tommaso, Bonfiglio mattia

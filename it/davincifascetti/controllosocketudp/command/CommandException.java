@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 /**
+ * SERVER
     CommandDisattivaServer. 
     Eccezione personalizzata sollevata da un qualsiasi comando.
     @author Tommaso Mussaldi, Mattia Bonfiglio

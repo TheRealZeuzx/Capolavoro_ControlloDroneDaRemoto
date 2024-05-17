@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.Server;
 
 /**
+ * SERVER
     CommandDisattivaServer. 
     È ciò occupa di disattivare un server istanziato dal terminale.
     Identifica il server da disattivare dal nome logico assegnatogli al momento della creazione.

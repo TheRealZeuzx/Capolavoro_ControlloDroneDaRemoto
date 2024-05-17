@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
 /** 
+ * GENERALE
     CommandHelp. 
     Permette di stampare il msg di help richiesto.
     @author Mussaldi Tommaso, Mattia Bonfiglio

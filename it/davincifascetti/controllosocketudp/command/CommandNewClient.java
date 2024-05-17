@@ -32,7 +32,7 @@ public class CommandNewClient extends CommandI<GestoreClientServer> implements U
         this.terminale = this.getGestore().getTerminalClient();
         String []temp =  nomeIpPorta.split("[ ]+");
         if(temp.length == 1)
-            this.nome = temp[0]; //new c c1 localhost 1212
+            this.nome = temp[0]; //c1 localhost 1212
         else if(temp.length == 3){
             this.nome = temp[0];
             this.ip = temp[1];
