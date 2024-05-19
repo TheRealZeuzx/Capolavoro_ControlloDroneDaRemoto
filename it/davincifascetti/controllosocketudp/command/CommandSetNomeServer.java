@@ -1,7 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
-import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.Server;
 /**cambia il nome del server
  * dispone di metodo undo quindi è possibile revertire i cambiamenti
@@ -9,7 +8,6 @@ import it.davincifascetti.controllosocketudp.program.Server;
  *  @version 1.0
  */
 public class CommandSetNomeServer extends CommandI<Server> implements UndoableCommand{
-    private String nome;
     private String nomePrecedente;
     /**
      * 

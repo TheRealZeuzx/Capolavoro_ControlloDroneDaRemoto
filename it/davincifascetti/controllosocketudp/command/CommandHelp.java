@@ -1,7 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
 
-import it.davincifascetti.controllosocketudp.program.ServerThread;
-
 /** 
  * GENERALE
     CommandHelp. 

@@ -1,7 +1,4 @@
 package it.davincifascetti.controllosocketudp.command;
-
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
-
 /** 
  * INTERFACE
     Abstract CommandI. 

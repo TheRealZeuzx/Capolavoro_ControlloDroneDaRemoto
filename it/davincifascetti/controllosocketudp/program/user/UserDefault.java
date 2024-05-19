@@ -1,5 +1,4 @@
 package it.davincifascetti.controllosocketudp.program.user;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;

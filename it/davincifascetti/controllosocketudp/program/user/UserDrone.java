@@ -1,9 +1,7 @@
 package it.davincifascetti.controllosocketudp.program.user;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
-import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
@@ -21,7 +19,6 @@ public final class UserDrone extends User{
     }
 
     protected void registraComandiClient(){
-        
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp =  User.getManager(UserDrone.class).getCommandList(Client.class);
         //normali

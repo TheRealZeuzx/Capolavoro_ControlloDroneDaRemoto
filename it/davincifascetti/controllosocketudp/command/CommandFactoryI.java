@@ -22,7 +22,6 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
     private Map<String,String> arrayAssociativo = null;
     private String comandoDefault = null;
     private T gestore = null; 
-    private CommandListManager manager = null;
     /**
         Costruttore di default di CommandFactoryServer.
         @param gestore è l'oggetto che farà da receiver per i comandi 
@@ -32,7 +31,6 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         if(manager == null) throw new CommandException("Errore, hai inserito un manager null");
         this.gestore = gestore;
-        this.manager = manager;
         Class<? extends Commandable> gestoreClass = gestore.getClass();
         //i comandi sono registrati dalla classe gestore
         this.comandoDefault = manager.getCommandList(gestoreClass).getCommandDefault();

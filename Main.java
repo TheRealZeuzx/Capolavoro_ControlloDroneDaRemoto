@@ -1,7 +1,6 @@
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.program.user.User;
 import it.davincifascetti.controllosocketudp.program.user.UserDefault;
-import it.davincifascetti.controllosocketudp.program.user.UserDrone;
 
 public class Main {
 //!MAIN
@@ -11,7 +10,6 @@ public class Main {
         * new s s1 1212
         * select c c1
         */
-        User u;
         User u2;
         try {
             // u = new UserDrone("errorLog.txt");
