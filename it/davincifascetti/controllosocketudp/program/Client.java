@@ -7,13 +7,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 
-import javax.swing.JFrame;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandInviaMsgClient;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -22,13 +18,12 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  * @throws CommandableException errori stampati sul terminale
  * @throws ErrorLogException errori stampati sul file
  */
-public class Client extends KeyAdapter implements Commandable,Runnable{
+public class Client implements Commandable,Runnable{
 
 	private static final int LunghezzaBuffer = 1024;
 	private static final int WAIT_TIME = 2000;
     private String nome;
-    private JFrame frame;
-    private Character tastoPrecedente;
+
 	private Terminal<Client> riferimentoTerminale;
     private InetAddress ipDestinazioneDefault = null;
     private int porta = -1;
@@ -122,38 +117,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
     }
 
 
-    /**KeyEvent che viene chiamato all keyevent del jFrame
-     * 
-     */
-    public void keyTyped(KeyEvent e) {
-        char c = e.getKeyChar();
-        if(c == 'e'){frame.removeKeyListener(this);frame.dispose();}
-        try {
-            if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
-                tastoPrecedente = Character.valueOf(c);
-                new CommandInviaMsgClient(this,"print " + String.valueOf(c)).execute();
-            }
-        } catch (CommandException e1) {
-            
-        } catch (ErrorLogException e1) {
-            
-        }
-    }
-    /**attiva la modalità telecomando (apre un JFrame per gli input e invia i msg al server)
-     * 
-     * @throws CommandException
-     * @throws ErrorLogException
-     */
-    public void modTelecomando() throws CommandException, ErrorLogException{
-        this.frame = new JFrame("Premi per inviare");
-        this.frame.setSize(500, 500);
-        this.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        this.frame.addKeyListener(this); 
-        this.frame.setVisible(true);
-        this.frame.setAlwaysOnTop(true); 
-        this.frame.requestFocus();
-        System.out.println("premi la tab per iniziare ad inviare ('e' per uscire)");
-    }
+    
 
     /**attiva il thread (del client attuale) quindi attiva la ricezione del msg da parte del server
      * vedere il metodo run di questa classe
@@ -166,7 +130,6 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
 
     @Override
     public String toString() {
-        
         return "Name: " + this.getNome() + (this.porta == -1 || this.ipDestinazioneDefault == null?"\tip: - \tporta: - ":("\tip: " + this.ipDestinazioneDefault.getHostAddress() + "\tporta: " + this.porta));
     }
 
@@ -254,7 +217,7 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
 
     @Override
     public boolean equals(Object o){
-        if(o instanceof Client){
+        if(Remote.class.isInstance(o)){
             return ((Client)o).getNome().equals(this.getNome());
         }
         return false;
@@ -264,6 +227,9 @@ public class Client extends KeyAdapter implements Commandable,Runnable{
         return this.riferimentoTerminale;
     }
 
+    public void modTelecomando() throws CommandException, ErrorLogException{
+        this.riferimentoTerminale.modTelecomando(this);
+    }
 
 }
 

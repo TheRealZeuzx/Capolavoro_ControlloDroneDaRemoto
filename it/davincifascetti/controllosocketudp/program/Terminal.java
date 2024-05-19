@@ -30,8 +30,7 @@ public class Terminal<T extends Commandable>{
     private boolean bloccato = false;
     private T gestoreAttuale = null;
     private CommandListManager manager = null;
-
-
+    private GestoreRemote telecomandi = null;
 
     /**
      * 
@@ -185,5 +184,10 @@ public class Terminal<T extends Commandable>{
     public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
     public CommandListManager getManager() {
         return manager;
+    }
+
+    public void modTelecomando(Client calling){
+
+        this.telecomandi.modTelecomando(calling);
     }
 }

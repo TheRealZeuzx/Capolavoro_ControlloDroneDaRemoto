@@ -22,8 +22,6 @@ public class CommandTelecomando extends CommandI<Client>{
 
     @Override
     public void execute() throws CommandException, ErrorLogException{
-        
-        this.getGestore().modTelecomando();
-        
+        this.getGestore().getTerminal().modTelecomando(this.getGestore());
     }
 }

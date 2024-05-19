@@ -22,12 +22,15 @@ public class GestoreClientServer implements Commandable{
     private Terminal<GestoreClientServer> terminal;
     private Terminal<Server> terminalS;
     private Terminal<Client> terminalC;
+    
+
+
     /**devo passargli il Errorlog che sarà unico tra tutte le classi che devono utilizzarlo
      * 
      * @param errorLog oggetto error log
      * @throws CommandException
      */
-    public GestoreClientServer(ErrorLog errorLog,CommandListManager manager) throws CommandException{
+    public GestoreClientServer(ErrorLog errorLog, CommandListManager manager) throws CommandException{
         if(errorLog == null || manager == null) throw new CommandException("Errore, qualcosa è andato storto!");
         this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);

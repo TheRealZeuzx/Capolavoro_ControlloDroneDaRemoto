@@ -71,6 +71,7 @@ public class CommandFactoryI<T extends Commandable> implements CommandFactory{
                 }
             }
         }
+    
         //se ho impostato il comando di default lo istanzio altrimenti uso CommandDefault
         try {
             if(temp == null && this.comandoDefault != null){
