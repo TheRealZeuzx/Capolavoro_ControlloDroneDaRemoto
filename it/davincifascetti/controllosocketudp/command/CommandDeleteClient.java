@@ -36,6 +36,7 @@ public class CommandDeleteClient extends CommandI<GestoreClientServer> implement
         try {
             this.client = this.getGestore().ricercaClient(nome);
             this.getGestore().removeClient(this.client);
+            
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
