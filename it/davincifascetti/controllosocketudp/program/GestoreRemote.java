@@ -26,7 +26,7 @@ public class GestoreRemote {
             temp.attiva();
     }
 
-    private Remote findRemote(Client c){
+    private Remote findRemote(Client c) throws CommandException,ErrorLogException{
         int pos = this.listaRemote.indexOf(new Remote(c));
         if(pos == -1)
             return null;

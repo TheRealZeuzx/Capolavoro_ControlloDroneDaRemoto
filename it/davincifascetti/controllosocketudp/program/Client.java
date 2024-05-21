@@ -103,7 +103,7 @@ public class Client implements Commandable,Runnable{
      * @throws CommandableException se la socket remota non è impostata o il msg è null
      */
     public void inviaMsg(String msg) throws CommandableException{
-        if(this.porta == -1 || this.ipDestinazioneDefault == null)throw new CommandableException("Errore, devi prima impostare il socket remoto");
+        if(!this.socketIsSet())throw new CommandableException("Errore, devi prima impostare il socket remoto");
         if(msg == null)throw new CommandableException("Errore, il messaggio inserito è null");
         this.bufferOUT = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
@@ -217,7 +217,8 @@ public class Client implements Commandable,Runnable{
 
     @Override
     public boolean equals(Object o){
-        if(Remote.class.isInstance(o)){
+        if(o == null) return false;
+        if(Client.class.isInstance(o)){
             return ((Client)o).getNome().equals(this.getNome());
         }
         return false;
@@ -229,6 +230,12 @@ public class Client implements Commandable,Runnable{
 
     public void modTelecomando() throws CommandException, ErrorLogException{
         this.riferimentoTerminale.modTelecomando(this);
+    }
+
+    public boolean socketIsSet(){
+        if(this.porta == -1 || this.ipDestinazioneDefault == null)
+            return false;
+        return true;
     }
 
 }

@@ -13,7 +13,6 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
     @version 1.0
 */
 public class CommandDeleteClient extends CommandI<GestoreClientServer> implements UndoableCommand{
-    private String nome;
     private Client client;
     /**
         Costruttore di default di CommandDeleteClient.
@@ -24,7 +23,6 @@ public class CommandDeleteClient extends CommandI<GestoreClientServer> implement
     */
     public CommandDeleteClient(GestoreClientServer gestore,String params) throws CommandException {
         super(gestore, params);
-        this.nome = params;
     }
 
     /**
@@ -34,7 +32,7 @@ public class CommandDeleteClient extends CommandI<GestoreClientServer> implement
      */
     public void execute() throws CommandException {
         try {
-            this.client = this.getGestore().ricercaClient(nome);
+            this.client = this.getGestore().ricercaClient(this.getParams());
             this.getGestore().removeClient(this.client);
             
         } catch (CommandableException e) {

@@ -50,6 +50,13 @@ public class Terminal<T extends Commandable>{
      * @throws CommandException
      */
     public void main(T gestore) throws CommandException {
+        // new s s1 1111
+            // g_new s s1 1111
+        // se s s1 
+            // g_se s s1
+        // (server)> set port 1112
+            // s_set port 1112
+         
         if(gestore == null) throw new CommandException("Errore, il gestore è null!");
         this.gestoreAttuale = gestore;
         this.attivo = true;

@@ -111,7 +111,7 @@ public class Server implements Runnable,Commandable{
      * @throws ErrorLogException 
      */
     public void iniziaAscolto()throws CommandableException, ErrorLogException{
-        if(this.socket == null) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
+        if(this.socketIsSet()) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
         if(this.socket.isClosed())
             try {
                 this.socket = new DatagramSocket(this.porta);
@@ -210,7 +210,8 @@ public class Server implements Runnable,Commandable{
 
     @Override
     public boolean equals(Object o){
-        if(o instanceof Server){
+        if(o == null) return false;
+        if(Server.class.isInstance(o)){
             return ((Server)o).getNome().equals(this.getNome());
         }
         return false;
@@ -219,4 +220,10 @@ public class Server implements Runnable,Commandable{
     public Terminal<Server> getTerminal() {
         return this.riferimentoTerminale;
     }
+
+    public boolean socketIsSet(){
+        if(this.socket == null) return false;
+        return true;
+    }
+
 }

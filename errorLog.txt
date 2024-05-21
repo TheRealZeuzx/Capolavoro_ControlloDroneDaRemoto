@@ -1,14 +1,16 @@
-[2024/05/17 23:11:14]	Errore, la porta o l'ip non sono stati specificati
-[2024/05/17 23:12:40]	Errore, la porta o l'ip non sono stati specificati
-[2024/05/17 23:17:16]	Errore, la porta o l'ip non sono stati specificati
-[2024/05/19 15:55:06]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:08]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:10]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:12]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:14]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:16]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:18]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:20]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:22]	Il server non ha dato nessuna risposta
-[2024/05/19 15:55:24]	Il server non ha dato nessuna risposta
-[2024/05/21 09:50:23]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:05]	Errore, prima devi impostare una socket!
+[2024/05/21 17:23:22]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:24]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:26]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:28]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:30]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:32]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:15]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:17]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:19]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:21]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:23]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:25]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:27]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:29]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:31]	Il server non ha dato nessuna risposta
