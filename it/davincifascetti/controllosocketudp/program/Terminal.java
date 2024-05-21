@@ -187,7 +187,12 @@ public class Terminal<T extends Commandable>{
     }
 
     public void modTelecomando(Client calling){
-
-        this.telecomandi.modTelecomando(calling);
+        if(this.telecomandi == null)
+            this.telecomandi = new GestoreRemote();
+        try {
+            this.telecomandi.modTelecomando(calling);
+        } catch (CommandException | ErrorLogException e) {
+            this.errorLog(e.getMessage(), true);
+        }
     }
 }

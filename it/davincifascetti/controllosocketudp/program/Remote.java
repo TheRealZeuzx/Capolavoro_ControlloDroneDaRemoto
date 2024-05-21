@@ -7,17 +7,17 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Vector;
 
 public class Remote extends KeyAdapter {
     private Client client;
     private JFrame frame;
-    private Character tastoPrecedente;
     // public Remote(Object client){
     //     if(client.getClass().isAssignableFrom(Client.class))
     //         throw new IllegalArgumentException("Il parametro deve essere di tipo client.");
     //     this.client = (Client) client; 
     // }
+
+    // TODO se chiudi la finestra
     
     public Remote(Client client){
         this.client = client;
@@ -30,18 +30,15 @@ public class Remote extends KeyAdapter {
         char c = e.getKeyChar();
         if(c == 'e'){
             frame.removeKeyListener(this);frame.dispose();
-            client = null;
-        }
-        try {
-            if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
-                tastoPrecedente = Character.valueOf(c);
+            this.client = null;
+        }else{
+            try {
                 new CommandInviaMsgClient(this.client,"print " + String.valueOf(c)).execute();
+            } catch (CommandException | ErrorLogException e1) {
+                // TODO ADD ErrorLog (errorlog statico?)
+                e1.printStackTrace();
             }
-        } catch (CommandException e1) {
-            
-        } catch (ErrorLogException e1) {
-            
-        }
+        }            
     }
 
         /**attiva la modalità telecomando (apre un JFrame per gli input e invia i msg al server)
@@ -61,14 +58,23 @@ public class Remote extends KeyAdapter {
     }
 
     public boolean isActive(){
-        return this.frame.isActive();
+        if(this.frame != null && this.frame.isActive())
+            return true;
+        return false;
     }
 
     public boolean equals(Object o){
-        if(Remote.class.isInstance(o))
-            if(((Remote)o).getClient().equals(this.getClient()))
-                return true;
+        try{
+            if(o != null && this.getClient()!=null){
+                if(Remote.class.isInstance(o))
+                    if(((Remote)o).getClient().equals(this.getClient()))
+                        return true;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return false;
+        
     }   
 
 	public Client getClient() {

@@ -6,8 +6,10 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class GestoreRemote {
-    // TODO capire dove inserire il gestore remote
+    //// TO DO capire dove inserire il gestore remote 
+    // Fixed. Messo riferimento in remote al suo gestore (musso, odiami, era la scelta più facile per il testing....)
     // TODO capire come gestire il caso in cui il client venga eliminato (e il remote sia ancora aperto)
+    // ancora to do? dipende se poi vuoi modificare la struttura e trovare un modo di collegare remote e gestoreRemote in qualche altro modo, altrimenti è fixato. vedi tu
     private Vector<Remote> listaRemote = null;
     
     public GestoreRemote() {
@@ -22,8 +24,6 @@ public class GestoreRemote {
         }
         if(!temp.isActive())
             temp.attiva();
-            
-        
     }
 
     private Remote findRemote(Client c){
