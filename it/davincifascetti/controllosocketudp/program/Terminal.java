@@ -44,6 +44,10 @@ public class Terminal<T extends Commandable>{
         this.storiaComandi = new CommandHistory();
     }
 
+    public void cambiaComandi(CommandListManager x){
+        
+    }
+
     /**peremtte di avviare il terminale, se bloccato è true gli input sono bloccati, se attivo allora attivo = true altrimenti false , serve a capire se il terminale è attivo dall'esterno (è attivo se chiamo il metodo main)
      * 
      * @param gestore deve implementare Commandable
