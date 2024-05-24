@@ -1,19 +1,17 @@
 package it.davincifascetti.controllosocketudp.program;
 
+import java.util.Stack;
 import java.util.Vector;
-
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class GestoreRemote {
-    //// TO DO capire dove inserire il gestore remote 
-    // Fixed. Messo riferimento in remote al suo gestore (musso, odiami, era la scelta più facile per il testing....)
+    // TODO capire dove inserire il gestore remote
     // TODO capire come gestire il caso in cui il client venga eliminato (e il remote sia ancora aperto)
-    // ancora to do? dipende se poi vuoi modificare la struttura e trovare un modo di collegare remote e gestoreRemote in qualche altro modo, altrimenti è fixato. vedi tu
-    private Vector<Remote> listaRemote = null;
+    private Stack<Remote> listaRemote = null;
     
     public GestoreRemote() {
-        listaRemote = new Vector<Remote>();
+        listaRemote = new Stack<Remote>();
     }
 
     public void modTelecomando(Client c) throws CommandException,ErrorLogException{
@@ -21,12 +19,14 @@ public class GestoreRemote {
         if(temp==null){
             temp = new Remote(c);
             this.listaRemote.add(temp);
+            if(!temp.isActive())
+                temp.attiva(this);
         }
-        if(!temp.isActive())
-            temp.attiva();
+            
+        
     }
 
-    private Remote findRemote(Client c) throws CommandException,ErrorLogException{
+    private Remote findRemote(Client c){
         int pos = this.listaRemote.indexOf(new Remote(c));
         if(pos == -1)
             return null;

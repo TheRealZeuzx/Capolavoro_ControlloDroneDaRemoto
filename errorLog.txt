@@ -14,3 +14,16 @@
 [2024/05/21 18:02:27]	Il server non ha dato nessuna risposta
 [2024/05/21 18:02:29]	Il server non ha dato nessuna risposta
 [2024/05/21 18:02:31]	Il server non ha dato nessuna risposta
+[2024/05/24 16:19:28]	Address already in use: Cannot bind
+[2024/05/24 16:20:05]	Address already in use: Cannot bind
+[2024/05/24 16:20:39]	socket closed
+[2024/05/24 16:20:47]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:49]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:51]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:53]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:55]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:57]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:59]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:01]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:03]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:05]	Il server non ha dato nessuna risposta

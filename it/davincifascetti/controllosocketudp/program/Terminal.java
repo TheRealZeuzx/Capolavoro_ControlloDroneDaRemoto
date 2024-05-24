@@ -1,4 +1,6 @@
 package it.davincifascetti.controllosocketudp.program;
+import java.io.IOException;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
 
 import it.davincifascetti.controllosocketudp.command.Command;
@@ -50,6 +52,7 @@ public class Terminal<T extends Commandable>{
      * @throws CommandException
      */
     public void main(T gestore) throws CommandException {
+        if(this.isBloccato()) return;
         // new s s1 1111
             // g_new s s1 1111
         // se s s1 
@@ -83,8 +86,8 @@ public class Terminal<T extends Commandable>{
                 if(gestore instanceof GestoreClientServer) System.out.print(">");
                 if(gestore instanceof Server) System.out.print("(server) >");
                 if(gestore instanceof Client){ System.out.print("(client) >");}
-                menu = input.nextLine();
                 
+                menu = input.nextLine();
                 String[] params;
                 if(menu.isBlank())
                     params = null;
