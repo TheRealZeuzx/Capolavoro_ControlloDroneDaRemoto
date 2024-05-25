@@ -8,17 +8,21 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Remote extends KeyAdapter {
+public class Remote extends KeyAdapter{
     private Client client;
     private JFrame frame;
     private Character tastoPrecedente;
+    private GestoreRemote gestoreRemote;
     // public Remote(Object client){
     //     if(client.getClass().isAssignableFrom(Client.class))
     //         throw new IllegalArgumentException("Il parametro deve essere di tipo client.");
     //     this.client = (Client) client; 
     // }
     
-    public Remote(Client client){
+    public Remote(Client client,GestoreRemote gest) throws CommandException{
+        if(client == null) throw new CommandException("Errore, il client è null!");
+        if(gest == null) throw new CommandException("Errore, il gestore remote è null!");
+        this.gestoreRemote = gest;
         this.client = client;
         this.frame = new JFrame("Premi per inviare");
         this.frame.setEnabled(false);
@@ -30,9 +34,7 @@ public class Remote extends KeyAdapter {
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
         if(c == 'e'){
-            this.client.getTerminal().setBloccato(false);
-            client = null;
-            frame.removeKeyListener(this);frame.dispose();
+            this.destroy();
         }
         try {
             if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
@@ -51,8 +53,8 @@ public class Remote extends KeyAdapter {
      * @throws CommandException
      * @throws ErrorLogException
      */
-    public void attiva(GestoreRemote gestoreRemote) throws CommandException, ErrorLogException{
-        this.client.getTerminal().setBloccato(true);
+    public void attiva() throws CommandException, ErrorLogException{
+        Terminal.setBloccato(true);
         this.frame.setEnabled(true);
         this.frame.requestFocus(); 
         this.frame.setSize(500, 500);
@@ -67,8 +69,15 @@ public class Remote extends KeyAdapter {
         return this.frame.isActive();
     }
 
+    public void destroy(){
+        this.frame.removeKeyListener(this);
+        this.frame.dispose();
+        this.gestoreRemote.remove(this);
+        Terminal.setBloccato(false);
+        this.client = null;
+    }
+
     public boolean equals(Object o){
-       
         if(o != null && this.getClient()!=null){
             if(Remote.class.isInstance(o))
                 if(((Remote)o).getClient() != null)

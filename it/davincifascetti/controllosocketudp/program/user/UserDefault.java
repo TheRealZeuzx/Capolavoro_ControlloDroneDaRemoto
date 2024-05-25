@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.program.user;
 
+
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
 import it.davincifascetti.controllosocketudp.program.Client;
@@ -34,11 +35,14 @@ public final class UserDefault extends User{
     //TODO Divisione dei comandi in pacchetti dedicati ?
     //TODO possibilmente fare le registrazioni prendendo i file da xml, decidere se farlo o no
     //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
-    //! FRA......... Dobbiamo gestire gli spazi dopo il parametro. Ho appena ricevuto una nullpointerexception dal delete :sob:
-    // ! TO RECREATE: "new c c1 " "del c c1 "
-    // ! ALTRO ERRORE: comando non esistente in client = exception
-    // ! TO RECREATE: ">new c c1 localhost 1111 " ">se c c1" ">rem"
-    //TODO terminale come classe generale e quindi usare static? si può fare con Class<> ecc come per le altre, da decidere
+    
+    //quella sotto non è un problema degli spazi, è problema del metodo removeClient di gestoreClientServer e del comando DeleteClient/DeleteServer, 
+    //semplicemente la ricerca restituiva null e nel metodo removeClient il caso null non era considerato... , fixato adesso il caso null è gestito e 
+    //quando faccio la ricerca, nel comando se restiuisce null faccio una throw.      
+    // // FRA......... Dobbiamo gestire gli spazi dopo il parametro. Ho appena ricevuto una nullpointerexception dal delete :sob:
+    // // ! TO RECREATE: "new c c1 " "del c c1 "
+    // // ! ALTRO ERRORE: comando non esistente in client = exception
+    // // ! TO RECREATE: ">new c c1 localhost 1111 " ">se c c1" ">rem"
     protected void registraComandiClient(){
         
         String path = "it.davincifascetti.controllosocketudp.command.";

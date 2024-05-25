@@ -87,12 +87,12 @@ public class Client implements Commandable,Runnable{
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
             System.out.println("Server response: " + msgRicevuto);
-            this.riferimentoTerminale.setBloccato(false);
+            Terminal.setBloccato(false);
         }catch(SocketTimeoutException e){
-            this.riferimentoTerminale.setBloccato(false);
+            Terminal.setBloccato(false);
             this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
         } catch (Exception e) {
-            this.riferimentoTerminale.setBloccato(false);
+            Terminal.setBloccato(false);
             this.riferimentoTerminale.errorLog(e.getMessage(), false);
         }
     }
@@ -109,7 +109,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
-            this.riferimentoTerminale.setBloccato(true);
+            Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
             this.riferimentoTerminale.errorLog(e.getMessage(), true);

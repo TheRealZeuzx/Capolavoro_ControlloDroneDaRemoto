@@ -15,14 +15,16 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
   *  @version 1.0
  */
-public class GestoreClientServer implements Commandable{
 
+public class GestoreClientServer implements Commandable{
+    public static final String CLIENT_RIMOSSO = "client_rimosso";
+    public static final String SERVER_RIMOSSO = "server_rimosso";
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;
     private Terminal<GestoreClientServer> terminal;
     private Terminal<Server> terminalS;
     private Terminal<Client> terminalC;
-    
+    private EventManagerCommandable eventManager= new EventManagerCommandable(CLIENT_RIMOSSO,SERVER_RIMOSSO);
 
 
     /**devo passargli il Errorlog che sarà unico tra tutte le classi che devono utilizzarlo
@@ -37,7 +39,10 @@ public class GestoreClientServer implements Commandable{
         this.terminal = new Terminal<GestoreClientServer>(errorLog,manager);
         this.terminalC = new Terminal<Client>(errorLog,manager);
         this.terminalS = new Terminal<Server>(errorLog,manager);
-        
+
+        //TODO chiunque vorrà avere delle reference di client o server dovrà registrarsi per poter rimuovere la reference alla rimozione che quindi sarà centralizzata da gestoreCS
+        //adesso il gestoreRemote verrà notificato ogni volta che un client verra rimosso (gli viene anche passata la reference)
+        this.eventManager.subscribe(GestoreClientServer.CLIENT_RIMOSSO, Terminal.getGestoreRemote());
     }
 
     /**
@@ -201,7 +206,13 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      */
     public void removeClient(Client c)throws CommandableException {
+        if(c == null) throw new CommandableException("il client è null!");
         if(!this.listaClient.remove(c)) throw new CommandableException("il client '" + c.getNome() + "' non esiste");
+        try {
+            this.eventManager.notify(CLIENT_RIMOSSO, c);
+        } catch (CommandException e) {
+            throw new CommandableException(e.getMessage());
+        }
     }
     /**permette di rimuovere un server dalla lista server
      * 
@@ -209,7 +220,13 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      */
     public void removeServer(Server s)throws CommandableException {
+        if(s == null) throw new CommandableException("il server è null!");
         if(!this.listaServer.remove(s)) throw new CommandableException("il server '" + s.getNome() + "' non esiste");
+        try {
+            this.eventManager.notify(SERVER_RIMOSSO, s);
+        } catch (CommandException e) {
+            throw new CommandableException(e.getMessage());
+        }
     }
 
     /**permette di avviare il terminale di GestoreClientServer

@@ -33,6 +33,7 @@ public class CommandDeleteClient extends CommandI<GestoreClientServer> implement
     public void execute() throws CommandException {
         try {
             this.client = this.getGestore().ricercaClient(this.getParams());
+            if(client == null) throw new CommandException("Il server '" + this.getParams() +"' non è stato trovato!");
             this.getGestore().removeClient(this.client);
             
         } catch (CommandableException e) {

@@ -1,6 +1,4 @@
 package it.davincifascetti.controllosocketudp.program;
-import java.io.IOException;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
 
 import it.davincifascetti.controllosocketudp.command.Command;
@@ -14,6 +12,8 @@ import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+
+//!nello schema fatto su figma, questa classe rappresenta Terminal e non Cli!
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
  * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
  * instanzia una commandFactory corrispondente al gestore utilizzando CommandFactoryInstantiar 
@@ -29,11 +29,11 @@ public class Terminal<T extends Commandable>{
     private ErrorLog errorLog;
     public static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
-    private boolean bloccato = false;
+    private static boolean bloccato = false;
     private T gestoreAttuale = null;
     private CommandListManager manager = null;
-    private GestoreRemote telecomandi = null;
-
+    private static final GestoreRemote telecomandi = new GestoreRemote();
+    
     /**
      * 
      * @param errorLog oggetto error log che si occupera del log su file degli errori
@@ -52,14 +52,7 @@ public class Terminal<T extends Commandable>{
      * @throws CommandException
      */
     public void main(T gestore) throws CommandException {
-        if(this.isBloccato()) return;
-        // new s s1 1111
-            // g_new s s1 1111
-        // se s s1 
-            // g_se s s1
-        // (server)> set port 1112
-            // s_set port 1112
-         
+        if(Terminal.isBloccato()) return;
         if(gestore == null) throw new CommandException("Errore, il gestore è null!");
         this.gestoreAttuale = gestore;
         this.attivo = true;
@@ -81,7 +74,7 @@ public class Terminal<T extends Commandable>{
         do{
             menu = "";
             
-            if(!this.isBloccato()){
+            if(!Terminal.isBloccato()){
                 
                 if(gestore instanceof GestoreClientServer) System.out.print(">");
                 if(gestore instanceof Server) System.out.print("(server) >");
@@ -190,19 +183,18 @@ public class Terminal<T extends Commandable>{
         if(this.gestoreAttuale.equals(gestore))return this.attivo;
         return false;
     }
-    public boolean isBloccato(){return this.bloccato;}
-    public void setBloccato(boolean bloccato){this.bloccato = bloccato;}
+    public synchronized static boolean isBloccato(){return Terminal.bloccato;}
+    public synchronized static void setBloccato(boolean bloccato){Terminal.bloccato = bloccato;}
     public CommandListManager getManager() {
         return manager;
     }
 
-    public void modTelecomando(Client calling){
-        if(this.telecomandi == null)
-            this.telecomandi = new GestoreRemote();
-        try {
-            this.telecomandi.modTelecomando(calling);
-        } catch (CommandException | ErrorLogException e) {
-            this.errorLog(e.getMessage(), true);
-        }
+    public void modTelecomando(Client calling) throws CommandException, ErrorLogException{
+        if(calling == null) throw new CommandException("Errore, il client calling è null!");
+        telecomandi.modTelecomando(calling);
+    }
+
+    public static GestoreRemote getGestoreRemote(){
+        return telecomandi;
     }
 }
