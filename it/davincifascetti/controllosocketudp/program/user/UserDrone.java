@@ -20,42 +20,46 @@ public final class UserDrone extends User{
 
     protected void registraComandiClient(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp =  User.getManager(UserDrone.class).getCommandList(Client.class);
+        CommandList temp = User.getManager(UserDefault.class).getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
-            "Comandi Terminale Client\n\n"+
+            "Comandi Terminale Drone\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
             "quit\t\tpermette di tornare al Terminale Generale \n" + 
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
             "info\t\tpermette di visualizzare le informazioni di questo client\n" +
-            "set\t\tpermette di modificare la socket oppure il nome del client\n\t\t(set name nuovoNome) permette di cambiare il nome del client\n\t\t(set socket nuovoIpRemoto nuovaPortaRemota) permette di cambiare a quale server collegarsi\n"+
+            "from\t\tserve a prendere l'input da spedire da un file(from nomeFile)\n"+
+            "remote\t\tattiva la modalità telecomando ('e' per uscire)\n"+
             "$\t\tpermette di inviare un comando al server, invia '$help' per sapere tutta la lista di comandi disponibili\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+        temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
         temp.registraComando( "\\$",path + "CommandInviaMsgClient");//qualsiasi cosa scritta dopo '$' verrà inviata al server
-        temp.registraComando( "(f(?:r(?:o(?:m)?)?)?[ ]*)",path + "CommandFromFile");
+        temp.registraComando( "(f(?:r(?:o(?:m)?)?)?[ ]+)",path + "CommandFromFile");
         temp.registraComando( "^(r(?:e(?:m(?:o(?:t(?:e)?)?)?)?)?[ ]*)$",path + "CommandTelecomando");
-        //!non funzionanti
-        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*)$",path + "CommandInfoClient");
-        temp.registraComando( "s(?:e(?:t?)?)?[ ]+p(?:o(?:r(?:t)?)?)?[ ]+",path + "CommandSetSocketClient");
-        temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
+        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
     }
    
     protected void registraComandiServer(){
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp =  User.getManager(UserDrone.class).getCommandList(Server.class);
         temp.setStringaHelp(
-            "Comandi Terminale Server\n\n"+
+            "Comandi Terminale InfoDrone\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
             "quit\t\tpermette di tornare al Terminale Generale \n" + 
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
             "info\t\tpermette di visualizzare le informazioni di questo server\n" +
             "enable\t\tpermette di avviare questo server\n" +
-            "disable\t\tpermette di disattivare questo server\n" +
-            "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"+
+            "disable\t\tpermette di disattivare questo server\n"+
             "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
+        temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
+        temp.registraComando( "^d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisattivaServer");
+        temp.registraComando( "^e(?:n(?:a(?:b(?:l(?:e)?)?)?)?)?[ ]*$",path + "CommandAttivaServer");
+        temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
+        temp.registraComando( "f(?:i(?:l(?:e)?)?)?[ ]+",path + "CommandEnableToFile");
+        temp.registraComando( "^f(?:i(?:l(?:e)?)?)?[ ]+d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisableToFile");
     }
     
     
@@ -67,13 +71,14 @@ public final class UserDrone extends User{
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
             "quit\t\tpermette di terminare l'esecuzione \n" + 
-            "show\t\tpermette di visualizzare la lista di tutti i client e server creati\n\t\t(show all) per visualizzare lista di client e server,\n\t\t(show client) per visualizzare solo la lista di client,\n\t\t(show server) per visualizzare solo la lista di server\n"+
-            "info\t\tpermette di visualizzare le informazioni di uno specifico client o server (info (client | server) nome)\n" +
-            "connect\t\tpermette di connettersi al drone\n\t\t(new client nomeClient ip porta) l'ip e la porta si riferiscono al socket remoto destinatario\n\t\t(new server nomeServer porta) la porta si riferisce alla porta su cui creare la nuova Socket locale\n\t\tse si specifica solo il nome(sia in client che server) sarà necessario attivarlo in seguito\n" + 
-            "select\t\tpermette di selezionare un server o client in base al nome\n\t\t(select client nomeClient) permette di selezionare un client\n\t\t(select server nomeServer) permette di selezionare un server\n"+
-            "delete\t\tpermette di eliminare un server o client in base al nome\n\t\t(delete client nomeClient) permette di eliminare un client\n\t\t(delete server nomeServer) permette di eliminare un server\n" +
+            "info\t\tpermette di visualizzare le informazioni del drone\n" + //stato: connesso    video: attivo    stats: attivo
+            "connect\t\tpermette di connettersi al drone\n" + 
+            "disconnect\t\tpermette di disconnetersi al drone\n" + 
+            "select\t\tpermette di passare alla vista per comandare il drone oppure alla vista per visualizzare le informazioni del drone\n" + 
+            "video\t\tpermette di attivare la visualizzazione fpv del drone, usare (enable | disable)" + 
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita (new e delete)\n"
         );
+        //TODO scegliere se far in modo da creare una finestra separata per la visualizzazione delle stats del drone
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
         temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
         temp.registraComando( "connect",path + "CommandConnect"); 
