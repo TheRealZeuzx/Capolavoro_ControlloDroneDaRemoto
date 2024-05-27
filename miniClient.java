@@ -19,7 +19,7 @@ public class miniClient implements Runnable{
     private Thread listening;
     private static boolean vero = false;
     private JFrame frame = null;
-    
+
 
     public miniClient(String telloIP, int telloPort, String identifier) throws UnknownHostException, SocketException{
         this.telloIP = InetAddress.getByName(telloIP);
@@ -42,20 +42,20 @@ public class miniClient implements Runnable{
             miniClient telloDrone = new miniClient("192.168.10.1", 8889, "Drone Tello");
             miniClient streamVideo = new miniClient("0.0.0.0",11111, "StreamVideo");
             // Abilita comandi
-            byte[] bufferOUT = new byte[1024];
+            byte[] bufferOUT = new byte[6220800];
             String msg = "command";
             bufferOUT = msg.getBytes();
             DatagramPacket remark2 = new DatagramPacket(bufferOUT,bufferOUT.length,telloDrone.telloIP,telloDrone.telloPort);
             telloDrone.socket.send(remark2);
             // Abilita video
-            /*  
+            /*
 
             */
             msg = "streamon";
             bufferOUT = msg.getBytes();
             DatagramPacket remark5 = new DatagramPacket(bufferOUT,bufferOUT.length,telloDrone.telloIP,telloDrone.telloPort);
             telloDrone.socket.send(remark5);
-            
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -63,14 +63,14 @@ public class miniClient implements Runnable{
 
     public void run(){
         while(true){
-        byte[] bufferIN = new byte[1024];
+        byte[] bufferIN = new byte[6220800];
         DatagramPacket ricevuto = new DatagramPacket(bufferIN,bufferIN.length);
         String msgRicevuto = null;
         try {
             socket.receive(ricevuto);
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
-            System.out.println(this.identifier + " - Server response: " + msgRicevuto);
+            // System.out.println(this.identifier + " - Server response: " + msgRicevuto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,16 +81,20 @@ public class miniClient implements Runnable{
 
         if(this.identifier.equalsIgnoreCase("StreamVideo")){
             try {
+                System.out.println(this.identifier + " - Server response: " + ricevuto.getData());
                 ByteArrayInputStream inStreambj = new ByteArrayInputStream(ricevuto.getData());
                 BufferedImage image = ImageIO.read(inStreambj);
-                
+                // BufferedImage image = ImageIO.read(new File("image.png"));
+                if(image != null){
+                    JLabel imageLabel = new JLabel(new ImageIcon(image));
+                    frame.add(imageLabel);
+                    frame.pack();
+                    frame.setVisible(true);
+                }else {System.out.println("image = null =/");}
 
-                JLabel imageLabel = new JLabel(new ImageIcon(image));
-                frame.add(imageLabel);
-                frame.pack();
-                frame.setVisible(true);
 
-                
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
