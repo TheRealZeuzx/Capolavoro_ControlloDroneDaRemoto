@@ -1,15 +1,15 @@
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class miniClient implements Runnable{
     private String identifier;
@@ -18,6 +18,7 @@ public class miniClient implements Runnable{
     private DatagramSocket socket;
     private Thread listening;
     private static boolean vero = false;
+    private JFrame frame = null;
     
 
     public miniClient(String telloIP, int telloPort, String identifier) throws UnknownHostException, SocketException{
@@ -27,6 +28,13 @@ public class miniClient implements Runnable{
         this.socket = new DatagramSocket(telloPort);
         this.listening = new Thread(this);
         this.listening.start();
+        if(this.frame == null && identifier.equalsIgnoreCase("StreamVideo")){
+            this.frame =  new JFrame("Image Viewer");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(400, 300);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }
     }
 
     public static void main(String[] args) {
@@ -46,7 +54,7 @@ public class miniClient implements Runnable{
             msg = "streamon";
             bufferOUT = msg.getBytes();
             DatagramPacket remark5 = new DatagramPacket(bufferOUT,bufferOUT.length,telloDrone.telloIP,telloDrone.telloPort);
-            telloDrone.socket.send(remark2);
+            telloDrone.socket.send(remark5);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -54,6 +62,7 @@ public class miniClient implements Runnable{
     }
 
     public void run(){
+        while(true){
         byte[] bufferIN = new byte[1024];
         DatagramPacket ricevuto = new DatagramPacket(bufferIN,bufferIN.length);
         String msgRicevuto = null;
@@ -65,17 +74,27 @@ public class miniClient implements Runnable{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // for(int i = 0;i<ricevuto.getData().length;i++){
+        //     System.out.print(ricevuto.getData()[i]);
+        //     System.out.println("");
+        // }
 
-
-        if(this.identifier == "StreamVideo" && !vero){
+        if(this.identifier.equalsIgnoreCase("StreamVideo")){
             try {
-                ByteArrayInputStream inStreambj = new ByteArrayInputStream(bufferIN);
-                BufferedImage newImage = ImageIO.read(inStreambj);
-                ImageIO.write(newImage, "jpg", new File("outputImage.jpg"));
+                ByteArrayInputStream inStreambj = new ByteArrayInputStream(ricevuto.getData());
+                BufferedImage image = ImageIO.read(inStreambj);
+                
+
+                JLabel imageLabel = new JLabel(new ImageIcon(image));
+                frame.add(imageLabel);
+                frame.pack();
+                frame.setVisible(true);
+
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }}
     }
     public Thread getListening() {
         return listening;
