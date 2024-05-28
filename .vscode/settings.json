@@ -1,5 +1,9 @@
 {
     "java.project.sourcePaths": [
         "."
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "libs/jcodec-javase-0.2.5-javadoc.jar"
     ]
 }
