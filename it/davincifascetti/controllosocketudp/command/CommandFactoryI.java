@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
-
 /**
  * FACTORY
     CommandFactoryClient.
@@ -22,32 +21,54 @@ public class CommandFactoryI implements CommandFactory{
     private Map<String,String> arrayAssociativo = null;
     private String comandoDefault = null;
     private Commandable gestore = null; 
+    private CommandListManager manager = null;
     /**
         Costruttore di default di CommandFactoryServer.
-        @param gestore è l'oggetto che farà da receiver per i comandi 
+        
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryI(Commandable gestore,CommandListManager manager) throws CommandException{
-        if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
-        if(manager == null) throw new CommandException("Errore, hai inserito un manager null");
+    public CommandFactoryI() throws CommandException{
+        super();     
+    }
+    /**
+        Costruttore di default di CommandFactoryServer.
+        
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+    */
+    public CommandFactoryI(Commandable gestore, CommandListManager manager) throws CommandException{
+        this.setManager(manager);
+        this.setGestore(gestore);
+    }
+
+    /**utilizza il gestore impostato precedentemente
+     * 
+     */
+    public Command getCommand(String params) throws CommandException{
+        return this.getCommand(this.gestore, params);
+    }
+
+    /**
+        getCommand. utilizza il gestore passato. (cambia il gestore attuale della factory)
+        Metodo che, in base ai parametri, ritorna il comando corrispondente.Utilizza una hashmap per salvare i comandi che andranno registrati dall esterno della classe
+        @param params stringa contenente i parametri da cui instanziare i comandi corretti
+        @param gestore è l'oggetto che farà da receiver per i comandi 
+        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
+     * @throws ErrorLogException 
+    */
+    public Command getCommand(Commandable gestore,String params) throws CommandException{
+        if(manager == null) throw new CommandException("Errore, prima devi impostare un manager!");
+        this.setGestore(gestore);
+        if(params == null) new CommandDefault("Parametri sono null!");
         this.gestore = gestore;
+
         Class<? extends Commandable> gestoreClass = gestore.getClass();
         //i comandi sono registrati dalla classe gestore
         this.comandoDefault = manager.getCommandList(gestoreClass).getCommandDefault();
         //usando Map.copyOf viene restituita una Map non modificabile
-        this.arrayAssociativo = Map.copyOf(manager.getCommandList(gestoreClass).getComandi());
+        this.arrayAssociativo = manager.getCommandList(gestoreClass).getComandi();
         if(this.arrayAssociativo == null) throw new CommandException("Errore, il gestore non ha comandi registrati");
-    }
 
-    /**
-        getCommand.
-        Metodo che, in base ai parametri, ritorna il comando corrispondente.Utilizza una hashmap per salvare i comandi che andranno registrati dall esterno della classe
-        @param params stringa contenente i parametri da cui instanziare i comandi corretti
-        @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
-     * @throws ErrorLogException 
-    */
-    public Command getCommand(String params) throws CommandException{
-        if(params == null) new CommandDefault("Parametri sono null!");
+
         Vector<Object> arguments = new Vector<>();
         arguments.add(this.gestore);
         Command temp = null;
@@ -119,5 +140,14 @@ public class CommandFactoryI implements CommandFactory{
             throw new CommandException("Errore, la regex non è valida!");
         }
     } 
+
+    public void setManager(CommandListManager manager) throws CommandException{
+        if(manager == null) throw new CommandException("Errore, hai inserito un manager null");
+        this.manager = manager;
+    }
+    public void setGestore(Commandable gestore) throws CommandException{
+        if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
+        this.gestore = gestore;
+    }
 
 }

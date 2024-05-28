@@ -31,7 +31,8 @@ public class ServerThread extends Thread implements Commandable{
     private String nomeServerOriginale;
     private FileLogger fileLogger = null;
     private Server riferimentoServer = null;
-    private CommandFactoryI<ServerThread> factory = null; 
+
+    //! al momento non ha un proprio eventManager, utilizza quello di server perchè non credo necessiti di eventi propri
     /**instanzia una classe che si occupa della risposta
      * 
      * @param packet pacchetto ricevuto
@@ -51,11 +52,7 @@ public class ServerThread extends Thread implements Commandable{
         this.nomeServerOriginale = nomeServerOriginale;
         this.fileLogger = fileLogger;
         this.riferimentoServer = riferimentoServer;
-        try {
-            this.factory = new CommandFactoryI<ServerThread>(this,this.getTerminal().getManager());
-        } catch (CommandException e) {
-            this.stampaVideo(e.getMessage());
-        }
+
     }
     
     /**si occupa di instanziare la factory che si occupa di creare i comandi in base al tipo di risposta da inviare
@@ -63,9 +60,12 @@ public class ServerThread extends Thread implements Commandable{
      */
     @Override
     public void run() {
+        this.getEventManager().notify(msgRicevuto);
+
+        //! il codice sotto lo eseguirà la CLI o chi per lui
         if(factory != null){
             try{
-                this.executeCommand(factory.getCommand(this.msgRicevuto));
+                this.executeCommand(factory.getCommand());
             }catch(CommandException e){
                 this.stampaVideo(e.getMessage());
             }catch(ErrorLogException e){
@@ -175,13 +175,8 @@ public class ServerThread extends Thread implements Commandable{
     }
 
     @Override
-    public void startTerminal() throws CommandException {
-        throw new CommandException("Questo gestore non ha un terminale!");
-    }
-
-    @Override
-    public Terminal<Server> getTerminal() {
-        return this.riferimentoTerminal;
+    public EventManagerCommandable getEventManager() {
+        return this.riferimentoServer.getEventManager();
     }
 
 

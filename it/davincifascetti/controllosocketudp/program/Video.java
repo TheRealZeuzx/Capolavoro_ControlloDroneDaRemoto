@@ -9,17 +9,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 
 public class Video implements Component,EventListenerRicezioneBuffer{
 
-    private CommandListManager manager;
     private JFrame frame = null;
+    private Ui riferimentoUi;
 
-
-    public Video(CommandListManager manager){
-        this.manager = manager;
-
+    public Video(Ui ui) throws CommandException{
+        this.setUi(ui);
         this.frame =  new JFrame("Image Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
@@ -47,6 +46,16 @@ public class Video implements Component,EventListenerRicezioneBuffer{
     
     @Override
     public CommandListManager getManager() {
-        return this.manager;
+        return null;
+    }
+    @Override
+    public void setManager(CommandListManager manager) throws CommandException{
+        return ;
+    }
+
+    @Override
+    public void setUi(Ui ui) throws CommandException {
+        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
+        this.riferimentoUi = ui;
     }
 }

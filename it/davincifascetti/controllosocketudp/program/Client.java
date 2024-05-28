@@ -42,10 +42,7 @@ public class Client implements Commandable,Runnable{
      * @throws CommandableException
      */
     //!probabilmente la parte di telecomando (modTelecomando e Keytyped vanno messi in un comando o qualcosa, il client si occuperà solo di invio e ricezione mentre il comando deciderà come farli agire)
-    public Client(String nomeClient,Terminal<Client> t) throws CommandableException{
-
-        if(t == null)throw new CommandableException("il terminale inserito non è valido");
-        this.riferimentoTerminale = t;
+    public Client(String nomeClient) throws CommandableException{
         this.setNome(nomeClient);
         try {
             this.socket = new DatagramSocket();
@@ -62,8 +59,8 @@ public class Client implements Commandable,Runnable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public Client(String nomeClient,String ipDestinazioneDefault,String porta,Terminal<Client> t) throws CommandableException, ErrorLogException{
-        this(nomeClient, t);
+    public Client(String nomeClient,String ipDestinazioneDefault,String porta) throws CommandableException, ErrorLogException{
+        this(nomeClient);
         if(porta == null || porta.isBlank() || ipDestinazioneDefault == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
         try{
             this.setIpDestinazioneDefault(ipDestinazioneDefault);
@@ -156,14 +153,6 @@ public class Client implements Commandable,Runnable{
         return "Name: " + this.getNome() + (this.porta == -1 || this.ipDestinazioneDefault == null?"\tip: - \tporta: - ":("\tip: " + this.ipDestinazioneDefault.getHostAddress() + "\tporta: " + this.porta));
     }
 
-    /**permette di far partire il temrinale usando l'istanza di oggetto attuale
-     * 
-     */
-    @Override
-    public void startTerminal() throws CommandException {
-        this.riferimentoTerminale.main(this);
-    }
-
     public String getNome(){return this.nome;}
     public int getPorta(){return this.porta;}
     /**
@@ -246,19 +235,16 @@ public class Client implements Commandable,Runnable{
         }
         return false;
     }
-    @Override
-    public Terminal<Client> getTerminal() {
-        return this.riferimentoTerminale;
-    }
 
-    public void modTelecomando() throws CommandException, ErrorLogException{
-        this.riferimentoTerminale.modTelecomando(this);
-    }
 
     public boolean socketIsSet(){
         if(this.porta == -1 || this.ipDestinazioneDefault == null)
             return false;
         return true;
+    }
+    @Override
+    public EventManagerCommandable getEventManager() {
+        return this.eventManager;
     }
 
 }

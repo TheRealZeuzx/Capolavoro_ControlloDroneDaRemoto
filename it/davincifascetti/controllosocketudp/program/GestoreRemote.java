@@ -2,14 +2,17 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.Vector;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class GestoreRemote implements EventListenerCommandable,Component{
 
     private Vector<Remote> listaRemote = null;
-    public GestoreRemote() {
+    private Ui riferimentoUi;
+    public GestoreRemote(Ui ui) throws CommandException {
         listaRemote = new Vector<Remote>();
+        this.setUi(ui);
     }
 
     public void modTelecomando(Client c) throws CommandException,ErrorLogException{
@@ -31,7 +34,7 @@ public class GestoreRemote implements EventListenerCommandable,Component{
     }
 
     @Override
-    public void update(String eventType, Commandable commandable) throws CommandException {
+    public void update(String eventType, Commandable commandable){
         Remote temp = null;
         if(!Client.class.isInstance(commandable)) return;
         temp = this.findRemote(((Client)commandable));
@@ -45,8 +48,19 @@ public class GestoreRemote implements EventListenerCommandable,Component{
     }
 
     @Override
-    public void update(byte[] buffer, int lung) {
+    public CommandListManager getManager() {
+        return null;
+    }
 
+    @Override
+    public void setManager(CommandListManager manager) throws CommandException {
+        return;
+    }
+
+    @Override
+    public void setUi(Ui ui) throws CommandException {
+        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
+        this.riferimentoUi = ui;
     }
 
 

@@ -34,7 +34,7 @@ public class EventManagerCommandable {
         users.remove(listener);
     }
 
-    public void notify(String eventType, Commandable commandable) throws CommandException {
+    public void notify(String eventType, Commandable commandable){
         ArrayList<EventListenerCommandable> users = listenerCommandable.get(eventType);
         for (EventListenerCommandable listener : users) {
             listener.update(eventType, commandable);
@@ -54,7 +54,7 @@ public class EventManagerCommandable {
         listenerRicezioneBuffer.remove(listener);
     }
 
-    public void notify(byte[] buffer, int length) throws CommandException {
+    public void notify(byte[] buffer, int length) {
         for (EventListenerRicezioneBuffer listener : this.listenerRicezioneBuffer) {
             listener.update(buffer,length);
         }
@@ -69,7 +69,7 @@ public class EventManagerCommandable {
         listenerRicezioneString.remove(listener);
     }
 
-    public void notify(String msg) throws CommandException {
+    public void notify(String msg){
         for (EventListenerRicezioneString listener : this.listenerRicezioneString) {
             listener.update(msg);
         }

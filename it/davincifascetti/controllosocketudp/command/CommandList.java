@@ -81,10 +81,14 @@ public class CommandList {
         throw new UnsupportedOperationException("Unimplemented method 'eliminaComando'");
     }
 
+    /**
+     * 
+     * @return resituisce la copia della Map contenente i Comandi
+     */
     public Map<String,String> getComandi(){
         if(this.arrayAssociativo.isEmpty())
             return null;
-        return this.arrayAssociativo;
+        return Map.copyOf(this.arrayAssociativo);
     }
     public String getCommandDefault(){return this.comandoDefault;}
     public String getStringaHelp(){if(this.help == null || this.help.isBlank()) return "Non è stata definita una stringa di help"; else return this.help;}

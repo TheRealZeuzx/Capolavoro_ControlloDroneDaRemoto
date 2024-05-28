@@ -13,5 +13,5 @@ public interface Commandable {
         Metodo astratto dedicato a far partire il terminale con l'istanza dell oggetto chiamante.
         @throws CommandException se il terminale non riesce a partire.
     */
-    public EventManagerCommandable getEventManager();
+    public abstract EventManagerCommandable getEventManager();
 }

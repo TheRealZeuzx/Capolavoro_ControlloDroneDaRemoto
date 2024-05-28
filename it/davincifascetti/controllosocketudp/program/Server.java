@@ -88,11 +88,11 @@ public class Server implements Runnable,Commandable{
                 this.socket.receive(pacchetto);
                 if(this.isAttivo()){
                     this.threadRisposta = null;
-                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale,this.getNome(),this.fileLogger,this);
+                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.getNome(),this.fileLogger,this);
                     this.threadRisposta.start(); 
                 }
             } catch (Exception e) {
-                this.getEventManager().notify(e.getMessage());
+                this.getEventManager().notify(e.getMessage());//! moddato
             }
         } 
         if(!this.socket.isClosed())this.socket.close();
@@ -204,10 +204,7 @@ public class Server implements Runnable,Commandable{
         return temp;
     }
 
-    @Override
-    public void startTerminal() throws CommandException {
-        this.riferimentoTerminale.main(this);
-    }
+
 
     public boolean isAttivo(){return this.statoAttivo;}
 
@@ -267,10 +264,6 @@ public class Server implements Runnable,Commandable{
             return ((Server)o).getNome().equals(this.getNome());
         }
         return false;
-    }
-    @Override
-    public Terminal<Server> getTerminal() {
-        return this.riferimentoTerminale;
     }
 
     public boolean socketIsSet(){
