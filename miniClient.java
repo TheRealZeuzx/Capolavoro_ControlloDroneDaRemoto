@@ -13,6 +13,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import org.jcodec.api.awt.*;
+
+
 
 public class miniClient implements Runnable{
     private String identifier;
