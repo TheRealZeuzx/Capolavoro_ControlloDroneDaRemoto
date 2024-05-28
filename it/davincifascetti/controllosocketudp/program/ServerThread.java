@@ -24,7 +24,6 @@ public class ServerThread extends Thread implements Commandable{
     private DatagramPacket packet;
     private DatagramSocket socketRisposta;
     private ArrayList<String> StoriaMsg;
-    private Terminal<Server> riferimentoTerminal;
     private byte[] bufferOUT = new byte[Server.LunghezzaBuffer];
     private DatagramPacket packetDaSpedire;
     private CommandHistory storiaComandi;
@@ -43,11 +42,11 @@ public class ServerThread extends Thread implements Commandable{
      * @param fileLogger riferimento al file logger che si trova nel Server, serve per stampare su file
      * @param riferimentoServer riferimento all server che ha creato ServerThread
      */
-    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg, Terminal<Server> riferimentoTerminal,String nomeServerOriginale, FileLogger fileLogger,Server riferimentoServer){
+    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg,String nomeServerOriginale, FileLogger fileLogger,Server riferimentoServer){
         this.packet = packet;
         this.socketRisposta = socketRisposta;
         this.StoriaMsg = StoriaMsg;
-        this.riferimentoTerminal = riferimentoTerminal;
+
         this.msgRicevuto = this.getMsgRicevuto();
         this.nomeServerOriginale = nomeServerOriginale;
         this.fileLogger = fileLogger;

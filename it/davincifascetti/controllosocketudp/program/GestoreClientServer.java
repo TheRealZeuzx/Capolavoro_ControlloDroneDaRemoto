@@ -17,50 +17,24 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 
 public class GestoreClientServer implements Commandable{
-    public static final String CLIENT_RIMOSSO = "client_rimosso";
-    public static final String SERVER_RIMOSSO = "server_rimosso";
     private ArrayList<Server> listaServer;
     private ArrayList<Client> listaClient;
-    private Terminal<GestoreClientServer> terminal;
-    private Terminal<Server> terminalS;
-    private Terminal<Client> terminalC;
+    //eventi
+    public static final String CLIENT_RIMOSSO = "client_rimosso";
+    public static final String SERVER_RIMOSSO = "server_rimosso";
     private EventManagerCommandable eventManager= new EventManagerCommandable(CLIENT_RIMOSSO,SERVER_RIMOSSO);
-
+    
 
     /**devo passargli il Errorlog che sarà unico tra tutte le classi che devono utilizzarlo
      * 
      * @param errorLog oggetto error log
      * @throws CommandException
      */
-    public GestoreClientServer(ErrorLog errorLog, CommandListManager manager) throws CommandException{
-        if(errorLog == null || manager == null) throw new CommandException("Errore, qualcosa è andato storto!");
+    public GestoreClientServer() throws CommandException{
         this.listaServer = new ArrayList<Server>(10);
         this.listaClient = new ArrayList<Client>(10);
-        this.terminal = new Terminal<GestoreClientServer>(errorLog,manager);
-        this.terminalC = new Terminal<Client>(errorLog,manager);
-        this.terminalS = new Terminal<Server>(errorLog,manager);
-
-        //TODO chiunque vorrà avere delle reference di client o server dovrà registrarsi per poter rimuovere la reference alla rimozione che quindi sarà centralizzata da gestoreCS
-        //adesso il gestoreRemote verrà notificato ogni volta che un client verra rimosso (gli viene anche passata la reference)
-        this.eventManager.subscribe(GestoreClientServer.CLIENT_RIMOSSO, Terminal.getGestoreRemote());
     }
 
-    /**
-     * 
-     * @return oggetto terminale di tipo Client, il terminale dedicato ai client
-     */
-    public Terminal<Client> getTerminalClient(){
-        return this.terminalC;
-    }
-    /**
-     * 
-     * @return oggetto terminale di tipo Server, il terminale dedicato ai server
-     */
-    public Terminal<Server> getTerminalServer(){
-        return this.terminalS;
-    }
-
-    public Terminal<GestoreClientServer> getTerminal(){return this.terminal;}
 
     /**ricerca nella lista di server
      * 
@@ -95,8 +69,7 @@ public class GestoreClientServer implements Commandable{
      * @param nome nome del client
      * @throws CommandableException
      */
-    public void newClient(Terminal<Client> terminale, String nome) throws CommandableException{
-        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+    public void newClient(String nome) throws CommandableException{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,terminale);
         this.listaClient.add(c);
@@ -143,6 +116,23 @@ public class GestoreClientServer implements Commandable{
         if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,porta,terminale);
+        this.listaServer.add(s);
+        s.iniziaAscolto();
+        
+    }
+    /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server
+     * 
+     * @param terminale terminale da di server da passare al costruttore di server
+     * @param nome nome del server
+     * @param porta porta locale del server
+     * @param ip porta locale del server
+     * @throws CommandableException
+     * @throws ErrorLogException
+     */
+    public void newServer(Terminal<Server> terminale, String nome,String ip,String porta) throws CommandableException, ErrorLogException{
+        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+        if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
+        Server s = new Server(nome,ip,porta,terminale);
         this.listaServer.add(s);
         s.iniziaAscolto();
         
@@ -229,13 +219,7 @@ public class GestoreClientServer implements Commandable{
         }
     }
 
-    /**permette di avviare il terminale di GestoreClientServer
-     * 
-     */
-    public void startTerminal() throws CommandException{
-        this.terminal.main(this);
-    }
 
-
+    public EventManagerCommandable getEventManager(){return this.eventManager;}
 
 }

@@ -16,18 +16,18 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
     @author Tommaso Mussaldi
     @version 1.0
 */ 
-
-public class CommandFactoryI<T extends Commandable> implements CommandFactory{
+//! in teoria ora funziona con tutte le classi che estendono Commandable (continua a distinguere i comandi per classi)
+public class CommandFactoryI implements CommandFactory{
 
     private Map<String,String> arrayAssociativo = null;
     private String comandoDefault = null;
-    private T gestore = null; 
+    private Commandable gestore = null; 
     /**
         Costruttore di default di CommandFactoryServer.
         @param gestore è l'oggetto che farà da receiver per i comandi 
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryI(T gestore,CommandListManager manager) throws CommandException{
+    public CommandFactoryI(Commandable gestore,CommandListManager manager) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         if(manager == null) throw new CommandException("Errore, hai inserito un manager null");
         this.gestore = gestore;

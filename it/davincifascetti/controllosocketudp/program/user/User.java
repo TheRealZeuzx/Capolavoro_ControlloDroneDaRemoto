@@ -6,9 +6,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
-import it.davincifascetti.controllosocketudp.command.CommandableException;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
-import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
@@ -18,45 +15,28 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
  * @version 1.0
  */
 public abstract class User {
-    private ErrorLog errorLog = null;
-    private GestoreClientServer gestore = null;
+
+    //!problema: così i listmanager sono specifici per la CLi ma non dovrebbero esserlo, dobrebbe essercene una per ogni componente della UI 
+    //TODO capire come affrontare il problema e risolvero, per ora userò la classe User per Cli
     private static final Map<Class<? extends User>, CommandListManager> listeManagers = Collections.synchronizedMap(new HashMap<Class<? extends User>, CommandListManager>());
     private static final Map<Class<? extends User>, AtomicBoolean> listeInizialized = Collections.synchronizedMap(new HashMap<Class<? extends User>, AtomicBoolean>());
-    private static final AtomicBoolean started = new AtomicBoolean();
     /**
      * @param pathErrorLogFile path del file errori
      * @param clazz Class che estende User (deve essere la classe di tipo figlio)
      * @throws CommandException
      */
-    protected User(String pathErrorLogFile,Class<? extends User> clazz) throws CommandException{
+    protected User(Class<? extends User> clazz) throws CommandException{
         if (!getClass().getSuperclass().equals(User.class)) {
             throw new RuntimeException("Non puoi estendere la classe più di una volta!");
         }
         this.init(clazz);
-        try {
-            this.errorLog = new ErrorLog(pathErrorLogFile);
-            this.gestore = new GestoreClientServer(errorLog,User.getManager(clazz));
-        } catch (CommandableException e) {
-            throw new CommandException(e.getMessage());
-        }
     }
-    /**avvia il terminale di gestoreclientserver di conseguenza il programma in se
-     * 
-     * @throws CommandException
-     */
-    public final void start() throws CommandException{
-        if(User.started.compareAndSet(false, true)){
-            this.logicaStart();
-            User.started.compareAndSet(true, false);
-        }else return;
-    }
-    protected abstract void logicaStart() throws CommandException;
+
     protected abstract void registraComandiClient();
     protected abstract void registraComandiServer();
     protected abstract void registraComandiGestoreCS();
     protected abstract void registraComandiServerThread();
-    public ErrorLog getErrorLog(){return errorLog;}
-    
+
     private void init(Class<? extends User> clazz){
         if(User.getListaInit(clazz).compareAndSet(false, true)){
             System.out.println("Debug: | Registrazione comandi GestoreClientServer |");
@@ -76,13 +56,13 @@ public abstract class User {
      * !se inserisco una classe errata, i comandi di tutti gli user potrebbero essere sballati
      * @return CommandListManager corrispondente alla classe
      */
-    protected static CommandListManager getManager(Class<? extends User> clazz){
-        if(User.listeManagers.containsKey(clazz))
-            return User.listeManagers.get(clazz);
+    public CommandListManager getManager(){
+        if(User.listeManagers.containsKey(this.getClass()))
+            return User.listeManagers.get(this.getClass());
         else{
-            System.out.println("Debug: > Creazione Lista Comandi " + clazz);
+            System.out.println("Debug: > Creazione Lista Comandi " + this.getClass());
             CommandListManager n = new CommandListManager();
-            User.listeManagers.put(clazz,n);
+            User.listeManagers.put(this.getClass(),n); 
             return n;
         }
     }
@@ -96,5 +76,4 @@ public abstract class User {
             return n;
         }
     }
-    public GestoreClientServer getGestore(){return gestore;}
 }

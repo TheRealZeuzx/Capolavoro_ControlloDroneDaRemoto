@@ -20,16 +20,8 @@ public final class UserDefault extends User{
      * @param pathErrorLogFile path del file errori
      * @throws CommandException
      */
-    public UserDefault(String pathErrorLogFile) throws CommandException{
-        super(pathErrorLogFile, UserDefault.class);
-    }
-
-    /**avvia il terminale di gestoreclientserver di conseguenza il programma in se
-     * 
-     * @throws CommandException
-     */
-    public void logicaStart() throws CommandException{
-        this.getGestore().startTerminal();
+    public UserDefault() throws CommandException{
+        super(UserDefault.class);
     }
 
     //TODO Divisione dei comandi in pacchetti dedicati ?
@@ -46,7 +38,7 @@ public final class UserDefault extends User{
     protected void registraComandiClient(){
         
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDefault.class).getCommandList(Client.class);
+        CommandList temp = this.getManager().getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Client\n\n"+
@@ -72,7 +64,7 @@ public final class UserDefault extends User{
     protected void registraComandiServer(){
         
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDefault.class).getCommandList(Server.class);
+        CommandList temp = this.getManager().getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale Server\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -99,7 +91,7 @@ public final class UserDefault extends User{
     protected void registraComandiGestoreCS(){
 
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDefault.class).getCommandList(GestoreClientServer.class);
+        CommandList temp = this.getManager().getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -125,7 +117,7 @@ public final class UserDefault extends User{
     }
     protected void registraComandiServerThread(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDefault.class).getCommandList(ServerThread.class);
+        CommandList temp = this.getManager().getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 

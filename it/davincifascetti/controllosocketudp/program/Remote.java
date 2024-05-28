@@ -13,11 +13,7 @@ public class Remote extends KeyAdapter{
     private JFrame frame;
     private Character tastoPrecedente;
     private GestoreRemote gestoreRemote;
-    // public Remote(Object client){
-    //     if(client.getClass().isAssignableFrom(Client.class))
-    //         throw new IllegalArgumentException("Il parametro deve essere di tipo client.");
-    //     this.client = (Client) client; 
-    // }
+
     
     public Remote(Client client,GestoreRemote gest) throws CommandException{
         if(client == null) throw new CommandException("Errore, il client è null!");

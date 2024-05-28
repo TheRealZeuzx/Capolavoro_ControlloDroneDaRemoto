@@ -1,7 +1,9 @@
 package it.davincifascetti.controllosocketudp.program;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
@@ -21,12 +23,112 @@ public class Server implements Runnable,Commandable{
     private DatagramSocket socket;
     private String nome;
     private int porta;
+    private InetAddress ip;
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
     private ServerThread threadRisposta = null;
-    private Terminal<Server> riferimentoTerminale;
     private ArrayList<String> StoriaMsg;
     private FileLogger fileLogger = null;
+
+    //eventi
+    public static final String MESSAGGIO_RICEVUTO = "messaggio_ricevuto";
+    public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
+    private EventManagerCommandable eventManager = new EventManagerCommandable(MESSAGGIO_RICEVUTO,MESSAGGIO_INVIATO);
+
+    
+     /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
+     * 
+     * @param nomeClient nome del server
+     * @param t terminale che verra usato da questo server
+     * @throws CommandableException
+     */
+    public Server(String nomeServer) throws CommandableException{
+        this.setNome(nomeServer);
+        this.StoriaMsg = new ArrayList<String>();
+    }
+    /**se uso quest costruttore, posso attivare il server
+     * 
+     * @param nomeClient nome del server
+     * @param porta porta locale su cui aprire il socket
+     * @param t riferimento terminale che verra usato da questo server
+     * @throws CommandableException
+     * @throws ErrorLogException
+     */
+    public Server(String nomeServer, String porta) throws CommandableException,ErrorLogException{
+        this.setPorta(porta);
+        if(porta == null) throw new CommandableException("Errore, la porta è null!");
+        try {
+            this.socket = new DatagramSocket(this.porta);
+        } catch (SocketException e) {
+            throw new ErrorLogException(e.getMessage());
+        }
+    }
+    public Server(String nomeServer, String ip,String porta) throws CommandableException,ErrorLogException{
+        if(porta == null || ip == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
+        this.setPorta(porta);
+        this.setIp(ip);
+        try {
+            this.socket = new DatagramSocket(this.porta,this.ip);
+        } catch (SocketException e) {
+            throw new ErrorLogException(e.getMessage());
+        }
+    }
+
+
+    /**implementa la logica di ricezione e attiva il thread di risposta
+     * 
+     */
+    @Override
+    public void run(){
+        if(!this.isAttivo())return;
+        byte[] bufferIN = new byte[Server.LunghezzaBuffer];
+        while(this.isAttivo()){
+            DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
+            try {
+                this.socket.receive(pacchetto);
+                if(this.isAttivo()){
+                    this.threadRisposta = null;
+                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale,this.getNome(),this.fileLogger,this);
+                    this.threadRisposta.start(); 
+                }
+            } catch (Exception e) {
+                this.getEventManager().notify(e.getMessage());
+            }
+        } 
+        if(!this.socket.isClosed())this.socket.close();
+    }
+
+
+    /**permette di avviare il server (crea e avvia il thread)
+     * 
+     * @throws CommandableException
+     * @throws ErrorLogException 
+     */
+    public void iniziaAscolto()throws CommandableException, ErrorLogException{
+        if(!this.socketIsSet()) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
+        if(this.socket.isClosed())
+            try {
+                this.socket = new DatagramSocket(this.porta);
+            } catch (SocketException e) {
+                throw new ErrorLogException(e.getMessage());
+            }
+        this.statoAttivo = true;
+        if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
+        if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
+    }
+
+
+    /**permette di terminare l'ascolto del server (interrompe il thread creato in iniza ascolto)
+     * chiude la socket
+     */
+    public void terminaAscolto(){
+        this.statoAttivo = false;
+        if(this.socket != null){
+            if(!this.socket.isClosed())this.socket.close();
+        }
+        if(this.threadAscolto != null ) this.threadAscolto.interrupt();
+        this.threadAscolto = null;
+    }
 
     /**permette di impostare la stampa su file di default
      * 
@@ -52,88 +154,38 @@ public class Server implements Runnable,Commandable{
         return fileLogger;
     }
 
-    /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
+ 
+    /**imposta l'ip del socket remoto e controlla che sia corretto
      * 
-     * @param nomeClient nome del server
-     * @param t terminale che verra usato da questo server
+     * @param ip ip di destinazione può essere "localhost" oppure un ip normale
      * @throws CommandableException
      */
-    public Server(String nomeServer,Terminal<Server> t) throws CommandableException{
-        if(t == null)throw new CommandableException("il terminale inserito non è valido");
-        this.riferimentoTerminale = t;
-        this.setNome(nomeServer);
-        this.StoriaMsg = new ArrayList<String>();
-    }
-    /**se uso quest costruttore, posso attivare il server
-     * 
-     * @param nomeClient nome del server
-     * @param porta porta locale su cui aprire il socket
-     * @param t riferimento terminale che verra usato da questo server
-     * @throws CommandableException
-     * @throws ErrorLogException
-     */
-    public Server(String nomeServer, String porta,Terminal<Server> t) throws CommandableException,ErrorLogException{
-        this(nomeServer,t);
-        this.setPorta(porta);
-        try {
-            this.socket = new DatagramSocket(this.porta);
-        } catch (SocketException e) {
-            throw new ErrorLogException(e.getMessage());
-        }
-    }
-    
-    /**implementa la logica di ricezione e attiva il thread di risposta
-     * 
-     */
-    @Override
-    public void run(){
-        if(!this.isAttivo())return;
-        byte[] bufferIN = new byte[Server.LunghezzaBuffer];
-        while(this.isAttivo()){
-            DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
-            try {
-                this.socket.receive(pacchetto);
-                if(this.isAttivo()){
-                    this.threadRisposta = null;
-                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.riferimentoTerminale,this.getNome(),this.fileLogger,this);
-                    this.threadRisposta.start(); 
+    public void setIp(String ip) throws CommandableException{
+        if(ip == null){ this.ip = null;return;}
+        boolean temp = false;
+        if(!ip.equalsIgnoreCase("localhost")){ 
+            String[] valori = ip.split("[.]");
+            if(valori.length != 4) temp = true;
+            else{
+                for (String string : valori){
+                    if(!string.matches("^[0-9]{1,3}$"))temp = true;
+                    if(Integer.valueOf(string) > 255)temp = true;
                 }
-            } catch (Exception e) {
-                this.riferimentoTerminale.errorLog(e.getMessage(),false);
             }
-        } 
-        if(!this.socket.isClosed())this.socket.close();
-    }
-
-    /**permette di avviare il server (crea e avvia il thread)
-     * 
-     * @throws CommandableException
-     * @throws ErrorLogException 
-     */
-    public void iniziaAscolto()throws CommandableException, ErrorLogException{
-        if(!this.socketIsSet()) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
-        if(this.socket.isClosed())
-            try {
-                this.socket = new DatagramSocket(this.porta);
-            } catch (SocketException e) {
-                throw new ErrorLogException(e.getMessage());
-            }
-        this.statoAttivo = true;
-        if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
-        if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
-    }
-
-    /**permette di terminare l'ascolto del server (interrompe il thread creato in iniza ascolto)
-     * chiude la socket
-     */
-    public void terminaAscolto(){
-        this.statoAttivo = false;
-        if(this.socket != null){
-            if(!this.socket.isClosed())this.socket.close();
         }
-        if(this.threadAscolto != null ) this.threadAscolto.interrupt();
-        this.threadAscolto = null;
+        if(temp == true)throw new CommandableException("Errore, l'ip di destinazione inserito non è valido (deve avere formato '255.255.255.255'))");
+        try {
+            this.ip = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            throw new CommandableException(e.getMessage());
+        }
     }
+
+   
+
+    
+
+    
 
     @Override
     public String toString() {
@@ -226,4 +278,8 @@ public class Server implements Runnable,Commandable{
         return true;
     }
 
+
+    public EventManagerCommandable getEventManager(){return this.eventManager;}
+
 }
+

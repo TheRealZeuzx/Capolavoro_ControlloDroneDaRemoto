@@ -5,10 +5,8 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
-public class GestoreRemote implements EventListenerCommandable{
-    // TODO capire dove inserire il gestore remote
-    // TODO capire come gestire il caso in cui il client venga eliminato (e il remote sia ancora aperto)
-    // TODO per poter gestire il caso in cui il client venga eliminato possiamo implementare l'observer design pattern.
+public class GestoreRemote implements EventListenerCommandable,Component{
+
     private Vector<Remote> listaRemote = null;
     public GestoreRemote() {
         listaRemote = new Vector<Remote>();
@@ -44,6 +42,11 @@ public class GestoreRemote implements EventListenerCommandable{
     public void remove(Remote r){
         if(r == null) return;
         this.listaRemote.remove(r);
+    }
+
+    @Override
+    public void update(byte[] buffer, int lung) {
+
     }
 
 

@@ -24,11 +24,16 @@ public class Client implements Commandable,Runnable{
 	private static final int WAIT_TIME = 2000;
     private String nome;
 
-	private Terminal<Client> riferimentoTerminale;
     private InetAddress ipDestinazioneDefault = null;
     private int porta = -1;
     private DatagramSocket socket;
     private byte[] bufferOUT = new byte[Client.LunghezzaBuffer];
+
+    //eventi
+    public static final String MESSAGGIO_RICEVUTO = "messaggio_ricevuto";
+    public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
+    private EventManagerCommandable eventManager = new EventManagerCommandable(MESSAGGIO_RICEVUTO,MESSAGGIO_INVIATO);
+
 
     /**costruttore che prende due parametri, quindi se si usa questo non si possono invaire msg, va settato il socket remoto
      * 
@@ -106,6 +111,24 @@ public class Client implements Commandable,Runnable{
         if(!this.socketIsSet())throw new CommandableException("Errore, devi prima impostare il socket remoto");
         if(msg == null)throw new CommandableException("Errore, il messaggio inserito è null");
         this.bufferOUT = msg.getBytes();
+        DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
+        try {
+            this.socket.send(packet);
+            Terminal.setBloccato(true);
+            this.ricevi();
+        } catch (Exception e) {
+            this.riferimentoTerminale.errorLog(e.getMessage(), true);
+        }
+    }
+    /**invia il messaggio al socket remoto, se non è impostato allora solleva un eccezione
+     * 
+     * @param msg byte array
+     * @throws CommandableException se la socket remota non è impostata o il msg è null
+     */
+    public void inviaMsg(byte[] msg) throws CommandableException{
+        if(!this.socketIsSet())throw new CommandableException("Errore, devi prima impostare il socket remoto");
+        if(msg == null)throw new CommandableException("Errore, il messaggio inserito è null");
+        this.bufferOUT = msg;
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);

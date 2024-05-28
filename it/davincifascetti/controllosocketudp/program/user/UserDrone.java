@@ -14,13 +14,13 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
  */
 public final class UserDrone extends User{
 
-    public UserDrone(String pathErrorLogFile) throws CommandException{
-        super(pathErrorLogFile, UserDrone.class);
+    public UserDrone() throws CommandException{
+        super(UserDrone.class);
     }
 
     protected void registraComandiClient(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDefault.class).getCommandList(Client.class);
+        CommandList temp = this.getManager().getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Drone\n\n"+
@@ -42,7 +42,7 @@ public final class UserDrone extends User{
    
     protected void registraComandiServer(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp =  User.getManager(UserDrone.class).getCommandList(Server.class);
+        CommandList temp =  this.getManager().getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale InfoDrone\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -66,7 +66,7 @@ public final class UserDrone extends User{
     protected void registraComandiGestoreCS(){
         //!fatto
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp =  User.getManager(UserDrone.class).getCommandList(GestoreClientServer.class);
+        CommandList temp =  this.getManager().getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -96,7 +96,7 @@ public final class UserDrone extends User{
     }
     protected void registraComandiServerThread(){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = User.getManager(UserDrone.class).getCommandList(ServerThread.class);
+        CommandList temp = this.getManager().getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -112,9 +112,5 @@ public final class UserDrone extends User{
         
     }
 
-    @Override
-    protected void logicaStart() throws CommandException {
-        this.getGestore().startTerminal();
-    }
 
 }

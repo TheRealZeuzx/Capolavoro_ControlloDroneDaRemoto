@@ -12,6 +12,7 @@ import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.user.UserDefault;
 
 //!nello schema fatto su figma, questa classe rappresenta Terminal e non Cli!
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
@@ -22,28 +23,29 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public class Terminal<T extends Commandable>{
+public class Terminal extends Ui{
     
-    private CommandHistory storiaComandi; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
-    private CommandFactoryI<T> factory;
-    private ErrorLog errorLog;
+    private CommandFactoryI<? extends Commandable> factory;//!
     public static Scanner input = new Scanner(System.in);
     private boolean attivo = false;
     private static boolean bloccato = false;
-    private T gestoreAttuale = null;
-    private CommandListManager manager = null;
-    private static final GestoreRemote telecomandi = new GestoreRemote();
+    private Commandable gestoreAttuale = null; //!
+
+    //componenti
+    //?passargli l'errorLog e renderlo concorrente?
+    //TODO capire se farlo o no
+    private  GestoreRemote telecomandi = new GestoreRemote();
+    private  Cli cli = new Cli(new UserDefault().getManager());
+    private Video video = new Video(null);
     
     /**
      * 
      * @param errorLog oggetto error log che si occupera del log su file degli errori
      * @throws CommandException
      */
-    public Terminal(ErrorLog errorLog,CommandListManager manager) throws CommandException{
-        if(errorLog == null || manager == null) throw new CommandException("Errore, qualcosa è andato storto!");
-        this.errorLog = errorLog;
-        this.manager = manager;
-        this.storiaComandi = new CommandHistory();
+    public Terminal(ErrorLog errorLog,GestoreClientServer business) throws CommandException{
+        super(business, errorLog);
+        this.gestoreAttuale = business; 
     }
 
     /**peremtte di avviare il terminale, se bloccato è true gli input sono bloccati, se attivo allora attivo = true altrimenti false , serve a capire se il terminale è attivo dall'esterno (è attivo se chiamo il metodo main)
@@ -51,7 +53,7 @@ public class Terminal<T extends Commandable>{
      * @param gestore deve implementare Commandable
      * @throws CommandException
      */
-    public void main(T gestore) throws CommandException {
+    public void main() throws CommandException {
         if(Terminal.isBloccato()) return;
         if(gestore == null) throw new CommandException("Errore, il gestore è null!");
         this.gestoreAttuale = gestore;
@@ -136,65 +138,44 @@ public class Terminal<T extends Commandable>{
         this.attivo = false;
     }
 
+    
+    public boolean isAttivo(Commandable gestore){
+        return this.gestoreAttuale.equals(gestore);
+    }
+
+
     /**permette di loggare un errore dall esterno del terminale
      * 
      * @param msg messaggio da loggare
      * @param video true se si stampa anche a video altrimenti false  solo su file
      */
-    public void errorLog(String msg,boolean video){
+    protected void errorLog(String msg,boolean video){
         if(video)System.out.println(msg);
-        new ErrorLogCommand(this.errorLog,msg).execute();
+        new ErrorLogCommand(this.getErrorLog(),msg).execute();
     }
+    
 
-    /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
-     * @return true se l'esecuzione è andata a buon fine altrimenti false
-     * @throws ErrorLogException 
-     * @throws CommandException 
-     */
-    private boolean undo() throws CommandException, ErrorLogException {
-        if (storiaComandi.isEmpty()) return false;
-        UndoableCommand command = storiaComandi.pop();
-        if (command != null) {
-            return command.undo();
-        }
-        return false;
-    }
-
-    /**esegue il comando e restituisce true se l'esec è riuscita altrimenti false, se il comando implementa undoable command, viene inserito nella storia comandi
-     * 
-     * @param command comando da eseguire (deve implementare Command)
-     * @return true se l'esecuzione è andata a buon fine altrimenti false
-     * @throws CommandException
-     */
-    private void executeCommand(Command command) throws CommandException,ErrorLogException{
-        if(command == null) return;
-        command.execute();
-        if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
-        
-    }
-
-    /**restituisce true se il terminale è attivo e sta usando il gestore che ha richiesto isAttivo altrimenti false
-     * 
-     * @param gestore gestore di cui si vuole sapere se è attivo il terminale 
-     * @return restituisce true se il terminale è attivo e sta usando il gestore che ha richiesto isAttivo altrimenti false
-     */
-    public boolean isAttivo(T gestore){
-        if(this.gestoreAttuale == null || gestore == null) return false;
-        if(this.gestoreAttuale.equals(gestore))return this.attivo;
-        return false;
-    }
     public synchronized static boolean isBloccato(){return Terminal.bloccato;}
     public synchronized static void setBloccato(boolean bloccato){Terminal.bloccato = bloccato;}
-    public CommandListManager getManager() {
-        return manager;
-    }
+    
 
     public void modTelecomando(Client calling) throws CommandException, ErrorLogException{
         if(calling == null) throw new CommandException("Errore, il client calling è null!");
         telecomandi.modTelecomando(calling);
     }
 
-    public static GestoreRemote getGestoreRemote(){
-        return telecomandi;
+    public GestoreRemote getGestoreRemote(){
+        return this.telecomandi;
     }
+
+    public Cli getCli(){return this.cli;}
+    public Video getVideo(){return this.video;}
+    
+    @Override
+    protected void init() {
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getGestoreRemote());
+        this.getBusiness().getEventManager().subscribe(this.getCli());
+        this.getBusiness().getEventManager().subscribe(this.getVideo());
+    }
+
 }
