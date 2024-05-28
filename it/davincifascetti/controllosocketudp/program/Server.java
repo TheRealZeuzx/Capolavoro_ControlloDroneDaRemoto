@@ -27,13 +27,11 @@ public class Server implements Runnable,Commandable{
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
     private ServerThread threadRisposta = null;
-    private ArrayList<String> StoriaMsg;
-    private FileLogger fileLogger = null;
 
     //eventi
-    public static final String MESSAGGIO_RICEVUTO = "messaggio_ricevuto";
-    public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
-    private EventManagerCommandable eventManager = new EventManagerCommandable(MESSAGGIO_RICEVUTO,MESSAGGIO_INVIATO);
+    public static final String ASCOLTO_INIZIATO = "ascolto_iniziato";
+    public static final String ASCOLTO_TERMINATO = "ascolto_terminato";
+    private EventManagerCommandable eventManager = new EventManagerCommandable(ASCOLTO_INIZIATO,ASCOLTO_TERMINATO);
 
     
      /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
@@ -88,11 +86,11 @@ public class Server implements Runnable,Commandable{
                 this.socket.receive(pacchetto);
                 if(this.isAttivo()){
                     this.threadRisposta = null;
-                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this.StoriaMsg,this.getNome(),this.fileLogger,this);
+                    this.threadRisposta = new ServerThread(pacchetto, this.socket,this);
                     this.threadRisposta.start(); 
                 }
             } catch (Exception e) {
-                this.getEventManager().notify(e.getMessage());//! moddato
+                this.getEventManager().notify(e.getMessage().getBytes(),e.getMessage().getBytes().length,this);//! moddato
             }
         } 
         if(!this.socket.isClosed())this.socket.close();
@@ -113,6 +111,7 @@ public class Server implements Runnable,Commandable{
                 throw new ErrorLogException(e.getMessage());
             }
         this.statoAttivo = true;
+        this.getEventManager().notify(ASCOLTO_INIZIATO, this);//! notifico inizio ascolto
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
@@ -128,31 +127,10 @@ public class Server implements Runnable,Commandable{
         }
         if(this.threadAscolto != null ) this.threadAscolto.interrupt();
         this.threadAscolto = null;
+        this.getEventManager().notify(ASCOLTO_TERMINATO, this);//! notifico termine ascolto
     }
 
-    /**permette di impostare la stampa su file di default
-     * 
-     * @param append true se si vuole stampare in modalità append altrimenti false
-     * @param nomeFile nome del file su cui si vuole scrivere, se ha valore "this" , il file prende il nome del server
-     * @throws CommandableException se il nome del file è vuoto oppure null
-     */
-    public void SuFile(boolean append,String nomeFile) throws CommandableException {
-        
-        if(nomeFile != null && nomeFile.equals("this")) this.fileLogger = new FileLogger(this.getNome() + ".txt");
-        else this.fileLogger = new FileLogger(nomeFile);
-        this.fileLogger.setAppend(append);
-        
-    }
 
-    /**permette di disabilitare la stampa su file di default
-     * (non avviene se il fileLogger è null a meno che non si specifichi il comando $file, in quel caso il file prende il nome del server)
-     */
-    public void disableSuFile(){this.fileLogger = null;}
-
-
-    public FileLogger getFileLogger() {
-        return fileLogger;
-    }
 
  
     /**imposta l'ip del socket remoto e controlla che sia corretto
@@ -181,12 +159,6 @@ public class Server implements Runnable,Commandable{
         }
     }
 
-   
-
-    
-
-    
-
     @Override
     public String toString() {
         return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  + "\t" +  (this.fileLogger == null?"ToFile: - ":("ToFile: "+this.fileLogger.getFileName())) +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
@@ -203,8 +175,6 @@ public class Server implements Runnable,Commandable{
         }
         return temp;
     }
-
-
 
     public boolean isAttivo(){return this.statoAttivo;}
 
@@ -270,7 +240,6 @@ public class Server implements Runnable,Commandable{
         if(this.socket == null) return false;
         return true;
     }
-
 
     public EventManagerCommandable getEventManager(){return this.eventManager;}
 

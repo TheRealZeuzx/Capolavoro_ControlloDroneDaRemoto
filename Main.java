@@ -1,4 +1,5 @@
 import it.davincifascetti.controllosocketudp.program.App;
+import it.davincifascetti.controllosocketudp.program.user.UserDefault;
 
 
 public class Main {
@@ -21,7 +22,7 @@ public class Main {
             // System.out.println("\u001B[33m" + "User creato correttamente" + "\u001B[37m");
             // u2.start();
 
-            App app = new App("errorLog.txt");
+            App app = new App("errorLog.txt",new UserDefault());
             app.start();
         } catch (Exception e) {
             System.out.println(e.getMessage());

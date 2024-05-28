@@ -2,10 +2,8 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**Gestore di client e server , è separato dal terminale in quanto ha metodi specifici per la gestione di client e server
  * contiene al suo interno il proprio terminale che esegue i propri command e il terminale di client e server che sono unici per tutti i client e server
@@ -22,6 +20,8 @@ public class GestoreClientServer implements Commandable{
     //eventi
     public static final String CLIENT_RIMOSSO = "client_rimosso";
     public static final String SERVER_RIMOSSO = "server_rimosso";
+    public static final String CLIENT_AGGIUNTO = "client_aggiunto";
+    public static final String SERVER_AGGIUNTO = "server_aggiunto";
     private EventManagerCommandable eventManager= new EventManagerCommandable(CLIENT_RIMOSSO,SERVER_RIMOSSO);
     
 
@@ -71,8 +71,9 @@ public class GestoreClientServer implements Commandable{
      */
     public void newClient(String nome) throws CommandableException{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
-        Client c = new Client(nome,terminale);
+        Client c = new Client(nome);
         this.listaClient.add(c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_AGGIUNTO, c);
         
     }
     /**permette di instanziare un nuovo client e inserirlo nella lista di client, utilizza il secondo costruttore di client
@@ -84,12 +85,12 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public void newClient(Terminal<Client> terminale, String nome,String ip,String porta) throws CommandableException, ErrorLogException{
-        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+    public void newClient(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
-        Client c = new Client(nome,ip,porta,terminale);
+        Client c = new Client(nome,ip,porta);
         this.listaClient.add(c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_AGGIUNTO, c);
     }
 
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il primo costruttore di server
@@ -98,10 +99,11 @@ public class GestoreClientServer implements Commandable{
      * @param nome nome del server
      * @throws CommandableException
      */
-    public void newServer(Terminal<Server> terminale, String nome) throws CommandableException{
+    public void newServer(String nome) throws CommandableException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,terminale);
+        Server s = new Server(nome);
         this.listaServer.add(s);
+        this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
         
     }
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server
@@ -112,12 +114,12 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public void newServer(Terminal<Server> terminale, String nome,String porta) throws CommandableException, ErrorLogException{
-        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+    public void newServer(String nome,String porta) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,porta,terminale);
+        Server s = new Server(nome,porta);
         this.listaServer.add(s);
         s.iniziaAscolto();
+        this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
         
     }
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server
@@ -129,12 +131,12 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public void newServer(Terminal<Server> terminale, String nome,String ip,String porta) throws CommandableException, ErrorLogException{
-        if(terminale == null) throw new CommandableException("Errore, il terminale specificato è null");
+    public void newServer(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,ip,porta,terminale);
+        Server s = new Server(nome,ip,porta);
         this.listaServer.add(s);
         s.iniziaAscolto();
+        this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
         
     }
     
@@ -146,6 +148,7 @@ public class GestoreClientServer implements Commandable{
     public void addServer(Server s)throws CommandableException{
         if(s == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
         this.listaServer.add(s);
+        this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
     }
     /**permette di aggiungere un client alla lista di client (gia instanziato)
      * 
@@ -155,6 +158,7 @@ public class GestoreClientServer implements Commandable{
     public void addClient(Client c)throws CommandableException{
         if(c == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
         this.listaClient.add(c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_AGGIUNTO, c);
     }
     public boolean isEmpty(boolean client){
         if(client) return this.listaClient.isEmpty();
@@ -198,11 +202,7 @@ public class GestoreClientServer implements Commandable{
     public void removeClient(Client c)throws CommandableException {
         if(c == null) throw new CommandableException("il client è null!");
         if(!this.listaClient.remove(c)) throw new CommandableException("il client '" + c.getNome() + "' non esiste");
-        try {
-            this.eventManager.notify(CLIENT_RIMOSSO, c);
-        } catch (CommandException e) {
-            throw new CommandableException(e.getMessage());
-        }
+        this.eventManager.notify(CLIENT_RIMOSSO, c);
     }
     /**permette di rimuovere un server dalla lista server
      * 
@@ -212,13 +212,9 @@ public class GestoreClientServer implements Commandable{
     public void removeServer(Server s)throws CommandableException {
         if(s == null) throw new CommandableException("il server è null!");
         if(!this.listaServer.remove(s)) throw new CommandableException("il server '" + s.getNome() + "' non esiste");
-        try {
-            this.eventManager.notify(SERVER_RIMOSSO, s);
-        } catch (CommandException e) {
-            throw new CommandableException(e.getMessage());
-        }
-    }
+        this.eventManager.notify(SERVER_RIMOSSO, s);
 
+    }
 
     public EventManagerCommandable getEventManager(){return this.eventManager;}
 

@@ -13,9 +13,9 @@ import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.user.User;
 import it.davincifascetti.controllosocketudp.program.user.UserDefault;
 
-//!nello schema fatto su figma, questa classe rappresenta Terminal e non Cli!
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
  * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
  * instanzia una commandFactory corrispondente al gestore utilizzando CommandFactoryInstantiar 
@@ -30,25 +30,31 @@ public class Terminal extends Ui{
     private AtomicBoolean attivo = new AtomicBoolean();
     private static AtomicBoolean  bloccato = new AtomicBoolean(); //rende boolean thread safe
     private Commandable gestoreAttuale = null;
-
+    private CommandHistory commandHistoryAttuale = null;
     //componenti
     //?passargli l'errorLog e renderlo concorrente?
     //TODO capire se farlo o no
-    private  GestoreRemote telecomandi = null;
-    private  Cli cli = null;
+    private GestoreRemote telecomandi = null;
+    private Cli cli = null;
     private Video video = null;
+    private GestoreRisposte gestoreRisposte = null; //gestisce risposte server in base ai comandi di user
     
     /**
      * 
      * @param errorLog oggetto error log che si occupera del log su file degli errori
      * @throws CommandException
      */
-    public Terminal(ErrorLog errorLog,GestoreClientServer business) throws CommandException{
-        super(business, errorLog);
+    //TODO capire come gestire USER, per ora rappresenta solo i comandi di CLI
+    public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi) throws CommandException{
+        super(business, errorLog,comandi);
         this.gestoreAttuale = business; 
-        this.telecomandi = new GestoreRemote(this);
-        this.cli = new Cli(new UserDefault().getManager(),this); //! per ora gli passo l'user a mano ma va cambiato
-        this.video = new Video(this);
+        this.telecomandi = new GestoreRemote(this); //si registra a gestoreClientServer (per rimuovere il client)
+        this.cli = new Cli(this.getUser().getManager(),this); 
+        this.video = new Video(this); //lui si regristra per ricevere risposte video da uno specifico server, toglie la registrazione di gestoreRisposte a quel server
+        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(),this); //lui si registrerà per ricevere risposte di server
+
+        this.cli.setVista(this.gestoreAttuale);
+        this.cli.getStoriaComandi(); //restituisce la storia comandi del gestore attuale
     }
 
     /**peremtte di avviare il terminale, se bloccato è true gli input sono bloccati, se attivo allora attivo = true altrimenti false , serve a capire se il terminale è attivo dall'esterno (è attivo se chiamo il metodo main)
@@ -163,15 +169,62 @@ public class Terminal extends Ui{
     public GestoreRemote getGestoreRemote(){
         return this.telecomandi;
     }
-
+    public GestoreRisposte getGestoreRisposte(){
+        return this.gestoreRisposte;
+    }
     public Cli getCli(){return this.cli;}
     public Video getVideo(){return this.video;}
     
     @Override
     protected void init() {
-        this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getGestoreRemote());
-        this.getBusiness().getEventManager().subscribe(this.getCli());
-        this.getBusiness().getEventManager().subscribe(this.getVideo());
+
+        //TODO devo registrare la CLI agli eventi di Server e Client
+        //TODO devo registrare il Video ad uno specifico Server 
+        this.subscribeVideo();
+        this.subscribeCli();
+        this.subscribeGestoreRemote();
+        this.subscribeGestoreRisposte();
     }
 
+    private void subscribeVideo(){
+        //business.newServer("servervideo")
+        //nuovoServer.getEventManager().subscribe(this.getVideo())
+    }
+    private void subscribeCli(){
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getCli());
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_AGGIUNTO, this.getCli());
+
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_RIMOSSO, this.getCli());
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_AGGIUNTO, this.getCli());
+    }
+    private void subscribeGestoreRemote(){
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getGestoreRemote());
+    }
+    private void subscribeGestoreRisposte(){
+        this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_RIMOSSO, this.getGestoreRisposte());
+    }
+
+
+
+    @Override
+    protected void executeCommand(Command command) throws CommandException,ErrorLogException{
+        if(command == null) return;
+        command.execute();
+        if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
+        
+    }
+
+    @Override
+    protected boolean undo() throws CommandException, ErrorLogException {
+        if (storiaComandi.isEmpty()) return false;
+        UndoableCommand command = storiaComandi.pop();
+        if (command != null) {
+            return command.undo();
+        }
+        return false;
+    }
+
+
+    
+    
 }

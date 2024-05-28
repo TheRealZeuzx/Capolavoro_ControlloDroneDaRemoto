@@ -1,14 +1,23 @@
 package it.davincifascetti.controllosocketudp.program;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
+import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
+import it.davincifascetti.controllosocketudp.command.Commandable;
+import it.davincifascetti.controllosocketudp.program.user.User;
 
 
-public class Cli implements Component,EventListenerRicezioneString{
+public class Cli implements Component,EventListenerRicezioneBuffer,EventListenerCommandable{
 
     private CommandListManager manager;
     private CommandFactoryI factory;
+    private Commandable gestoreAttuale;
+    private Map<Commandable,CommandHistory> storieComandi = Collections.synchronizedMap(new HashMap<Commandable,CommandHistory>());
     private Ui riferimentoUi;
 
 
@@ -35,16 +44,37 @@ public class Cli implements Component,EventListenerRicezioneString{
     }
 
     @Override
-    public void update(String msg) {
-        // risposta del server 
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
-    }
-
-
-    @Override
     public void setUi(Ui ui) throws CommandException {
         if(ui == null) throw new CommandException("Errore, la UI passata è null!");
         this.riferimentoUi = ui;
+    }
+
+    //TODO crea una classe apposita per gestire le viste
+    /**cambia la vista attuale
+     * 
+     */
+    public void setVista(){
+
+    }
+
+    /**
+     * 
+     * @return CommandHistory appartenente al gestore attuale
+     */
+    public CommandHistory getCommandHistory(){
+
+    }
+    
+
+
+
+    @Override
+    public void update(byte[] buffer, int lung,Commandable commandable) {
+        System.out.println("messaggio ricevuto!");
+    }
+    @Override
+    public void update(String eventType, Commandable commandable) {
+        System.out.println("è appena successa una cosa epica: " + eventType);
     }
 
 }

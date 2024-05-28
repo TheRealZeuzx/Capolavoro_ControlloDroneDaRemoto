@@ -8,11 +8,12 @@ import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.user.User;
 
 public abstract class Ui{
 
-    private CommandHistory storiaComandi = null; //lo uso solo per i comandi di creazione e delete dei server-client perché per le altre op non ha senso.
     private ErrorLog errorLog = null;
+    private User comandi = null;
     private GestoreClientServer business = null;
     private AtomicBoolean inizializzato = new AtomicBoolean();
 
@@ -20,10 +21,13 @@ public abstract class Ui{
     //?lasciarlo qui ? penso di si
     //ogni componente della UI dovrà avere i propri comandi es CLI comandi da tastiera mentre VIdeo usera gli eventi di Server
 
-    public Ui(GestoreClientServer business,ErrorLog errorLog) throws CommandException{
+    public Ui(GestoreClientServer business,ErrorLog errorLog,User comandi) throws CommandException{
+        if(business == null) throw new CommandException("Errore, il GestoreClientServer è null!");
+        if(errorLog == null) throw new CommandException("Errore,ErrorLog  è null!");
+        if(comandi == null) throw new CommandException("Errore,User è null!");
         this.business = business;
         this.errorLog = errorLog;
-        this.storiaComandi = new CommandHistory(); 
+        this.comandi = comandi;
     }
 
     //TODO capire se questa classe la estendono solo i componenti della UI es CLI oppure Video oppure se la estende Terminal o GUI.
@@ -60,12 +64,13 @@ public abstract class Ui{
      * @return true se l'esecuzione è andata a buon fine altrimenti false
      * @throws CommandException
      */
-    protected void executeCommand(Command command) throws CommandException,ErrorLogException{
-        if(command == null) return;
-        command.execute();
-        if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
+    protected abstract void executeCommand(Command command) throws CommandException,ErrorLogException;
+    // protected void executeCommand(Command command) throws CommandException,ErrorLogException{
+    //     if(command == null) return;
+    //     command.execute();
+    //     if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
         
-    }
+    // }
     
 
     /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
@@ -73,14 +78,15 @@ public abstract class Ui{
      * @throws ErrorLogException 
      * @throws CommandException 
      */
-    protected boolean undo() throws CommandException, ErrorLogException {
-        if (storiaComandi.isEmpty()) return false;
-        UndoableCommand command = storiaComandi.pop();
-        if (command != null) {
-            return command.undo();
-        }
-        return false;
-    }
+    protected abstract boolean undo() throws CommandException, ErrorLogException;
+    // protected boolean undo() throws CommandException, ErrorLogException {
+    //     if (storiaComandi.isEmpty()) return false;
+    //     UndoableCommand command = storiaComandi.pop();
+    //     if (command != null) {
+    //         return command.undo();
+    //     }
+    //     return false;
+    // }
 
 
     public GestoreClientServer getBusiness(){
@@ -88,6 +94,9 @@ public abstract class Ui{
     }
     public ErrorLog getErrorLog(){
         return this.errorLog;
+    }
+    public User getUser(){
+        return this.comandi;
     }
 
 }

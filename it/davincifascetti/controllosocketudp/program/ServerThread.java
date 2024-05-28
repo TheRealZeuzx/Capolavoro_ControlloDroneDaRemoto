@@ -14,6 +14,7 @@ import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.user.UserDefault;
 
 /**si occupa di prendere il pacchetto ricevuto dal server e elaborare la risposta corretta
  * Tramite la FactoryRisposta può instanziare comandi per la risposta di msg ricevuti dal client
@@ -23,13 +24,11 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class ServerThread extends Thread implements Commandable{
     private DatagramPacket packet;
     private DatagramSocket socketRisposta;
-    private ArrayList<String> StoriaMsg;
     private byte[] bufferOUT = new byte[Server.LunghezzaBuffer];
     private DatagramPacket packetDaSpedire;
-    private CommandHistory storiaComandi;
+
     private String msgRicevuto = "";
     private String nomeServerOriginale;
-    private FileLogger fileLogger = null;
     private Server riferimentoServer = null;
 
     //! al momento non ha un proprio eventManager, utilizza quello di server perchè non credo necessiti di eventi propri
@@ -43,14 +42,10 @@ public class ServerThread extends Thread implements Commandable{
      * @param fileLogger riferimento al file logger che si trova nel Server, serve per stampare su file
      * @param riferimentoServer riferimento all server che ha creato ServerThread
      */
-    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta, ArrayList<String> StoriaMsg,String nomeServerOriginale, FileLogger fileLogger,Server riferimentoServer){
+    public ServerThread(DatagramPacket packet, DatagramSocket socketRisposta,Server riferimentoServer){
         this.packet = packet;
         this.socketRisposta = socketRisposta;
-        this.StoriaMsg = StoriaMsg;
-
         this.msgRicevuto = this.getMsgRicevuto();
-        this.nomeServerOriginale = nomeServerOriginale;
-        this.fileLogger = fileLogger;
         this.riferimentoServer = riferimentoServer;
 
     }
@@ -60,18 +55,9 @@ public class ServerThread extends Thread implements Commandable{
      */
     @Override
     public void run() {
-        this.getEventManager().notify(msgRicevuto);
-
-        //! il codice sotto lo eseguirà la CLI o chi per lui
-        if(factory != null){
-            try{
-                this.executeCommand(factory.getCommand());
-            }catch(CommandException e){
-                this.stampaVideo(e.getMessage());
-            }catch(ErrorLogException e){
-                this.errorLog(e.getMessage(), true);
-            }
-        }
+        
+        this.getEventManager().notify(this.packet.getData(),this.packet.getLength(),this);
+        
         
     }
 
@@ -113,16 +99,7 @@ public class ServerThread extends Thread implements Commandable{
         this.riferimentoTerminal.errorLog(msg,false);
     }
 
-    /**permette di estrapolare il messaggio ricevuto dal pacchetto ricevuto
-     * 
-     * @return stringa contenente il msg ricevuto dal client
-     */
-    private String getMsgRicevuto(){
-        int lungPacket = this.packet.getLength();
-		String msgRicevuto = new String(this.packet.getData());
-		return msgRicevuto.substring(0, lungPacket);
-        
-    }
+    
 
     public DatagramPacket getPacket(){
         return this.packet;

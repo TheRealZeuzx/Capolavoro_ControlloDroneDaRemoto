@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
+import it.davincifascetti.controllosocketudp.command.Commandable;
 
 public class Video implements Component,EventListenerRicezioneBuffer{
 
@@ -28,7 +29,7 @@ public class Video implements Component,EventListenerRicezioneBuffer{
 
 
     @Override
-    public void update(byte[] buffer, int lung) {
+    public void update(byte[] buffer, int lung,Commandable commandable) {
         ByteArrayInputStream inStreambj = new ByteArrayInputStream(buffer);
         BufferedImage image = null;
         try {
@@ -58,4 +59,6 @@ public class Video implements Component,EventListenerRicezioneBuffer{
         if(ui == null) throw new CommandException("Errore, la UI passata è null!");
         this.riferimentoUi = ui;
     }
+
+    
 }

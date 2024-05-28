@@ -9,7 +9,6 @@ import it.davincifascetti.controllosocketudp.command.Commandable;
 
 public class EventManagerCommandable {
     private Map<String, ArrayList<EventListenerCommandable>> listenerCommandable = new HashMap<>();
-    private ArrayList<EventListenerRicezioneString> listenerRicezioneString = new ArrayList<>();
     private ArrayList<EventListenerRicezioneBuffer> listenerRicezioneBuffer = new ArrayList<>();
 
     public EventManagerCommandable() {
@@ -54,27 +53,11 @@ public class EventManagerCommandable {
         listenerRicezioneBuffer.remove(listener);
     }
 
-    public void notify(byte[] buffer, int length) {
+    public void notify(byte[] buffer, int length,Commandable commandable) {
         for (EventListenerRicezioneBuffer listener : this.listenerRicezioneBuffer) {
-            listener.update(buffer,length);
+            listener.update(buffer,length,commandable);
         }
     }
-    /*metodi per EventListenerRicezioneBufferString*/
-
-    public void subscribe(EventListenerRicezioneString listener) {
-        listenerRicezioneString.add(listener);
-    }
-
-    public void unsubscribe(EventListenerRicezioneString listener) {
-        listenerRicezioneString.remove(listener);
-    }
-
-    public void notify(String msg){
-        for (EventListenerRicezioneString listener : this.listenerRicezioneString) {
-            listener.update(msg);
-        }
-    }
-
 
 
 }

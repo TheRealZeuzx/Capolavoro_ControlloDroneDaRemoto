@@ -6,10 +6,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-
-
-
-import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -32,6 +28,8 @@ public class Client implements Commandable,Runnable{
     //eventi
     public static final String MESSAGGIO_RICEVUTO = "messaggio_ricevuto";
     public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
+    public static final String SERVER_NO_RESPONSE = "server_no_response";
+    public static final String UNKNOWN_EXCEPTION = "unknown_exception";
     private EventManagerCommandable eventManager = new EventManagerCommandable(MESSAGGIO_RICEVUTO,MESSAGGIO_INVIATO);
 
 
@@ -92,10 +90,10 @@ public class Client implements Commandable,Runnable{
             Terminal.setBloccato(false);
         }catch(SocketTimeoutException e){
             Terminal.setBloccato(false);
-            this.riferimentoTerminale.errorLog("Il server non ha dato nessuna risposta", true);
+            this.eventManager.notify(Client.SERVER_NO_RESPONSE,this);
         } catch (Exception e) {
             Terminal.setBloccato(false);
-            this.riferimentoTerminale.errorLog(e.getMessage(), false);
+            this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this);
         }
     }
 
@@ -114,7 +112,7 @@ public class Client implements Commandable,Runnable{
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
-            this.riferimentoTerminale.errorLog(e.getMessage(), true);
+            this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this); //!se si volesse fare bene si dovrebbe mettere il multi-catch e una costante apposita per ogni eccezione
         }
     }
     /**invia il messaggio al socket remoto, se non è impostato allora solleva un eccezione
@@ -132,7 +130,7 @@ public class Client implements Commandable,Runnable{
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
-            this.riferimentoTerminale.errorLog(e.getMessage(), true);
+            this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this);
         }
     }
 

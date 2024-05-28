@@ -37,7 +37,11 @@ public class GestoreRemote implements EventListenerCommandable,Component{
     public void update(String eventType, Commandable commandable){
         Remote temp = null;
         if(!Client.class.isInstance(commandable)) return;
-        temp = this.findRemote(((Client)commandable));
+        try {
+            temp = this.findRemote(((Client)commandable));
+        } catch (CommandException e) {
+            System.out.println("Errore, qualcosa è andato storto | " + e.getMessage());
+        }
         if(temp == null)return;
         temp.destroy();
     }
