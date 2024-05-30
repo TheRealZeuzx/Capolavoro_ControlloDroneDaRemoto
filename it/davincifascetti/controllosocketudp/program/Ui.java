@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
+import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
 import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -58,36 +59,15 @@ public abstract class Ui{
         }
     }
 
-    /**esegue il comando e restituisce true se l'esec è riuscita altrimenti false, se il comando implementa undoable command, viene inserito nella storia comandi
+    /**permette di loggare un errore dall esterno del terminale
      * 
-     * @param command comando da eseguire (deve implementare Command)
-     * @return true se l'esecuzione è andata a buon fine altrimenti false
-     * @throws CommandException
+     * @param msg messaggio da loggare
+     * @param video true se si stampa anche a video altrimenti false  solo su file
      */
-    protected abstract void executeCommand(Command command) throws CommandException,ErrorLogException;
-    // protected void executeCommand(Command command) throws CommandException,ErrorLogException{
-    //     if(command == null) return;
-    //     command.execute();
-    //     if(command instanceof UndoableCommand)storiaComandi.push((UndoableCommand)command);
-        
-    // }
-    
-
-    /**fa l'undo dell' ultimo undoableCommand che si trova nella storiaComandi, se non ci sono comandi allora non restituisce false
-     * @return true se l'esecuzione è andata a buon fine altrimenti false
-     * @throws ErrorLogException 
-     * @throws CommandException 
-     */
-    protected abstract boolean undo() throws CommandException, ErrorLogException;
-    // protected boolean undo() throws CommandException, ErrorLogException {
-    //     if (storiaComandi.isEmpty()) return false;
-    //     UndoableCommand command = storiaComandi.pop();
-    //     if (command != null) {
-    //         return command.undo();
-    //     }
-    //     return false;
-    // }
-
+    protected synchronized void errorLog(String msg,boolean video){
+        if(video)System.out.println(msg);
+        new ErrorLogCommand(this.getErrorLog(),msg).execute();
+    }
 
     public GestoreClientServer getBusiness(){
         return this.business;

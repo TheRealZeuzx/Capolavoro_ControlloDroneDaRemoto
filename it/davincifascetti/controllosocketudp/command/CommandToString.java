@@ -1,5 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.program.Ui;
+
 /** 
  * GENERALE
     CommandHelp. 
@@ -16,8 +18,8 @@ public class CommandToString<T extends Commandable> extends CommandI<T>{
         @param gestore se è null, non viene inviato al client il messaggio altrimenti se passo ServerThread viene invaito al client il msg
      * @throws CommandException 
     */
-    public CommandToString(T gestore,String msg) throws CommandException{
-        super(gestore, "");
+    public CommandToString(T gestore,String msg,Ui ui) throws CommandException{
+        super(gestore, "",ui);
     }
     public void execute() throws CommandException {
 

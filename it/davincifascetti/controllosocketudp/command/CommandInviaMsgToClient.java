@@ -2,10 +2,11 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 public class CommandInviaMsgToClient extends CommandI<ServerThread>{
-    public CommandInviaMsgToClient(ServerThread gestore,String params) throws CommandException{
-        super(gestore,params);
+    public CommandInviaMsgToClient(ServerThread gestore,String params,Ui ui) throws CommandException{
+        super(gestore,params,ui);
     }
 
 

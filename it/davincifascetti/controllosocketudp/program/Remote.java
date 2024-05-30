@@ -35,7 +35,7 @@ public class Remote extends KeyAdapter{
         try {
             if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
                 tastoPrecedente = Character.valueOf(c);
-                new CommandInviaMsgClient(this.client,"print " + String.valueOf(c)).execute();
+                new CommandInviaMsgClient(this.client,"print " + String.valueOf(c),this.gestoreRemote.getUi()).execute();
             }
         } catch (CommandException e1) {
             

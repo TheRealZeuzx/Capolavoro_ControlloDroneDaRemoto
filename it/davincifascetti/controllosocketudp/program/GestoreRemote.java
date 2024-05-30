@@ -6,16 +6,16 @@ import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
-public class GestoreRemote implements EventListenerCommandable,Component{
+public class GestoreRemote extends Component implements EventListenerCommandable{
 
     private Vector<Remote> listaRemote = null;
-    private Ui riferimentoUi;
     public GestoreRemote(Ui ui) throws CommandException {
         listaRemote = new Vector<Remote>();
         this.setUi(ui);
     }
 
     public void modTelecomando(Client c) throws CommandException,ErrorLogException{
+        if(c == null) throw new CommandException("Errore, il client calling è null!");
         Remote temp = this.findRemote(c);
         if(temp==null){
             temp = new Remote(c,this);
@@ -61,11 +61,6 @@ public class GestoreRemote implements EventListenerCommandable,Component{
         return;
     }
 
-    @Override
-    public void setUi(Ui ui) throws CommandException {
-        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
-        this.riferimentoUi = ui;
-    }
 
 
 }

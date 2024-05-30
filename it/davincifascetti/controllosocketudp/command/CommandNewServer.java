@@ -4,6 +4,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.Terminal;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /** permette di instanziare un nuovo server all'interno della lista client di GestoreClientServer
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -12,7 +13,6 @@ import it.davincifascetti.controllosocketudp.program.Terminal;
 public class CommandNewServer extends CommandI<GestoreClientServer> implements UndoableCommand{
 
     private String nome;
-    private Terminal<Server> terminale;
     private String porta = null;
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il primo costruttore di server
      * @param gestore GestoreClientServer che farà da reciever e quindi instanziera e inserira il server
@@ -20,9 +20,8 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
      * @param nome nome del server
      * @throws CommandableException
      */
-    public CommandNewServer(GestoreClientServer gestore,String nomePorta) throws CommandException {
-        super(gestore, nomePorta);
-        this.terminale = gestore.getTerminalServer();
+    public CommandNewServer(GestoreClientServer gestore,String nomePorta,Ui ui) throws CommandException {
+        super(gestore, nomePorta,ui);
         String []temp =  nomePorta.split("[ ]+");
         if(temp.length == 1)
             this.nome = temp[0]; //new c c1 localhost 1212
@@ -41,9 +40,9 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
     public void execute() throws CommandException, ErrorLogException {
         try{
             if(porta == null)
-                this.getGestore().newServer(terminale,nome);
+                this.getGestore().newServer(nome);
             else
-                this.getGestore().newServer(terminale,nome,porta);
+                this.getGestore().newServer(nome,porta);
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }
@@ -54,7 +53,7 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
      */
     @Override
     public boolean undo() throws CommandException {
-        new CommandDeleteServer(getGestore(), nome).execute();
+        new CommandDeleteServer(getGestore(), nome,this.getUi()).execute();
        return true;
     }
     

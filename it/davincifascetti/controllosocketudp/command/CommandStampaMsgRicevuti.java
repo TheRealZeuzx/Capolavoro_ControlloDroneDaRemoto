@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /** stampa la lista di messaggi ricevuti dal client
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -14,11 +15,11 @@ public class CommandStampaMsgRicevuti extends CommandI<Server>{
      * @param gestore Server di cui stampare la lista di msg ricevuti
      * @throws CommandException
      */
-    public CommandStampaMsgRicevuti(Server gestore,String msg) throws CommandException {
-        super(gestore,msg);
+    public CommandStampaMsgRicevuti(Server gestore,String msg,Ui ui) throws CommandException {
+        super(gestore,msg,ui);
     }
-    public CommandStampaMsgRicevuti(Server gestore) throws CommandException {
-        super(gestore,"");
+    public CommandStampaMsgRicevuti(Server gestore,Ui ui) throws CommandException {
+        super(gestore,"",ui);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class Client implements Commandable,Runnable{
     public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
     public static final String SERVER_NO_RESPONSE = "server_no_response";
     public static final String UNKNOWN_EXCEPTION = "unknown_exception";
-    private EventManagerCommandable eventManager = new EventManagerCommandable(MESSAGGIO_RICEVUTO,MESSAGGIO_INVIATO);
+    private EventManagerCommandable eventManager = null;
 
 
     /**costruttore che prende due parametri, quindi se si usa questo non si possono invaire msg, va settato il socket remoto
@@ -39,8 +39,9 @@ public class Client implements Commandable,Runnable{
      * @param t terminale che verra usato da questo client
      * @throws CommandableException
      */
-    //!probabilmente la parte di telecomando (modTelecomando e Keytyped vanno messi in un comando o qualcosa, il client si occuperà solo di invio e ricezione mentre il comando deciderà come farli agire)
-    public Client(String nomeClient) throws CommandableException{
+    public Client(String nomeClient,EventManagerCommandable eventManager) throws CommandableException{
+        if(eventManager == null) throw new CommandableException("Errore, l'eventManager è null!");
+        this.eventManager = eventManager;
         this.setNome(nomeClient);
         try {
             this.socket = new DatagramSocket();
@@ -87,13 +88,13 @@ public class Client implements Commandable,Runnable{
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
             System.out.println("Server response: " + msgRicevuto);
-            Terminal.setBloccato(false);
+            this.eventManager.notify(Client.MESSAGGIO_RICEVUTO,this);
         }catch(SocketTimeoutException e){
-            Terminal.setBloccato(false);
             this.eventManager.notify(Client.SERVER_NO_RESPONSE,this);
         } catch (Exception e) {
-            Terminal.setBloccato(false);
             this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this);
+        }finally{
+            Terminal.setBloccato(false);
         }
     }
 
@@ -109,6 +110,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
+            this.eventManager.notify(Client.MESSAGGIO_INVIATO,this);
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
@@ -127,6 +129,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
+            this.eventManager.notify(Client.MESSAGGIO_INVIATO,this);
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {

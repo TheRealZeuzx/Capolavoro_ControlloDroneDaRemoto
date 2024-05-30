@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
  * FACTORY
@@ -43,8 +44,8 @@ public class CommandFactoryI implements CommandFactory{
     /**utilizza il gestore impostato precedentemente
      * 
      */
-    public Command getCommand(String params) throws CommandException{
-        return this.getCommand(this.gestore, params);
+    public Command getCommand(String params, Ui ui) throws CommandException{
+        return this.getCommand(this.gestore, params,ui);
     }
 
     /**
@@ -55,11 +56,13 @@ public class CommandFactoryI implements CommandFactory{
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
      * @throws ErrorLogException 
     */
-    public Command getCommand(Commandable gestore,String params) throws CommandException{
+    
+    public Command getCommand(Commandable gestore,String params, Ui ui) throws CommandException{
         if(manager == null) throw new CommandException("Errore, prima devi impostare un manager!");
         this.setGestore(gestore);
         if(params == null) new CommandDefault("Parametri sono null!");
-        this.gestore = gestore;
+        if(ui == null) new CommandDefault("Ui è null!");
+
 
         Class<? extends Commandable> gestoreClass = gestore.getClass();
         //i comandi sono registrati dalla classe gestore
@@ -81,10 +84,11 @@ public class CommandFactoryI implements CommandFactory{
             if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {
                     arguments.add(params.substring(tempP.length(),params.length()));
+                    arguments.add(ui);
                     if(Class.forName(value).getDeclaredConstructors()[0].getParameterTypes()[0].isInterface())//nel caso in cui sia generale
-                        temp = (Command)Class.forName(value).getDeclaredConstructor(Commandable.class,String.class).newInstance(arguments.toArray());
+                        temp = (Command)Class.forName(value).getDeclaredConstructor(Commandable.class,String.class,Ui.class).newInstance(arguments.toArray());
                     else
-                        temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
+                        temp = (Command)Class.forName(value).getDeclaredConstructor(this.gestore.getClass(),String.class,Ui.class).newInstance(arguments.toArray());
                 } catch (InvocationTargetException e){
                     throw new CommandException(e.getTargetException().getMessage());
                 }catch (Exception e){
@@ -93,11 +97,13 @@ public class CommandFactoryI implements CommandFactory{
             }
         }
     
+    
         //se ho impostato il comando di default lo istanzio altrimenti uso CommandDefault
         try {
             if(temp == null && this.comandoDefault != null){
                 arguments.add(params);
-                temp = (Command)Class.forName(this.comandoDefault).getDeclaredConstructor(this.gestore.getClass(),String.class).newInstance(arguments.toArray());
+                arguments.add(ui);
+                temp = (Command)Class.forName(this.comandoDefault).getDeclaredConstructor(this.gestore.getClass(),String.class,Ui.class).newInstance(arguments.toArray());
             }
         } catch (Exception e){
             throw new CommandException(e.getMessage());

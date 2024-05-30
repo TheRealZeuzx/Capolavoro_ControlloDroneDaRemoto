@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
  * GENERALE
@@ -17,8 +18,8 @@ public class CommandFileLog extends CommandI<ServerThread>{
         @param msg messaggio da stampare nel file
         @param gestore server thread che si occuperà di stampare nel file
     */
-    public CommandFileLog(ServerThread gestore,String msg) throws CommandException{
-        super(gestore,msg);
+    public CommandFileLog(ServerThread gestore,String msg,Ui ui) throws CommandException{
+        super(gestore,msg,ui);
     }
 
     /**

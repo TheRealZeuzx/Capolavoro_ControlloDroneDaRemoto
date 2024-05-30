@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**permette di stampare la lista di client presenti nel GestoreClientServer
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -16,8 +17,8 @@ public class CommandShow extends CommandI<GestoreClientServer>{
      * @param params può essere ignorato
      * @throws CommandException
      */
-    public CommandShow(GestoreClientServer gestore,String params) throws CommandException{
-        super(gestore,params);
+    public CommandShow(GestoreClientServer gestore,String params,Ui ui) throws CommandException{
+        super(gestore,params,ui);
         if(CommandFactoryI.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",this.getParams()))
             this.server = true;
         else if(CommandFactoryI.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",this.getParams()))

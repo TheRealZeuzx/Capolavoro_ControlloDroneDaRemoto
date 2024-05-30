@@ -1,6 +1,7 @@
 
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 /**
  * SERVER
     Command Disable To File Server.
@@ -16,8 +17,8 @@ public class CommandDisableToFile extends CommandI<Server> implements UndoableCo
         Richiama al costruttore del padre (CommandI).
         @param gestore Gestore su cui effettuare le operazioni. 
     */
-    public CommandDisableToFile(Server gestore,String params) throws CommandException {
-        super(gestore,"");
+    public CommandDisableToFile(Server gestore,String params,Ui ui) throws CommandException {
+        super(gestore,"",ui);
         this.nomeFile = this.getGestore().getFileLogger().getFileName();
         this.append = this.getGestore().getFileLogger().isAppend();
     }

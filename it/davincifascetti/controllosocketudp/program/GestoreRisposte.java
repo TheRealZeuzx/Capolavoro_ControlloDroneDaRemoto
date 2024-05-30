@@ -12,7 +12,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
 
-public class GestoreRisposte implements EventListenerRicezioneBuffer,EventListenerCommandable,Component {
+public class GestoreRisposte extends Component implements EventListenerRicezioneBuffer,EventListenerCommandable {
     private Ui riferimentoUi;
     private CommandFactoryI factory;
     private CommandListManager manager;
@@ -29,7 +29,7 @@ public class GestoreRisposte implements EventListenerRicezioneBuffer,EventListen
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
         if(this.factory != null){
             try{
-                this.riferimentoUi.executeCommand(this.factory.getCommand(s,msgRicevuto));
+                this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);
             }catch(CommandException e){
                 // this.stampaVideo(e.getMessage()); //TODO Capire
             }catch(ErrorLogException e){
@@ -37,6 +37,9 @@ public class GestoreRisposte implements EventListenerRicezioneBuffer,EventListen
             }
         }
     }
+
+    
+
 
 
     /**permette di estrapolare il messaggio ricevuto dal pacchetto ricevuto
@@ -104,10 +107,10 @@ public class GestoreRisposte implements EventListenerRicezioneBuffer,EventListen
     public CommandListManager getManager() {
         return this.manager;
     }
-
+    
+    @Override
     public void setManager (CommandListManager manager) throws CommandException{
-        if(manager == null) throw new CommandException("Errore, il gestore inserito è null!");
-        this.manager = manager;
+        super.setManager(manager);
         this.factory.setManager(manager);
     }
 

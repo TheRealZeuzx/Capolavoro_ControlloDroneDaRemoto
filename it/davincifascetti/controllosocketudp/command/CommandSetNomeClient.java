@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Ui;
 /**cambia il nome del client
  * dispone di metodo undo quindi è possibile revertire i cambiamenti
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -14,8 +15,8 @@ public class CommandSetNomeClient extends CommandI<Client> implements UndoableCo
      * @param nome nuovo nome 
      * @throws CommandException
      */
-    public CommandSetNomeClient(Client gestore,String nome) throws CommandException {
-        super(gestore,nome);
+    public CommandSetNomeClient(Client gestore,String nome,Ui ui) throws CommandException {
+        super(gestore,nome,ui);
         this.nomePrecedente = this.getGestore().getNome();
     }
     @Override

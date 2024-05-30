@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 /**elimina il socket e imposta lo stato a disattivo quindi una volta modificato il socket devi riattivare il server
  * dispone di metodo undo quindi è possibile revertire i cambiamenti
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -15,8 +16,8 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      * @param porta nuova porta locale
      * @throws CommandException
      */
-    public CommandSetSocketServer(Server gestore,String porta) throws CommandException {
-        super(gestore,porta);
+    public CommandSetSocketServer(Server gestore,String porta,Ui ui) throws CommandException {
+        super(gestore,porta,ui);
         this.portaPrecedente = String.valueOf(this.getGestore().getPorta());
     }
     @Override

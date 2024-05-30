@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
  * TODO FIX server/client
@@ -20,8 +21,8 @@ public class CommandInfo extends CommandI<GestoreClientServer>{
      * @param params nome del client o server di cui stampare le info
      * @throws CommandException
      */
-    public CommandInfo(GestoreClientServer gestore,String params) throws CommandException{
-        super(gestore,params);
+    public CommandInfo(GestoreClientServer gestore,String params,Ui ui) throws CommandException{
+        super(gestore,params,ui);
         String[] temp = params.split("[ ]+");
         if(temp.length == 2)
             this.nome = temp[1];

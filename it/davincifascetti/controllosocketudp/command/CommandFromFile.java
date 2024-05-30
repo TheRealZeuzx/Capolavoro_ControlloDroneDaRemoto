@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
  * CLIENT 
@@ -20,8 +21,8 @@ public class CommandFromFile extends CommandI<Client>{
      * @param gestore client receiver
      * @throws CommandException
      */
-    public CommandFromFile(Client gestore,String nomeFile) throws CommandException {
-        super(gestore,nomeFile);
+    public CommandFromFile(Client gestore,String nomeFile,Ui ui) throws CommandException {
+        super(gestore,nomeFile,ui);
     }
 
     @Override

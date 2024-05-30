@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Ui;
 /**cambia i valori di ip e porta del server remoto
  * dispone di metodo undo quindi è possibile revertire i cambiamenti
  *  @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -19,8 +20,8 @@ public class CommandSetSocketClient extends CommandI<Client> implements Undoable
      * @param porta nuova porta di destinazione
      * @throws CommandException
      */
-    public CommandSetSocketClient(Client gestore,String ipPorta) throws CommandException {
-        super(gestore,ipPorta);
+    public CommandSetSocketClient(Client gestore,String ipPorta,Ui ui) throws CommandException {
+        super(gestore,ipPorta,ui);
         String []temp =  this.getParams().split("[ ]+");
         if(temp.length != 2) throw new CommandException("Errore, il numero di parametri è errato!");
         this.ip = temp[0];

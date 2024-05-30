@@ -4,9 +4,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-
-import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -31,7 +28,7 @@ public class Server implements Runnable,Commandable{
     //eventi
     public static final String ASCOLTO_INIZIATO = "ascolto_iniziato";
     public static final String ASCOLTO_TERMINATO = "ascolto_terminato";
-    private EventManagerCommandable eventManager = new EventManagerCommandable(ASCOLTO_INIZIATO,ASCOLTO_TERMINATO);
+    private EventManagerCommandable eventManager = null;
 
     
      /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
@@ -42,7 +39,6 @@ public class Server implements Runnable,Commandable{
      */
     public Server(String nomeServer) throws CommandableException{
         this.setNome(nomeServer);
-        this.StoriaMsg = new ArrayList<String>();
     }
     /**se uso quest costruttore, posso attivare il server
      * 
@@ -161,20 +157,9 @@ public class Server implements Runnable,Commandable{
 
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))  + "\t" +  (this.fileLogger == null?"ToFile: - ":("ToFile: "+this.fileLogger.getFileName())) +"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))+"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
-    /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
-     * 
-     * @return stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
-     */
-    public String stampaStoriaMsg(){
-        String temp = "";
-        for (String string : StoriaMsg) {
-            temp +=string+"\n";
-        }
-        return temp;
-    }
 
     public boolean isAttivo(){return this.statoAttivo;}
 

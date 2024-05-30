@@ -22,7 +22,21 @@ public class GestoreClientServer implements Commandable{
     public static final String SERVER_RIMOSSO = "server_rimosso";
     public static final String CLIENT_AGGIUNTO = "client_aggiunto";
     public static final String SERVER_AGGIUNTO = "server_aggiunto";
-    private EventManagerCommandable eventManager= new EventManagerCommandable(CLIENT_RIMOSSO,SERVER_RIMOSSO);
+    private EventManagerCommandable eventManager= new EventManagerCommandable(
+        CLIENT_RIMOSSO,
+        SERVER_RIMOSSO,
+        CLIENT_AGGIUNTO,
+        SERVER_AGGIUNTO
+    );
+    //!problema: l'oggetto è comune a tutti i client/server
+    //TODO probabilmente far diventare EventManagerCommandable una interfaccia, creare per client e per server una Map di client, Map<String, ArrayList<EventListenerCommandable>>
+    private EventManagerCommandable eventManagerClient = new EventManagerCommandable(
+        Client.MESSAGGIO_RICEVUTO,
+        Client.MESSAGGIO_INVIATO,
+        Client.SERVER_NO_RESPONSE,
+        Client.UNKNOWN_EXCEPTION
+    );
+    private EventManagerCommandable eventManagerServer= new EventManagerCommandable(Server.ASCOLTO_INIZIATO,Server.ASCOLTO_TERMINATO);
     
 
     /**devo passargli il Errorlog che sarà unico tra tutte le classi che devono utilizzarlo
@@ -217,5 +231,7 @@ public class GestoreClientServer implements Commandable{
     }
 
     public EventManagerCommandable getEventManager(){return this.eventManager;}
+    public EventManagerCommandable getEventManagerClient(){return this.eventManagerClient;}
+    public EventManagerCommandable getEventManagerServer(){return this.eventManagerServer;}
 
 }

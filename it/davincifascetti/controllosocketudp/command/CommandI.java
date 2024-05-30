@@ -1,4 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
+
+import it.davincifascetti.controllosocketudp.program.Ui;
+
 /** 
  * INTERFACE
     Abstract CommandI. 
@@ -9,13 +12,15 @@ package it.davincifascetti.controllosocketudp.command;
 public abstract class CommandI<T extends Commandable> implements Command{
     private T gestore = null;
     private String params = null;
-
+    private Ui ui = null;
     
-    public CommandI(T gestore,String params) throws CommandException{
+    public CommandI(T gestore,String params,Ui ui) throws CommandException{
         if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
         this.gestore = gestore;
         if(params == null) throw new CommandException("Errore, non ci sono parametri");
         this.params = params;
+        if(ui == null) throw new CommandException("Errore, Ui è null!");
+        this.ui = ui;
     }
     /**
         getGestore().
@@ -24,4 +29,5 @@ public abstract class CommandI<T extends Commandable> implements Command{
     */
     public T getGestore(){return this.gestore;}
     public String getParams(){return this.params;}
+    public Ui getUi(){return this.ui;}
 }

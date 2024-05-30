@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
  * SERVER
@@ -22,8 +23,8 @@ public class CommandDeleteServer extends CommandI<GestoreClientServer> implement
         @param nome Nome logico del server da eliminare.
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandDeleteServer(GestoreClientServer gestore,String nome) throws CommandException {
-        super(gestore,nome);
+    public CommandDeleteServer(GestoreClientServer gestore,String nome,Ui ui) throws CommandException {
+        super(gestore,nome,ui);
         this.nome = nome;
     }
     @Override

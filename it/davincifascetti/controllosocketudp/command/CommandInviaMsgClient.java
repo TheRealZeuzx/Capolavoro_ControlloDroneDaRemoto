@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Ui;
 
 /** 
     CommandInviaMsgClient. 
@@ -16,8 +17,9 @@ public class CommandInviaMsgClient extends CommandI<Client>{
         @param msg Messaggio da inviare
         @param gestore Gestore da cui inviare il messaggio
     */
-    public CommandInviaMsgClient(Client gestore,String msg) throws CommandException {
-        super(gestore,msg);
+    public CommandInviaMsgClient(Client gestore,String msg,Ui ui) throws CommandException {
+        super(gestore,msg,ui);
+        
     }
 
     /**

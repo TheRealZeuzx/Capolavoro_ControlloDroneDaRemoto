@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Ui;
 /**
     SERVER
     Command Attiva Server.
@@ -15,8 +16,8 @@ public class CommandAttivaServer extends CommandI<Server>{
         Richiama al costruttore del padre (CommandI).
         @param gestore Gestore su cui effettuare le operazioni. 
     */
-    public CommandAttivaServer(Server gestore,String params) throws CommandException {
-        super(gestore,"");
+    public CommandAttivaServer(Server gestore,String params,Ui ui) throws CommandException {
+        super(gestore,"",ui);
     }
 
     /**
