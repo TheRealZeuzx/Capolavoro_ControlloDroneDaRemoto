@@ -2,13 +2,9 @@ package it.davincifascetti.controllosocketudp.program;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandHistory;
 import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
-import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.user.User;
 
 public abstract class Ui{

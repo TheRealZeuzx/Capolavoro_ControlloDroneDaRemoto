@@ -1,8 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
-import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
-import it.davincifascetti.controllosocketudp.program.Terminal;
 import it.davincifascetti.controllosocketudp.program.Ui;
 /** permette di instanziare un nuovo client all'interno della lista client di GestoreClientServer
  *  @author Mussaldi Tommaso, Mattia Bonfiglio

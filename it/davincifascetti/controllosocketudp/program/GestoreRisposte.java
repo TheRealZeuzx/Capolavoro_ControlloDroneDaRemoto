@@ -8,6 +8,7 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
+import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
@@ -34,14 +35,20 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
             try{
                 this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);
             }catch(CommandException e){
-                // this.stampaVideo(e.getMessage()); //TODO Capire
+                this.add(s.getServer()).stampaVideo(e.getMessage(),this.getUi(),s.getServer()); 
             }catch(ErrorLogException e){
-                // this.errorLog(e.getMessage(), true);//TODO Capire
+                this.add(s.getServer()).errorLog(e.getMessage(), true,this.getUi(),s.getServer());
             }
         }
     }
 
-    
+    public void defaultResponse(String message,Server s) throws CommandableException{
+        InfoServer temp = this.add(s);
+        if(temp == null) throw new CommandableException("Errore, qualcosa è andato storto!");
+        if(temp.getFileLogger() != null)
+            temp.fileLog(message,s);
+        temp.stampaVideo("il client dice: " + message,this.getUi(),s);
+    }
 
 
 
@@ -56,9 +63,13 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
         
     }
 
-    public void add(Server s){
+    public InfoServer add(Server s){
         InfoServer temp = this.findLista(s);
-        if(temp == null) this.mapInfoServer.put(s, new InfoServer());
+        if(temp == null){ 
+            temp = new InfoServer();
+            this.mapInfoServer.put(s, temp);
+        }
+        return temp;
     }
 
     private InfoServer findLista(Server s){

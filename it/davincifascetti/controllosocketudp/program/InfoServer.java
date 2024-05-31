@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.program;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import it.davincifascetti.controllosocketudp.command.CommandHistory;
@@ -58,5 +59,47 @@ public class InfoServer {
         return fileLogger;
     }
 
+
+    /**permette di loggare su di un file che ha lo stesso nome del server, si occupa di aprire e terminale lo stream
+     * se specificato non è specificato un file stampa sul file che prende il nome del server in modalità append
+     * @param message messaggio da loggare
+     * @return true se è andato a buonfine altrienti false
+     * @throws CommandableException 
+     */
+    public boolean fileLog(String message,Server s) throws CommandableException{
+        try{
+            if(this.fileLogger == null){
+                FileLogger logger = new FileLogger(s.getNome()+".txt");
+                logger.setAppend(true);
+                logger.printToFile(message);
+                return true;
+            }
+            this.fileLogger.printToFile(message);
+            return true;
+        }catch(IOException e){
+            return false;
+        }
+
+    }
+
+
+    /**PER STAMPARE SUL TERMINALE SI USA QUESTO
+     * se voglio stampare sul terminale devo usare questo metodo perchè in base a se il terminale è attivo o no , stampa a video oppure aggiunge alla lista storiamsg
+     * @param msg messaggio da stampare
+     */
+    public void stampaVideo(String msg,Ui ui,Server s){
+        if(((Terminal)ui).isAttivo(s))System.out.println(msg); //!non va bene, solo di prova
+		else this.storiaMsg.add(msg);
+    }
+
+    /**permette di loggare un errore 
+     * 
+     * @param msg messaggio da loggare
+     * @param video true se si stampa anche a video altrimenti false  solo su file
+     */
+    public void errorLog(String msg, boolean video,Ui ui,Server s){
+        if(video)this.stampaVideo(msg,ui,s);
+        ui.errorLog(msg,false);
+    }
 
 }

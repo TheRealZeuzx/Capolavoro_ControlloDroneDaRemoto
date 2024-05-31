@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
+import it.davincifascetti.controllosocketudp.program.Terminal;
 import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
@@ -29,11 +30,11 @@ public class CommandServerDefaultResponse extends CommandI<ServerThread>{
      */
     public void execute() throws CommandException, ErrorLogException {
         try {
-            this.getGestore().defaultResponse(this.getParams());
+            ((Terminal)this.getUi()).getGestoreRisposte().defaultResponse(this.getParams(),this.getGestore().getServer());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine").execute();
+        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine",this.getUi()).execute();
         
     }
 }

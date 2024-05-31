@@ -2,19 +2,10 @@ package it.davincifascetti.controllosocketudp.program;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import it.davincifascetti.controllosocketudp.command.Command;
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
-import it.davincifascetti.controllosocketudp.command.CommandHistory;
-import it.davincifascetti.controllosocketudp.command.CommandListManager;
-import it.davincifascetti.controllosocketudp.command.CommandStampaMsgRicevuti;
 import it.davincifascetti.controllosocketudp.command.Commandable;
-import it.davincifascetti.controllosocketudp.command.ErrorLogCommand;
-import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.user.User;
-import it.davincifascetti.controllosocketudp.program.user.UserDefault;
 
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
  * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
