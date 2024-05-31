@@ -13,11 +13,10 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class Cli extends Component implements EventListenerRicezioneBuffer,EventListenerCommandable{
 
-    private CommandListManager manager;
     private CommandFactoryI factory;
     private Commandable gestoreAttuale;
-    
-    private Ui riferimentoUi;
+    private Commandable gestorePrecedente = null;
+
 
 
     public Cli(CommandListManager manager) throws CommandException{
@@ -25,17 +24,18 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
         this.setManager(manager);
     }
     public Cli(CommandListManager manager,Ui ui) throws CommandException{
-        this.factory = new CommandFactoryI();
-        this.setManager(manager);
+        this(manager);
         this.setUi(ui);
     }
 
 
     public void main(Scanner input){
-
         String menu;
-        System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n");
+        System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n"); //solo la prima volta
         do{ 
+            if(!this.isAttivo(this.gestorePrecedente)){
+                System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n");
+            }
             System.out.print("(" + this.getGestoreAttuale().getClass().getSimpleName() +") >");
             menu ="";
             menu = input.nextLine();
@@ -52,7 +52,7 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
                 } catch (CommandException e) {
                     System.out.println(e.getMessage());
                 } catch (ErrorLogException e) {
-                    this.riferimentoUi.errorLog(e.getMessage(),true);
+                    this.getUi().errorLog(e.getMessage(),true);
                 }
                 break;
                 case "quit":
@@ -61,15 +61,15 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
                 
                 default:
                 try{
-                    this.executeCommand(factory.getCommand(this.getGestoreAttuale(),menu.toLowerCase(),this.riferimentoUi),this.getGestoreAttuale());
+                    this.executeCommand(factory.getCommand(this.getGestoreAttuale(),menu.toLowerCase(),this.getUi()),this.getGestoreAttuale());
                 }catch(CommandException e){
                     System.out.println(e.getMessage());
                 }catch(ErrorLogException e){
-                    this.riferimentoUi.errorLog(e.getMessage(),true);
+                    this.getUi().errorLog(e.getMessage(),true);
                 }
                 break;
             }   
-            if(this.isAttivo(this.riferimentoUi.getBusiness()) && menu.equalsIgnoreCase("quit")){
+            if(this.isAttivo(this.getUi().getBusiness()) && menu.equalsIgnoreCase("quit")){
                 String conferma="";
                 do{
                     System.out.print("sicuro di voler chiudere il programma? [y/n] : ");
@@ -78,19 +78,21 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
                     else if(conferma.equals("n"))menu = "";
                 }while(!conferma.equals("y") && !conferma.equals("n"));
             }
+            else if(menu.equalsIgnoreCase("quit")){
+                this.setVista(this.getUi().getBusiness());
+                menu = "";
+
+            }
         }while(!menu.equalsIgnoreCase("quit"));
     }
     
     public Commandable getGestoreAttuale(){return this.gestoreAttuale;}
     
     public boolean isAttivo(Commandable gestore){
+        if(gestore == null) return false;
         return this.gestoreAttuale.equals(gestore);
     }
 
-    @Override
-    public CommandListManager getManager() {
-        return this.manager;
-    }
 
     @Override
     public void setManager (CommandListManager manager) throws CommandException{
@@ -98,18 +100,14 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
         this.factory.setManager(manager);
     }
 
-    @Override
-    public void setUi(Ui ui) throws CommandException {
-        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
-        this.riferimentoUi = ui;
-    }
-
     //TODO classe che gestisce la vista e tiene anche la factory relativa? + come si fa cambiarla dai command?
     /**cambia la vista attuale
      * 
      */
     public void setVista(Commandable gestore){
+        this.gestorePrecedente = gestoreAttuale;
         this.gestoreAttuale = gestore;
+        if(gestorePrecedente == null) this.gestorePrecedente = this.gestoreAttuale;
     }
 
     @Override
@@ -118,7 +116,16 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
     }
     @Override
     public void update(String eventType, Commandable commandable) {
-        System.out.println("è appena successa una cosa epica: " + eventType);
+        switch (eventType) {
+            case Client.SERVER_NO_RESPONSE:
+                System.out.println("Il server non ha dato nessuna risposta =( ");
+                break;
+        
+            default:
+                System.out.println("è appena successa una cosa epica: " + eventType);
+                break;
+        }
+       
     }
 
 

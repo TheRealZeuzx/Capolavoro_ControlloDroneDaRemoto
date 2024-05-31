@@ -37,7 +37,8 @@ public class Server implements Runnable,Commandable{
      * @param t terminale che verra usato da questo server
      * @throws CommandableException
      */
-    public Server(String nomeServer) throws CommandableException{
+    public Server(String nomeServer,EventManagerCommandable eventManager) throws CommandableException{
+        if(eventManager == null) throw new CommandableException("Errore, l'eventManager è null!");
         this.setNome(nomeServer);
     }
     /**se uso quest costruttore, posso attivare il server
@@ -48,7 +49,8 @@ public class Server implements Runnable,Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public Server(String nomeServer, String porta) throws CommandableException,ErrorLogException{
+    public Server(String nomeServer, String porta,EventManagerCommandable eventManager) throws CommandableException,ErrorLogException{
+        this(nomeServer,eventManager);
         this.setPorta(porta);
         if(porta == null) throw new CommandableException("Errore, la porta è null!");
         try {
@@ -57,7 +59,8 @@ public class Server implements Runnable,Commandable{
             throw new ErrorLogException(e.getMessage());
         }
     }
-    public Server(String nomeServer, String ip,String porta) throws CommandableException,ErrorLogException{
+    public Server(String nomeServer, String ip,String porta,EventManagerCommandable eventManager) throws CommandableException,ErrorLogException{
+        this(nomeServer,eventManager);
         if(porta == null || ip == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
         this.setPorta(porta);
         this.setIp(ip);

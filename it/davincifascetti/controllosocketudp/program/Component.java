@@ -13,10 +13,12 @@ import it.davincifascetti.controllosocketudp.command.UndoableCommand;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public abstract class Component {
-    private Ui riferimentoUi;
-    private CommandListManager manager;
+    private Ui riferimentoUi = null;
+    private CommandListManager manager = null;
 
-    public CommandListManager getManager() throws CommandException{
+    
+
+    public CommandListManager getManager(){
         return this.manager;
     }
     public void setManager (CommandListManager manager) throws CommandException{
@@ -24,10 +26,10 @@ public abstract class Component {
         this.manager = manager;
     }
     public  void setUi(Ui ui) throws CommandException{
-        if(ui == null) throw new CommandException("Errore, la ui passata è null!");
+        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
         this.riferimentoUi = ui;
     }
-    public Ui getUi() throws CommandException{return this.riferimentoUi;}
+    public Ui getUi(){return this.riferimentoUi;}
     private Map<Commandable,CommandHistory> storieComandi = Collections.synchronizedMap(new HashMap<Commandable,CommandHistory>());
 
 

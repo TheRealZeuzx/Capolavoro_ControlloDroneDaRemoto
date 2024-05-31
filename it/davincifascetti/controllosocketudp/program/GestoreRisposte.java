@@ -15,14 +15,16 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class GestoreRisposte extends Component implements EventListenerRicezioneBuffer,EventListenerCommandable {
     private Ui riferimentoUi;
     private CommandFactoryI factory;
-    private CommandListManager manager;
 
     private Map<Server,InfoServer> mapInfoServer = Collections.synchronizedMap(new HashMap<Server,InfoServer>());
 
-    public GestoreRisposte(CommandListManager manager,Ui ui) throws CommandException {
-        this.setUi(ui);
+    public GestoreRisposte(CommandListManager manager) throws CommandException {
         this.factory = new CommandFactoryI();
         this.setManager(manager);
+    }
+    public GestoreRisposte(CommandListManager manager,Ui ui) throws CommandException {
+        this(manager);
+        this.setUi(ui);
     }
 
     private void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException{
@@ -103,10 +105,6 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
     }
 
 
-    @Override
-    public CommandListManager getManager() {
-        return this.manager;
-    }
     
     @Override
     public void setManager (CommandListManager manager) throws CommandException{

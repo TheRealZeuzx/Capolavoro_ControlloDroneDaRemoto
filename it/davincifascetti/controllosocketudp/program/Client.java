@@ -58,8 +58,8 @@ public class Client implements Commandable,Runnable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public Client(String nomeClient,String ipDestinazioneDefault,String porta) throws CommandableException, ErrorLogException{
-        this(nomeClient);
+    public Client(String nomeClient,String ipDestinazioneDefault,String porta,EventManagerCommandable eventManager) throws CommandableException, ErrorLogException{
+        this(nomeClient,eventManager);
         if(porta == null || porta.isBlank() || ipDestinazioneDefault == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
         try{
             this.setIpDestinazioneDefault(ipDestinazioneDefault);

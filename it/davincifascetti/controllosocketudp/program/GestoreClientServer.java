@@ -28,8 +28,7 @@ public class GestoreClientServer implements Commandable{
         CLIENT_AGGIUNTO,
         SERVER_AGGIUNTO
     );
-    //!problema: l'oggetto è comune a tutti i client/server
-    //TODO probabilmente far diventare EventManagerCommandable una interfaccia, creare per client e per server una Map di client, Map<String, ArrayList<EventListenerCommandable>>
+    //!attenzione: eventManagerClient e eventManagerServer sono comuni a tutti i client e tutti i server
     private EventManagerCommandable eventManagerClient = new EventManagerCommandable(
         Client.MESSAGGIO_RICEVUTO,
         Client.MESSAGGIO_INVIATO,
@@ -85,7 +84,7 @@ public class GestoreClientServer implements Commandable{
      */
     public void newClient(String nome) throws CommandableException{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
-        Client c = new Client(nome);
+        Client c = new Client(nome,this.getEventManagerClient());
         this.listaClient.add(c);
         this.eventManager.notify(GestoreClientServer.CLIENT_AGGIUNTO, c);
         
@@ -102,7 +101,7 @@ public class GestoreClientServer implements Commandable{
     public void newClient(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
-        Client c = new Client(nome,ip,porta);
+        Client c = new Client(nome,ip,porta,this.getEventManagerClient());
         this.listaClient.add(c);
         this.eventManager.notify(GestoreClientServer.CLIENT_AGGIUNTO, c);
     }
@@ -115,7 +114,7 @@ public class GestoreClientServer implements Commandable{
      */
     public void newServer(String nome) throws CommandableException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome);
+        Server s = new Server(nome,this.getEventManagerServer());
         this.listaServer.add(s);
         this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
         
@@ -130,7 +129,7 @@ public class GestoreClientServer implements Commandable{
      */
     public void newServer(String nome,String porta) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,porta);
+        Server s = new Server(nome,porta,this.getEventManagerServer());
         this.listaServer.add(s);
         s.iniziaAscolto();
         this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);
@@ -147,7 +146,7 @@ public class GestoreClientServer implements Commandable{
      */
     public void newServer(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,ip,porta);
+        Server s = new Server(nome,ip,porta,this.getEventManagerServer());
         this.listaServer.add(s);
         s.iniziaAscolto();
         this.eventManager.notify(GestoreClientServer.SERVER_AGGIUNTO, s);

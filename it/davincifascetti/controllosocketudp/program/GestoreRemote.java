@@ -9,8 +9,11 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class GestoreRemote extends Component implements EventListenerCommandable{
 
     private Vector<Remote> listaRemote = null;
-    public GestoreRemote(Ui ui) throws CommandException {
+    public GestoreRemote() throws CommandException {
         listaRemote = new Vector<Remote>();
+    }
+    public GestoreRemote(Ui ui) throws CommandException {
+        this();
         this.setUi(ui);
     }
 

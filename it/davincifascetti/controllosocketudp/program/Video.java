@@ -16,11 +16,11 @@ import it.davincifascetti.controllosocketudp.command.Commandable;
 public class Video extends Component implements EventListenerRicezioneBuffer{
 
     private JFrame frame = null;
-    private Ui riferimentoUi;
 
     public Video(Ui ui) throws CommandException{
         this.setUi(ui);
     }
+    public Video(){super();}
 
 
     @Override
@@ -58,12 +58,5 @@ public class Video extends Component implements EventListenerRicezioneBuffer{
     public void setManager(CommandListManager manager) throws CommandException{
         return ;
     }
-
-    @Override
-    public void setUi(Ui ui) throws CommandException {
-        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
-        this.riferimentoUi = ui;
-    }
-
     
 }
