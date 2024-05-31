@@ -27,3 +27,7 @@
 [2024/05/24 16:21:01]	Il server non ha dato nessuna risposta
 [2024/05/24 16:21:03]	Il server non ha dato nessuna risposta
 [2024/05/24 16:21:05]	Il server non ha dato nessuna risposta
+[2024/05/31 19:05:08]	Address already in use: Cannot bind
+[2024/05/31 19:22:13]	Errore, l'ip di destinazione inserito non è valido (deve avere formato '255.255.255.255'))
+[2024/05/31 19:22:25]	Address already in use: Cannot bind
+[2024/05/31 19:22:32]	Address already in use: Cannot bind

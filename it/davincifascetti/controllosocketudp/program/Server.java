@@ -39,6 +39,7 @@ public class Server implements Runnable,Commandable{
      */
     public Server(String nomeServer,EventManagerCommandable eventManager) throws CommandableException{
         if(eventManager == null) throw new CommandableException("Errore, l'eventManager è null!");
+        this.eventManager = eventManager;
         this.setNome(nomeServer);
     }
     /**se uso quest costruttore, posso attivare il server
@@ -158,9 +159,10 @@ public class Server implements Runnable,Commandable{
         }
     }
 
+    public String getIp(){ if(this.ip == null) return null; return this.ip.getHostAddress();}
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta()))+"\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta())) + "\t" + (this.socket == null?"Ip: - ":("Ip: "+this.getIp()))+ "\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
 

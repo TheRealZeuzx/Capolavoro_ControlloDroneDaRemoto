@@ -112,7 +112,7 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
 
     @Override
     public void update(byte[] buffer, int lung,Commandable commandable) {
-        System.out.println("messaggio ricevuto!");
+        System.out.println(commandable.getClass().getSimpleName() + ": messaggio ricevuto! --> " + new String(buffer));
     }
     @Override
     public void update(String eventType, Commandable commandable) {

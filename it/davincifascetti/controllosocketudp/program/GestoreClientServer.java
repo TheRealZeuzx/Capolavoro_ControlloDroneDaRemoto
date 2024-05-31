@@ -144,7 +144,7 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public void newServer(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
+    public void newServer(String nome,String porta,String ip) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,ip,porta,this.getEventManagerServer());
         this.listaServer.add(s);

@@ -29,6 +29,7 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
 
     private void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException{
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
+        System.out.println("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
         if(this.factory != null){
             try{
                 this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);

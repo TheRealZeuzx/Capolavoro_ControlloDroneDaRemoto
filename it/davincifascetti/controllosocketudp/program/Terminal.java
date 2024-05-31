@@ -44,10 +44,10 @@ public class Terminal extends Ui{
     //TODO capire come gestire USER, per ora rappresenta solo i comandi di CLI
     public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi) throws CommandException{
         super(business, errorLog,comandi);
-        this.telecomandi = new GestoreRemote(); //si registra a gestoreClientServer (per rimuovere il client)
-        this.cli = new Cli(this.getUser().getManager()); 
-        this.video = new Video(); //lui si regristra per ricevere risposte video da uno specifico server, toglie la registrazione di gestoreRisposte a quel server
-        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager()); //lui si registrerà per ricevere risposte di server
+        this.telecomandi = new GestoreRemote(this); //si registra a gestoreClientServer (per rimuovere il client)
+        this.cli = new Cli(this.getUser().getManager(),this); 
+        this.video = new Video(this); //lui si regristra per ricevere risposte video da uno specifico server, toglie la registrazione di gestoreRisposte a quel server
+        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(),this); //lui si registrerà per ricevere risposte di server
         
         this.cli.setVista(this.getBusiness());
     }
@@ -90,14 +90,7 @@ public class Terminal extends Ui{
     
     @Override
     protected void init() {
-        try {
-            this.getCli().setUi((Ui)this);
-            this.getGestoreRemote().setUi((Ui)this);
-            this.getGestoreRisposte().setUi((Ui)this);
-            this.getVideo().setUi((Ui)this);
-        } catch (CommandException e) {
-            System.out.println(e.getMessage());
-        }
+        
         
         //TODO devo registrare la CLI agli eventi di Server e Client
         //TODO devo registrare il Video ad uno specifico Server 
@@ -120,12 +113,18 @@ public class Terminal extends Ui{
         
         this.getBusiness().getEventManagerClient().subscribe(Client.SERVER_NO_RESPONSE, this.getCli());
         this.getBusiness().getEventManagerClient().subscribe(Client.MESSAGGIO_INVIATO, this.getCli());
+
+
+        this.getBusiness().getEventManagerServer().subscribe(Server.ASCOLTO_INIZIATO, this.getCli());
+        this.getBusiness().getEventManagerServer().subscribe(Server.ASCOLTO_TERMINATO, this.getCli());
+        this.getBusiness().getEventManagerClient().subscribe(this.getCli());
     }
     private void subscribeGestoreRemote(){
         this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getGestoreRemote());
     }
     private void subscribeGestoreRisposte(){
         this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_RIMOSSO, this.getGestoreRisposte());
+        this.getBusiness().getEventManagerServer().subscribe(this.getGestoreRisposte());
     }
 
 

@@ -55,7 +55,7 @@ public class ServerThread extends Thread implements Commandable{
     @Override
     public void run() {
         
-        this.getEventManager().notify(this.packet.getData(),this.packet.getLength(),this);
+        this.riferimentoServer.getEventManager().notify(this.packet.getData(),this.packet.getLength(),this);
         
         
     }
