@@ -1,0 +1,33 @@
+[2024/05/21 17:23:05]	Errore, prima devi impostare una socket!
+[2024/05/21 17:23:22]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:24]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:26]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:28]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:30]	Il server non ha dato nessuna risposta
+[2024/05/21 17:23:32]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:15]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:17]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:19]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:21]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:23]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:25]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:27]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:29]	Il server non ha dato nessuna risposta
+[2024/05/21 18:02:31]	Il server non ha dato nessuna risposta
+[2024/05/24 16:19:28]	Address already in use: Cannot bind
+[2024/05/24 16:20:05]	Address already in use: Cannot bind
+[2024/05/24 16:20:39]	socket closed
+[2024/05/24 16:20:47]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:49]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:51]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:53]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:55]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:57]	Il server non ha dato nessuna risposta
+[2024/05/24 16:20:59]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:01]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:03]	Il server non ha dato nessuna risposta
+[2024/05/24 16:21:05]	Il server non ha dato nessuna risposta
+[2024/05/31 19:05:08]	Address already in use: Cannot bind
+[2024/05/31 19:22:13]	Errore, l'ip di destinazione inserito non è valido (deve avere formato '255.255.255.255'))
+[2024/05/31 19:22:25]	Address already in use: Cannot bind
+[2024/05/31 19:22:32]	Address already in use: Cannot bind
