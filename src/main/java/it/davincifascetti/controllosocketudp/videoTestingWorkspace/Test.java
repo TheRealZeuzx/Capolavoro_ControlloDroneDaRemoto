@@ -14,7 +14,7 @@ import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.IplImage;
 import java.awt.image.BufferedImage;
-
+import org.bytedeco.ffmpeg.global.avutil;
 
 
 public class Test {
