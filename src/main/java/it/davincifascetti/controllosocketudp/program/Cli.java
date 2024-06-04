@@ -11,7 +11,7 @@ import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
-public class Cli extends Component implements EventListenerRicezioneBuffer,EventListenerCommandable{
+public class Cli extends Component {
 
     private CommandFactoryI factory;
     private Commandable gestoreAttuale;
@@ -35,6 +35,7 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
         do{ 
             if(!this.isAttivo(this.gestorePrecedente)){
                 System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n");
+                this.gestorePrecedente = this.getGestoreAttuale();
             }
             System.out.print("(" + this.getGestoreAttuale().getClass().getSimpleName() +") >");
             menu ="";
@@ -110,23 +111,23 @@ public class Cli extends Component implements EventListenerRicezioneBuffer,Event
         if(gestorePrecedente == null) this.gestorePrecedente = this.gestoreAttuale;
     }
 
-    @Override
-    public void update(byte[] buffer, int lung,Commandable commandable) {
-        System.out.println(commandable.getClass().getSimpleName() + ": messaggio ricevuto! --> " + new String(buffer));
-    }
-    @Override
-    public void update(String eventType, Commandable commandable) {
-        switch (eventType) {
-            case Client.SERVER_NO_RESPONSE:
-                System.out.println("Il server non ha dato nessuna risposta =( ");
-                break;
+    // @Override
+    // public void update(byte[] buffer, int lung,Commandable commandable) {
+    //     System.out.println(commandable.getClass().getSimpleName() + ": messaggio ricevuto! --> " + new String(buffer));
+    // }
+    // @Override
+    // public void update(String eventType, Commandable commandable) {
+    //     switch (eventType) {
+    //         case Client.SERVER_NO_RESPONSE:
+    //             System.out.println("Il server non ha dato nessuna risposta =( ");
+    //             break;
         
-            default:
-                System.out.println("è appena successa una cosa epica: " + eventType);
-                break;
-        }
+    //         default:
+    //             System.out.println("è appena successa una cosa epica: " + eventType);
+    //             break;
+    //     }
        
-    }
+    // }
 
 
     

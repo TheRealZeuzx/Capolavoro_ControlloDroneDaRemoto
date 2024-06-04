@@ -13,7 +13,7 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 
-public class Video extends Component implements EventListenerRicezioneBuffer{
+public class Video extends Component {
 
     private JFrame frame = null;
 
@@ -22,10 +22,10 @@ public class Video extends Component implements EventListenerRicezioneBuffer{
     }
     public Video(){super();}
 
+    
 
-    @Override
-    public void update(byte[] buffer, int lung,Commandable commandable) {
-
+    public void updateVideo(byte[] buffer, int lung ) {
+        System.out.println("nuovo frame!");
         if(this.frame == null){
             this.frame =  new JFrame("FPV Drone");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

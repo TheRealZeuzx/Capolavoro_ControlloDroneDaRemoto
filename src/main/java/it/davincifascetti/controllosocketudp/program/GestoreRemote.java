@@ -6,7 +6,7 @@ import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
-public class GestoreRemote extends Component implements EventListenerCommandable{
+public class GestoreRemote extends Component {
 
     private Vector<Remote> listaRemote = null;
     public GestoreRemote() throws CommandException {
@@ -36,18 +36,18 @@ public class GestoreRemote extends Component implements EventListenerCommandable
         return this.listaRemote.get(pos);
     }
 
-    @Override
-    public void update(String eventType, Commandable commandable){
-        Remote temp = null;
-        if(!Client.class.isInstance(commandable)) return;
-        try {
-            temp = this.findRemote(((Client)commandable));
-        } catch (CommandException e) {
-            System.out.println("Errore, qualcosa è andato storto | " + e.getMessage());
-        }
-        if(temp == null)return;
-        temp.destroy();
-    }
+    // @Override
+    // public void update(String eventType, Commandable commandable){
+    //     Remote temp = null;
+    //     if(!Client.class.isInstance(commandable)) return;
+    //     try {
+    //         temp = this.findRemote(((Client)commandable));
+    //     } catch (CommandException e) {
+    //         System.out.println("Errore, qualcosa è andato storto | " + e.getMessage());
+    //     }
+    //     if(temp == null)return;
+    //     temp.destroy();
+    // }
 
     public void remove(Remote r){
         if(r == null) return;

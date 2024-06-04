@@ -15,7 +15,7 @@ import it.davincifascetti.controllosocketudp.command.CommandableException;
 public class ServerThread extends Thread implements Commandable{
     private DatagramPacket packet;
     private DatagramSocket socketRisposta;
-    private byte[] bufferOUT = new byte[Server.LunghezzaBuffer];
+    private byte[] bufferOUT = new byte[Server.BUFFER_LENGHT];
     private DatagramPacket packetDaSpedire;
 
 
@@ -88,7 +88,10 @@ public class ServerThread extends Thread implements Commandable{
 
     public Server getServer(){return this.riferimentoServer;}
 
-
+    @Override
+    public String getDesc() {
+        return this.getServer().getDesc();
+    }
 
 }
 

@@ -16,7 +16,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 public class Server implements Runnable,Commandable{
     
-    public static final int LunghezzaBuffer = 1024;
+    public static final int BUFFER_LENGHT = 1024;
     private DatagramSocket socket;
     private String nome;
     private int porta;
@@ -24,10 +24,11 @@ public class Server implements Runnable,Commandable{
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
     private ServerThread threadRisposta = null;
+    private String desc = null;
 
     //eventi
-    public static final String ASCOLTO_INIZIATO = "ascolto_iniziato";
-    public static final String ASCOLTO_TERMINATO = "ascolto_terminato";
+    public static final String LISTENING_STARTED = "listening_started";
+    public static final String LISTENING_ENDED = "listening_ended";
     private EventManagerCommandable eventManager = null;
 
     
@@ -79,9 +80,9 @@ public class Server implements Runnable,Commandable{
     @Override
     public void run(){
         if(!this.isAttivo())return;
-        byte[] bufferIN = new byte[Server.LunghezzaBuffer];
+        byte[] bufferIN = new byte[Server.BUFFER_LENGHT];
         while(this.isAttivo()){
-            DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.LunghezzaBuffer);
+            DatagramPacket pacchetto = new DatagramPacket(bufferIN, Server.BUFFER_LENGHT);
             try {
                 this.socket.receive(pacchetto);
                 if(this.isAttivo()){
@@ -111,7 +112,7 @@ public class Server implements Runnable,Commandable{
                 throw new ErrorLogException(e.getMessage());
             }
         this.statoAttivo = true;
-        this.getEventManager().notify(ASCOLTO_INIZIATO, this);//! notifico inizio ascolto
+        this.getEventManager().notify(LISTENING_STARTED, this);//! notifico inizio ascolto
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
@@ -127,7 +128,7 @@ public class Server implements Runnable,Commandable{
         }
         if(this.threadAscolto != null ) this.threadAscolto.interrupt();
         this.threadAscolto = null;
-        this.getEventManager().notify(ASCOLTO_TERMINATO, this);//! notifico termine ascolto
+        this.getEventManager().notify(LISTENING_ENDED, this);//! notifico termine ascolto
     }
 
 
@@ -232,6 +233,10 @@ public class Server implements Runnable,Commandable{
     }
 
     public EventManagerCommandable getEventManager(){return this.eventManager;}
+
+    public void setDesc(String desc){this.desc = desc;}
+    @Override
+    public String getDesc(){return this.desc;}
 
 }
 

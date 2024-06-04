@@ -16,18 +16,18 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 public class Client implements Commandable,Runnable{
 
-	private static final int LunghezzaBuffer = 1024;
+	private static final int BUFFER_LENGHT = 1024;
 	private static final int WAIT_TIME = 2000;
     private String nome;
 
     private InetAddress ipDestinazioneDefault = null;
     private int porta = -1;
     private DatagramSocket socket;
-    private byte[] bufferOUT = new byte[Client.LunghezzaBuffer];
+    private byte[] bufferOUT = new byte[Client.BUFFER_LENGHT];
 
     //eventi
-    public static final String MESSAGGIO_RICEVUTO = "messaggio_ricevuto";
-    public static final String MESSAGGIO_INVIATO = "messaggio_inviato";
+    public static final String MESSAGGIO_RECEIVED = "message_received";
+    public static final String MESSAGE_SENT = "message_sent";
     public static final String SERVER_NO_RESPONSE = "server_no_response";
     public static final String UNKNOWN_EXCEPTION = "unknown_exception";
     private EventManagerCommandable eventManager = null;
@@ -76,7 +76,7 @@ public class Client implements Commandable,Runnable{
      */
     @Override
     public void run() {
-        byte[] bufferIN = new byte[Client.LunghezzaBuffer];
+        byte[] bufferIN = new byte[Client.BUFFER_LENGHT];
         //creo il pacchetto di ricezione
         DatagramPacket ricevuto = new DatagramPacket(bufferIN,bufferIN.length);
         //ricevo sul pacchetto di ricezione
@@ -88,7 +88,7 @@ public class Client implements Commandable,Runnable{
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
             System.out.println("Server response: " + msgRicevuto);
-            this.eventManager.notify(Client.MESSAGGIO_RICEVUTO,this);
+            this.eventManager.notify(Client.MESSAGGIO_RECEIVED,this);
         }catch(SocketTimeoutException e){
             this.eventManager.notify(Client.SERVER_NO_RESPONSE,this);
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
-            this.eventManager.notify(Client.MESSAGGIO_INVIATO,this);
+            this.eventManager.notify(Client.MESSAGE_SENT,this);
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class Client implements Commandable,Runnable{
         DatagramPacket packet = new DatagramPacket(bufferOUT,bufferOUT.length,this.ipDestinazioneDefault,this.porta);
         try {
             this.socket.send(packet);
-            this.eventManager.notify(Client.MESSAGGIO_INVIATO,this);
+            this.eventManager.notify(Client.MESSAGE_SENT,this);
             Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
@@ -246,6 +246,10 @@ public class Client implements Commandable,Runnable{
     @Override
     public EventManagerCommandable getEventManager() {
         return this.eventManager;
+    }
+    @Override
+    public String getDesc() {
+        return null;
     }
 
 }

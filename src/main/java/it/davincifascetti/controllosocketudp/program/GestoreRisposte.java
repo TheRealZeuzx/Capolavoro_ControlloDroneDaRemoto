@@ -13,7 +13,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
 
-public class GestoreRisposte extends Component implements EventListenerRicezioneBuffer,EventListenerCommandable {
+public class GestoreRisposte extends Component{
     private Ui riferimentoUi;
     private CommandFactoryI factory;
 
@@ -28,7 +28,7 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
         this.setUi(ui);
     }
 
-    private void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException{
+    public void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException{
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
         System.out.println("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
         if(this.factory != null){
@@ -96,25 +96,25 @@ public class GestoreRisposte extends Component implements EventListenerRicezione
 
 
 
-    @Override
-    public void update(byte[] buffer, int lung,Commandable commandable) {
-        if(ServerThread.class.isInstance(commandable)){
-            try {
-                this.gestisciRisposta(buffer, lung, (ServerThread)commandable);
-            } catch (CommandException e) {
-                //credo notify 
-            }
-        }
-    }
+    // @Override
+    // public void update(byte[] buffer, int lung,Commandable commandable) {
+    //     if(ServerThread.class.isInstance(commandable)){
+    //         try {
+    //             this.gestisciRisposta(buffer, lung, (ServerThread)commandable);
+    //         } catch (CommandException e) {
+    //             //credo notify 
+    //         }
+    //     }
+    // }
 
 
-    @Override
-    public void update(String eventType, Commandable commandable) {
-        if(eventType.equals(GestoreClientServer.SERVER_RIMOSSO)){
-            if(Server.class.isInstance(commandable))
-                this.remove((Server)commandable);
-        }
-    }
+    // @Override
+    // public void update(String eventType, Commandable commandable) {
+    //     if(eventType.equals(GestoreClientServer.SERVER_RIMOSSO)){
+    //         if(Server.class.isInstance(commandable))
+    //             this.remove((Server)commandable);
+    //     }
+    // }
 
 
     

@@ -14,4 +14,5 @@ public interface Commandable {
         @throws CommandException se il terminale non riesce a partire.
     */
     public abstract EventManagerCommandable getEventManager();
+    public abstract String getDesc();
 }
