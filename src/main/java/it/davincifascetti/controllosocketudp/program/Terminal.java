@@ -1,4 +1,7 @@
 package it.davincifascetti.controllosocketudp.program;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -6,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.user.User;
 
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
@@ -51,7 +55,22 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
      */
     @Override
     public void main() throws CommandException {
-        
+        //!funny
+        try {
+            //https://manytools.org/hacker-tools/ascii-banner/ 
+            //https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=CAPOLAVORO
+            //per cambiarlo devi metterlo nel file
+            FileReader fileTesto = new FileReader("./art/art2.txt");
+            Scanner in = new Scanner(fileTesto);  
+            while(in.hasNextLine()) {
+                System.out.println("\u001B[35m" + in.nextLine() + "\u001B[0m");
+            }
+            in.close();
+            fileTesto.close();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+  
         System.out.println("Terminale attivato");
         this.cli.main(Terminal.input);
         
