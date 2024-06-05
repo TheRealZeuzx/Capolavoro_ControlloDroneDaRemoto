@@ -37,7 +37,7 @@ public class Cli extends Component {
                 System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n");
                 this.gestorePrecedente = this.getGestoreAttuale();
             }
-            System.out.print("(" + this.getGestoreAttuale().getClass().getSimpleName() +") >");
+            System.out.print("\033[1;92m"+"(" + this.getGestoreAttuale().getClass().getSimpleName() +") >"  + "\u001B[0m");
             menu ="";
             menu = input.nextLine();
             String[] params;

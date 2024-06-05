@@ -59,6 +59,7 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
         try {
             //https://manytools.org/hacker-tools/ascii-banner/ 
             //https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=CAPOLAVORO
+            //https://www.asciiart.eu/computers/computers
             //per cambiarlo devi metterlo nel file
             FileReader fileTesto = new FileReader("./art/art6.txt");
             Scanner in = new Scanner(fileTesto);  
@@ -71,7 +72,6 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
             System.err.println(e.getMessage());
         }
   
-        System.out.println("Terminale attivato");
         this.cli.main(Terminal.input);
         
     }
