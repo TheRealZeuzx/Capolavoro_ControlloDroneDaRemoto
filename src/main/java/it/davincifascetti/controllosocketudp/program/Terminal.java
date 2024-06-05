@@ -60,7 +60,7 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
             //https://manytools.org/hacker-tools/ascii-banner/ 
             //https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=CAPOLAVORO
             //per cambiarlo devi metterlo nel file
-            FileReader fileTesto = new FileReader("./art/art2.txt");
+            FileReader fileTesto = new FileReader("./art/art6.txt");
             Scanner in = new Scanner(fileTesto);  
             while(in.hasNextLine()) {
                 System.out.println("\u001B[35m" + in.nextLine() + "\u001B[0m");

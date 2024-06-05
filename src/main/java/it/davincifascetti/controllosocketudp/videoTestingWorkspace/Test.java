@@ -1,32 +1,31 @@
 package it.davincifascetti.controllosocketudp.videoTestingWorkspace;
 
 
-import java.io.File;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.opencv.opencv_core.IplImage;
 import java.awt.image.BufferedImage;
-import org.bytedeco.ffmpeg.global.avutil;
 
 
 public class Test {
-    public File file=null;
+    public String file=null;
 
     public Test(String fileName){
-        this.file = new File(fileName);
+        this.file = fileName;
     };
     
     
     public static void main(String[] args) {
-        String filePath = "video.mp4";
+        new Test("video.mp4").test1();
+    }
+       
+
+    public void test1(){
+        String filePath = this.file;
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(filePath);
 
         try {
@@ -44,15 +43,12 @@ public class Test {
 
             // Legge e visualizza i frame uno per uno
             org.bytedeco.javacv.Frame grabbedFrame;
+            int frameCount = 0;
             while ((grabbedFrame = grabber.grab()) != null) {
-                // Converti il frame in un IplImage
-                IplImage iplImage = converter.convertToIplImage(grabbedFrame);
-
-                // Converti IplImage a Frame
-                org.bytedeco.javacv.Frame frameConverted = converter.convert(iplImage);
-
-                // Converti Frame a BufferedImage
-                BufferedImage bufferedImage = converter2D.convert(frameConverted);
+                frameCount++;
+                System.out.println("Frame " + frameCount + " grabbed.");
+                // Converti il frame in un BufferedImage
+                BufferedImage bufferedImage = converter2D.convert(grabbedFrame);
 
                 // Mostra l'immagine nel JLabel
                 if (bufferedImage != null) {
@@ -65,18 +61,16 @@ public class Test {
 
                 // Aggiorna il frame per renderlo visibile
                 frame.repaint();
+
                 // Aggiungi un ritardo per visualizzare i frame al ritmo corretto (opzionale)
                 long sleepTime = (long) (1000 / grabber.getFrameRate());
                 Thread.sleep(sleepTime);
             }
-
             // Rilascia le risorse
-            frame.dispose();
             grabber.stop();
             grabber.release();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
