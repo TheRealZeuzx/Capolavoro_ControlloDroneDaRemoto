@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.program;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +13,12 @@ import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
-
+/**specifico per la Ui Terminal
+ * 
+ */
 public class GestoreRisposte extends Component{
     private Ui riferimentoUi;
     private CommandFactoryI factory;
-
     private Map<Server,InfoServer> mapInfoServer = Collections.synchronizedMap(new HashMap<Server,InfoServer>());
 
     public GestoreRisposte(CommandListManager manager) throws CommandException {
@@ -28,17 +30,12 @@ public class GestoreRisposte extends Component{
         this.setUi(ui);
     }
 
-    public void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException{
+    public void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException,ErrorLogException{
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
-        System.out.println("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
+        ((Terminal)this.getUi()).getCli().print("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
         if(this.factory != null){
-            try{
-                this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);
-            }catch(CommandException e){
-                this.add(s.getServer()).stampaVideo(e.getMessage(),this.getUi(),s.getServer()); 
-            }catch(ErrorLogException e){
-                this.add(s.getServer()).errorLog(e.getMessage(), true,this.getUi(),s.getServer());
-            }
+            this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);
+            this.add(s.getServer());
         }
     }
 
@@ -47,7 +44,9 @@ public class GestoreRisposte extends Component{
         if(temp == null) throw new CommandableException("Errore, qualcosa è andato storto!");
         if(temp.getFileLogger() != null)
             temp.fileLog(message,s);
-        temp.stampaVideo("il client dice: " + message,this.getUi(),s);
+        temp.addMsg(message);
+        if(((Terminal)this.getUi()).getCli().isAttivo(s)) 
+            ((Terminal)this.getUi()).getCli().print("il client dice: " + message);
     }
 
 

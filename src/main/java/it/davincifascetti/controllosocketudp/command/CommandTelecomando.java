@@ -1,5 +1,7 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import java.io.IOException;
+
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.Terminal;
@@ -25,6 +27,10 @@ public class CommandTelecomando extends CommandI<Client>{
 
     @Override
     public void execute() throws CommandException, ErrorLogException{
-        ((Terminal)this.getUi()).getGestoreRemote().modTelecomando(this.getGestore());
+        try {
+            ((Terminal)this.getUi()).getGestoreRemote().modTelecomando(this.getGestore());
+        }catch(Exception e ){
+            ((Terminal)this.getUi()).getCli().printError(e.getMessage());
+        }
     }
 }

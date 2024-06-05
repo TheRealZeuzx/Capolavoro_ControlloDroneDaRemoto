@@ -1,4 +1,5 @@
 package it.davincifascetti.controllosocketudp.program;
+import java.io.IOException;
 import java.util.Vector;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
@@ -17,16 +18,24 @@ public class GestoreRemote extends Component {
         this.setUi(ui);
     }
 
-    public void modTelecomando(Client c) throws CommandException,ErrorLogException{
+    public void modTelecomando(Client c) throws CommandException,ErrorLogException, IOException{
+        ((Terminal)this.getUi()).getCli().setBloccato(true);
         if(c == null) throw new CommandException("Errore, il client calling è null!");
         Remote temp = this.findRemote(c);
         if(temp==null){
             temp = new Remote(c,this);
             this.listaRemote.add(temp);
-            if(!temp.isActive())
+            if(!temp.isActive()){   
                 temp.attiva();
+            }
         }
         
+    }
+
+    public void destroy(Remote remote){
+        remote.destroy();
+        this.remove(remote);
+        ((Terminal)this.getUi()).getCli().setBloccato(false);
     }
 
     private Remote findRemote(Client c) throws CommandException{

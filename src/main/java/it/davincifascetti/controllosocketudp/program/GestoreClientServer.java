@@ -30,7 +30,7 @@ public class GestoreClientServer implements Commandable{
     );
     //!attenzione: eventManagerClient e eventManagerServer sono comuni a tutti i client e tutti i server
     private EventManagerCommandable eventManagerClient = new EventManagerCommandable(
-        Client.MESSAGGIO_RECEIVED,
+        Client.MESSAGE_RECEIVED,
         Client.MESSAGE_SENT,
         Client.SERVER_NO_RESPONSE,
         Client.UNKNOWN_EXCEPTION

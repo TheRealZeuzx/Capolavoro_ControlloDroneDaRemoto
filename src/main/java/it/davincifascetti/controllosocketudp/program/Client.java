@@ -26,7 +26,7 @@ public class Client implements Commandable,Runnable{
     private byte[] bufferOUT = new byte[Client.BUFFER_LENGHT];
 
     //eventi
-    public static final String MESSAGGIO_RECEIVED = "message_received";
+    public static final String MESSAGE_RECEIVED = "message_received";
     public static final String MESSAGE_SENT = "message_sent";
     public static final String SERVER_NO_RESPONSE = "server_no_response";
     public static final String UNKNOWN_EXCEPTION = "unknown_exception";
@@ -88,13 +88,11 @@ public class Client implements Commandable,Runnable{
             msgRicevuto = new String(ricevuto.getData());
             msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
             System.out.println("Server response: " + msgRicevuto);
-            this.eventManager.notify(Client.MESSAGGIO_RECEIVED,this);
+            this.eventManager.notify(Client.MESSAGE_RECEIVED,this);
         }catch(SocketTimeoutException e){
             this.eventManager.notify(Client.SERVER_NO_RESPONSE,this);
         } catch (Exception e) {
             this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this);
-        }finally{
-            Terminal.setBloccato(false);
         }
     }
 
@@ -111,7 +109,6 @@ public class Client implements Commandable,Runnable{
         try {
             this.socket.send(packet);
             this.eventManager.notify(Client.MESSAGE_SENT,this);
-            Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
             this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this); //!se si volesse fare bene si dovrebbe mettere il multi-catch e una costante apposita per ogni eccezione
@@ -130,7 +127,6 @@ public class Client implements Commandable,Runnable{
         try {
             this.socket.send(packet);
             this.eventManager.notify(Client.MESSAGE_SENT,this);
-            Terminal.setBloccato(true);
             this.ricevi();
         } catch (Exception e) {
             this.eventManager.notify(Client.UNKNOWN_EXCEPTION,this);

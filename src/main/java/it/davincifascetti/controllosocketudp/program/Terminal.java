@@ -6,24 +6,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
+import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.user.User;
 
-/**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
- * ha la possibilità di fare l'undo dei comandi che implementano UndoableCommand
- * instanzia una commandFactory corrispondente al gestore utilizzando CommandFactoryInstantiar 
- * la command factory si occupa di creare i comandi opportuni per ogni messaggio inviato dal utente, la execute del command , attivera il receiver che eseguira effettivaemnte l'operazione richiesta
- * utilizza il command design pattern
- * @author Mussaldi Tommaso, Mattia Bonfiglio
- * @version 1.0
+/**La classe Terminal si occupa di gestire i propri componenti e eseguire azioni in base a 
+ * gli eventi e i msg ricevuti dalla parte business dell'applicazione , in questo caso GestoreClientServer.
+ * in questo caso il terminale istanzia la CLI che sarà il vero e proprio terminale ovvero dove avverrano input e output, sarà il terminale stesso
+ * a decidere chi e come userà la CLI per l'output, farà da mediator (Mediator Design Pattern)
  */
-public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventListenerCommandable{
+public class Terminal extends Ui {
     
     public static Scanner input = new Scanner(System.in);
-    private static AtomicBoolean  bloccato = new AtomicBoolean(); //rende boolean thread safe
-    //componenti
-    //?passargli l'errorLog e renderlo concorrente?
-    //TODO capire se farlo o no
     private GestoreRemote telecomandi = null;
     private Cli cli = null;
     private Video video = null;
@@ -33,9 +28,10 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
      * 
      * @param errorLog oggetto error log che si occupera del log su file degli errori
      * @throws CommandException
+     * @throws IOException 
      */
     //TODO capire come gestire USER, per ora rappresenta solo i comandi di CLI
-    public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi) throws CommandException{
+    public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi) throws CommandException, IOException{
         super(business, errorLog,comandi);
         this.telecomandi = new GestoreRemote(this);
         this.cli = new Cli(this.getUser().getManager(),this); //agirà di input output con l'utente
@@ -49,9 +45,10 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
      * 
      * @param gestore deve implementare Commandable
      * @throws CommandException
+     * @throws IOException 
      */
     @Override
-    public void main() throws CommandException {
+    public void main() throws CommandException, IOException {
         //!funny
         try {
             //https://manytools.org/hacker-tools/ascii-banner/ 
@@ -60,33 +57,26 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
             //per cambiarlo devi metterlo nel file
             FileReader fileTesto = new FileReader("./art/art6.txt");
             Scanner in = new Scanner(fileTesto);  
+            System.out.print(Cli.BANNER_COLOR);
             while(in.hasNextLine()) {
-                System.out.println("\033[38;2;255;107;53m" + in.nextLine() + "\u001B[0m");
+                System.out.println(in.nextLine());
             }
-            System.out.println("");
-            System.out.println("\033[38;2;255;107;53m" + "Type '\033[38;2;239;239;208mhelp\033[38;2;255;107;53m' or '\033[38;2;239;239;208m?\033[38;2;255;107;53m' to see list of available commands" + "\u001B[0m" +"\n");
+            System.out.println("\nType '"+Cli.INPUT_COLOR+"help"+Cli.BANNER_COLOR+"' or '"+Cli.INPUT_COLOR+"?"+Cli.BANNER_COLOR + "' to see list of available commands" + Cli.RESET_COLOR +"\n");
             in.close();
             fileTesto.close();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-        this.cli.main(Terminal.input);
+        this.cli.setScanner(input);
+        this.cli.main();
+        
         
     }
 
-    
+    //TODO rimuoverlo da qui
     public boolean isAttivo(Commandable gestore){
         return this.cli.isAttivo(gestore);
     }
-
-
-    
-    
-
-    public synchronized static boolean isBloccato(){return Terminal.bloccato.get();}
-    public synchronized static void setBloccato(boolean bloccato){Terminal.bloccato.set(bloccato);}
-    
-
 
     public GestoreRemote getGestoreRemote(){
         return this.telecomandi;
@@ -113,32 +103,45 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
         
     }
 
+
+    //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
     @Override
     public void update(String eventType, Commandable commandable) {
-        if(commandable == null){System.out.println("Errore!");} //!gestire
-        System.out.println("è successo questo: " + eventType);
+        if(commandable == null){this.getCli().printError("Errore!");} //!gestire
+        this.getCli().print("è successo questo: " + eventType); 
+        if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setBloccato(true); 
+        if(eventType.equals(Client.MESSAGE_RECEIVED ) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setBloccato(false); 
+        
+        
     }
 
     @Override
     public void update(byte[] buffer, int lung, Commandable commandable) {
-        if(commandable == null){System.out.println("Errore!");} //!gestire
-        System.out.println("qualcuno ha detto: " + new String(buffer));
+        if(commandable == null){this.getCli().printError("Errore!");} //!gestire
+        this.getCli().print(commandable.getClass().getSimpleName() + " ha detto: " + new String(buffer));   
         if(ServerThread.class.isInstance(commandable)){
             //in base alla descrizione decido come gestire es: getDesc.equals("video") --> aggiorno il video
             if(commandable.getDesc() == null){
                 try {
                     this.getGestoreRisposte().gestisciRisposta(buffer, lung, (ServerThread)commandable);
                 } catch (CommandException e) {
-                    //credo errore alla cli? o al errorLog
-                    try {
-                        this.getErrorLog().log(e.getMessage());
-                    } catch (IOException e1) {
-                        System.err.println(e.getMessage());
-                    }
+                    this.getCli().printError(e.getMessage());
+                } catch (ErrorLogException e) {
+                    this.getCli().printError(e.getMessage());
+                    this.errorLog(e.getMessage());
                 }
             }else if(commandable.getDesc().equals("video")){
                 this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
             }
+        }
+    }
+
+    @Override
+    public void errorLog(String msg){
+        try {
+            this.getErrorLog().log(msg);
+        } catch (IOException e) {
+            this.getCli().printError(e.getMessage());
         }
     }
 

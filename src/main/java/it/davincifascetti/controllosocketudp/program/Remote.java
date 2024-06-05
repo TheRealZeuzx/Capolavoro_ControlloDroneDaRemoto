@@ -30,7 +30,7 @@ public class Remote extends KeyAdapter{
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
         if(c == 'e'){
-            this.destroy();
+            this.gestoreRemote.destroy(this);
         }
         try {
             if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
@@ -50,7 +50,6 @@ public class Remote extends KeyAdapter{
      * @throws ErrorLogException
      */
     public void attiva() throws CommandException, ErrorLogException{
-        Terminal.setBloccato(true);
         this.frame.setEnabled(true);
         this.frame.requestFocus(); 
         this.frame.setSize(500, 500);
@@ -68,8 +67,6 @@ public class Remote extends KeyAdapter{
     public void destroy(){
         this.frame.removeKeyListener(this);
         this.frame.dispose();
-        this.gestoreRemote.remove(this);
-        Terminal.setBloccato(false);
         this.client = null;
     }
 

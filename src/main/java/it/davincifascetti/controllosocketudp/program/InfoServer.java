@@ -59,7 +59,7 @@ public class InfoServer {
         return fileLogger;
     }
 
-
+    //!non so se deve stare qui il filelogger
     /**permette di loggare su di un file che ha lo stesso nome del server, si occupa di aprire e terminale lo stream
      * se specificato non è specificato un file stampa sul file che prende il nome del server in modalità append
      * @param message messaggio da loggare
@@ -87,19 +87,8 @@ public class InfoServer {
      * se voglio stampare sul terminale devo usare questo metodo perchè in base a se il terminale è attivo o no , stampa a video oppure aggiunge alla lista storiamsg
      * @param msg messaggio da stampare
      */
-    public void stampaVideo(String msg,Ui ui,Server s){
-        if(((Terminal)ui).isAttivo(s))System.out.println(msg); //!non va bene, solo di prova
-		else this.storiaMsg.add(msg);
-    }
-
-    /**permette di loggare un errore 
-     * 
-     * @param msg messaggio da loggare
-     * @param video true se si stampa anche a video altrimenti false  solo su file
-     */
-    public void errorLog(String msg, boolean video,Ui ui,Server s){
-        if(video)this.stampaVideo(msg,ui,s);
-        ui.errorLog(msg,false);
+    public void addMsg(String msg){
+        this.storiaMsg.add(msg);
     }
 
 }

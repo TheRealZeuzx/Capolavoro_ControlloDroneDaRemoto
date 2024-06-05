@@ -27,9 +27,8 @@ public class Main {
             System.out.println("\u001B[33m" + "User creato correttamente" + "\u001B[37m");
             app.start();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Programma Terminato a causa di questo errore: " + e.getMessage());
         }
-        System.out.println("Programma Terminato");
        
     }
 }
