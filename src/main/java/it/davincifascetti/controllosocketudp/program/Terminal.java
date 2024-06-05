@@ -1,6 +1,4 @@
 package it.davincifascetti.controllosocketudp.program;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
@@ -9,7 +7,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLog;
-import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.user.User;
 
 /**classe Terminal si occupa della gestione del terminale, utilizza i command per eseguire le operazioni richieste,
@@ -64,14 +61,15 @@ public class Terminal extends Ui implements EventListenerRicezioneBuffer,EventLi
             FileReader fileTesto = new FileReader("./art/art6.txt");
             Scanner in = new Scanner(fileTesto);  
             while(in.hasNextLine()) {
-                System.out.println("\u001B[35m" + in.nextLine() + "\u001B[0m");
+                System.out.println("\033[38;2;255;107;53m" + in.nextLine() + "\u001B[0m");
             }
+            System.out.println("");
+            System.out.println("\033[38;2;255;107;53m" + "Type '\033[38;2;239;239;208mhelp\033[38;2;255;107;53m' or '\033[38;2;239;239;208m?\033[38;2;255;107;53m' to see list of available commands" + "\u001B[0m" +"\n");
             in.close();
             fileTesto.close();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-  
         this.cli.main(Terminal.input);
         
     }

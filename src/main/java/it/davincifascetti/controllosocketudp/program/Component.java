@@ -54,7 +54,7 @@ public abstract class Component {
 
     private CommandHistory findCommandHistory(Commandable commandable){
         boolean pos = this.storieComandi.containsKey(commandable);
-        if(pos)
+        if(!pos)
             return null;
         return this.storieComandi.get(commandable);
     }

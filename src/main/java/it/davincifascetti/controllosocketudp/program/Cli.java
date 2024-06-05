@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.program;
 
 
 import java.util.Scanner;
+import java.util.Stack;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
@@ -14,9 +15,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class Cli extends Component {
 
     private CommandFactoryI factory;
-    private Commandable gestoreAttuale;
-    private Commandable gestorePrecedente = null;
-
+    private Stack<Commandable> viste = new Stack<Commandable>();
 
 
     public Cli(CommandListManager manager) throws CommandException{
@@ -31,15 +30,20 @@ public class Cli extends Component {
 
     public void main(Scanner input){
         String menu;
-        System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n"); //solo la prima volta
+        if(this.viste.empty()){ 
+            System.out.println("Prima devi impostare una vista!");
+            return; 
+        }
         do{ 
-            if(!this.isAttivo(this.gestorePrecedente)){
-                System.out.print("--- Vista " + this.getGestoreAttuale().getClass().getSimpleName() +" ---\n");
-                this.gestorePrecedente = this.getGestoreAttuale();
-            }
-            System.out.print("\033[1;92m"+"(" + this.getGestoreAttuale().getClass().getSimpleName() +") >"  + "\u001B[0m");
+            // System.out.println("\033[38;2;255;107;53m banner \u001B[0m");
+            // System.out.println("\033[38;2;1;167;194m terminal \u001B[0m");
+            // System.out.println("\033[38;2;239;239;208m scrivo \u001B[0m");
+            // System.out.println("\033[38;2;144;103;198m risposta \u001B[0m");
+            System.out.print("\033[38;2;1;167;194m"+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >"  + "\u001B[0m");
             menu ="";
+            System.out.print("\033[38;2;239;239;208m");//colore con cui scrivo in chat
             menu = input.nextLine();
+            System.out.print("\033[38;2;144;103;198m");//colore risposta (metterlo nel metodo apposito)
             String[] params;
             if(menu.isBlank())
             params = null;
@@ -48,8 +52,8 @@ public class Cli extends Component {
             switch((params == null ? "" : params[0])){
                 case "undo":
                 try {
-                    if(!this.undo(this.gestoreAttuale))System.out.println("non ci sono azioni significative da annullare");
-                    else System.out.println("l'ultima azione significativa è stata annullata con successo");
+                    if(!this.undo(this.getGestoreAttuale()))System.out.println("no commands to undo");
+                    else System.out.println("last command undone correctly");
                 } catch (CommandException e) {
                     System.out.println(e.getMessage());
                 } catch (ErrorLogException e) {
@@ -57,9 +61,23 @@ public class Cli extends Component {
                 }
                 break;
                 case "quit":
-                System.out.println("Chiusura vista " + this.getGestoreAttuale().getClass().getSimpleName() + " ...\n");
+                    if(this.isLastVista()){
+                        String conferma="";
+                        do{
+                        
+                            System.out.print("\033[38;2;1;167;194m|sure? [y/n]| > \033[38;2;239;239;208m");
+                            conferma = input.nextLine();
+                            if(conferma.equals("y"))System.out.println("\033[38;2;144;103;198mChiusura Programma ...");
+                            else if(conferma.equals("n"))menu = "";
+                        }while(!conferma.equals("y") && !conferma.equals("n"));
+                    }else{
+                        this.quitVista();
+                        menu = "";
+                    }
                 break;
-                
+                case "clear":
+                    System.out.print("\033\143");
+                break;
                 default:
                 try{
                     this.executeCommand(factory.getCommand(this.getGestoreAttuale(),menu.toLowerCase(),this.getUi()),this.getGestoreAttuale());
@@ -70,28 +88,15 @@ public class Cli extends Component {
                 }
                 break;
             }   
-            if(this.isAttivo(this.getUi().getBusiness()) && menu.equalsIgnoreCase("quit")){
-                String conferma="";
-                do{
-                    System.out.print("sicuro di voler chiudere il programma? [y/n] : ");
-                    conferma = input.nextLine();
-                    if(conferma.equals("y"))System.out.println("Chiusura Programma ...");
-                    else if(conferma.equals("n"))menu = "";
-                }while(!conferma.equals("y") && !conferma.equals("n"));
-            }
-            else if(menu.equalsIgnoreCase("quit")){
-                this.setVista(this.getUi().getBusiness());
-                menu = "";
-
-            }
         }while(!menu.equalsIgnoreCase("quit"));
+        System.out.print("\u001B[0m");
     }
     
-    public Commandable getGestoreAttuale(){return this.gestoreAttuale;}
+    public Commandable getGestoreAttuale(){return this.viste.peek();}
     
     public boolean isAttivo(Commandable gestore){
         if(gestore == null) return false;
-        return this.gestoreAttuale.equals(gestore);
+        return this.viste.peek().equals(gestore);
     }
 
 
@@ -102,13 +107,29 @@ public class Cli extends Component {
     }
 
     //TODO classe che gestisce la vista e tiene anche la factory relativa? + come si fa cambiarla dai command?
-    /**cambia la vista attuale
+    /**cambia la vista attuale, aggiunge allo stack e userà quello come gestore attuale
      * 
      */
     public void setVista(Commandable gestore){
-        this.gestorePrecedente = gestoreAttuale;
-        this.gestoreAttuale = gestore;
-        if(gestorePrecedente == null) this.gestorePrecedente = this.gestoreAttuale;
+        this.viste.add(gestore);
+    }
+    /**permette di tornare indietro nello stack
+     * 
+     * @return il gestore quittato
+     */
+    public Commandable quitVista(){
+        return this.viste.pop();
+    }
+    /**restituisce true se è rimasto una sola vista (mi trovo nel root element)
+     * 
+     * @return true se sono all gestore root
+     */
+    public boolean isLastVista(){
+        return this.viste.size() > 1 ? false : true;
+    }
+
+    public synchronized void stampa(){
+
     }
 
     // @Override

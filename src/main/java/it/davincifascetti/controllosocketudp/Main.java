@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp;
 
 import it.davincifascetti.controllosocketudp.program.App;
 import it.davincifascetti.controllosocketudp.program.user.UserDefault;
+import it.davincifascetti.controllosocketudp.program.user.UserDrone;
 
 public class Main {
 //!MAIN
