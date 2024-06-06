@@ -17,7 +17,6 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  * 
  */
 public class GestoreRisposte extends Component{
-    private Ui riferimentoUi;
     private CommandFactoryI factory;
     private Map<Server,InfoServer> mapInfoServer = Collections.synchronizedMap(new HashMap<Server,InfoServer>());
 
@@ -34,7 +33,7 @@ public class GestoreRisposte extends Component{
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
         ((Terminal)this.getUi()).getCli().print("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
         if(this.factory != null){
-            this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.riferimentoUi),s);
+            this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.getUi()),s);
             this.add(s.getServer());
         }
     }
@@ -82,18 +81,6 @@ public class GestoreRisposte extends Component{
         if(s == null) return;
         this.mapInfoServer.remove(s);
     }
-
-    
-
-    @Override
-    public void setUi(Ui ui) throws CommandException {
-        if(ui == null) throw new CommandException("Errore, la UI passata è null!");
-        this.riferimentoUi = ui;
-    }
-
-    
-
-
 
     // @Override
     // public void update(byte[] buffer, int lung,Commandable commandable) {

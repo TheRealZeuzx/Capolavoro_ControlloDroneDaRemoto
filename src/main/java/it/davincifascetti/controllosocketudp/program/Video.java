@@ -23,7 +23,11 @@ public class Video extends Component {
     public Video(){super();}
 
     
-
+    /**Uso questa classe per aggiornare il frame del video quando mi arriva il pacchetto
+     * 
+     * @param buffer
+     * @param lung
+     */
     public void updateVideo(byte[] buffer, int lung ) {
         System.out.println("nuovo frame!");
         if(this.frame == null){

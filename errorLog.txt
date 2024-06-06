@@ -31,3 +31,4 @@
 [2024/05/31 19:22:13]	Errore, l'ip di destinazione inserito non è valido (deve avere formato '255.255.255.255'))
 [2024/05/31 19:22:25]	Address already in use: Cannot bind
 [2024/05/31 19:22:32]	Address already in use: Cannot bind
+[2024/06/05 19:28:05]	Address already in use: Cannot bind

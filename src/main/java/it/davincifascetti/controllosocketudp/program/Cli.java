@@ -22,9 +22,9 @@ public class Cli extends Component {
     private Scanner input = null;
     public final static String BANNER_COLOR = "\033[38;2;255;107;53m";
     public final static String INPUT_COLOR = "\033[38;2;239;239;208m";
-    public final static String OUTPUT_COLOR = "\033[38;2;144;103;198m";
+    public final static String OUTPUT_COLOR = "\033[38;2;130;112;129m";
     public final static String SCOPE_COLOR = "\033[38;2;1;167;194m"; // si riferisce a |gestore|>
-    public final static String ERROR_COLOR = "\033[38;2;226;61;40m\"";
+    public final static String ERROR_COLOR = "\033[38;2;226;61;40m";
     public final static String RESET_COLOR = "\u001B[0m";
     public final static String CLEAR_CONSOLE = "\033\143";
 
@@ -155,6 +155,7 @@ public class Cli extends Component {
     public synchronized void print(String message){
         if(!this.isBloccato())
             System.out.println(OUTPUT_COLOR  + message);
+        System.out.print(RESET_COLOR);
     }
     /**PER STAMPARE UN ERRORE SULLA CLI SI USA QUESTO (chiunque voglia stampare a video deve usare questo, quindi lo gestirà la UI chi stampa cosa)
      * 
@@ -162,6 +163,7 @@ public class Cli extends Component {
      */
     public synchronized void printError(String message){
         System.out.println(ERROR_COLOR  + message);
+        System.out.print(RESET_COLOR);
     }
 
     public void setScanner(Scanner input) throws CommandException{

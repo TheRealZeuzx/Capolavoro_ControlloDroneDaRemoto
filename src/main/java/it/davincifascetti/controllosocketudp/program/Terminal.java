@@ -110,8 +110,9 @@ public class Terminal extends Ui {
         if(commandable == null){this.getCli().printError("Errore!");} //!gestire
         this.getCli().print("è successo questo: " + eventType); 
         if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setBloccato(true); 
-        if(eventType.equals(Client.MESSAGE_RECEIVED ) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setBloccato(false); 
         
+        //TODO capire se conviene mettere un attributo bloccatoVideo in CLI in modo che anche se è bloccata la CLI possa stampare ad esempio un msg di risposta
+        //if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setBloccato(false); 
         
     }
 
