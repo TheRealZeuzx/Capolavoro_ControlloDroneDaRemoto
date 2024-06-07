@@ -13,6 +13,10 @@ public class Main {
         * select c c1
         */
         
+        //! ho finito di fixare gli ultimi comandi del server (ho messo unsupportedOperation al logging su file)
+        //! e soprattutto ora Server accetta anche il parametro di IP.
+        //! nel Client, il comando "from" non è riconosciuto.
+        //! In qualche modo il programma 
         try {
             // User u;
             // u = new UserDrone("errorLog.txt");

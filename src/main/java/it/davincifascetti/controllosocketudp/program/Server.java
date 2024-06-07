@@ -205,11 +205,12 @@ public class Server implements Runnable,Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public void setSocket(String porta) throws CommandableException, ErrorLogException{
+    public void setSocket(String ip, String porta) throws CommandableException, ErrorLogException{
         boolean wasActive = this.isAttivo();
         if(this.isAttivo())
             this.terminaAscolto();
         this.setPorta(porta);
+        this.setIp(ip);
         try {
             this.socket = new DatagramSocket(this.porta);
         } catch (SocketException e) {

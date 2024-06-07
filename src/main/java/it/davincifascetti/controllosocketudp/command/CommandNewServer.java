@@ -26,11 +26,11 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
             this.nome = temp[0]; //new c c1 localhost 1212
         else if(temp.length == 2){
             this.nome = temp[0];
-            this.porta = temp[1];
+            this.ip = temp[1];
         }else if(temp.length == 3){
             this.nome = temp[0];
-            this.porta = temp[1];
-            this.ip = temp[2];
+            this.ip = temp[1];
+            this.porta = temp[2];
         }else
             throw new CommandException("I parametri passati non sono validi!");
     }
@@ -46,7 +46,7 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
                 this.getGestore().newServer(nome);
             else if(ip == null)
                 this.getGestore().newServer(nome,porta);
-            else  this.getGestore().newServer(nome,porta,ip);
+            else  this.getGestore().newServer(nome,ip,porta);
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }

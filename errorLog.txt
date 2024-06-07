@@ -32,3 +32,8 @@
 [2024/05/31 19:22:25]	Address already in use: Cannot bind
 [2024/05/31 19:22:32]	Address already in use: Cannot bind
 [2024/06/05 19:28:05]	Address already in use: Cannot bind
+[2024/06/07 09:56:23]	Cannot assign requested address: bind
+[2024/06/07 09:56:34]	Cannot assign requested address: bind
+[2024/06/07 10:01:29]	Address already in use: bind
+[2024/06/07 10:48:26]	Address already in use: bind
+[2024/06/07 10:48:38]	Address already in use: bind

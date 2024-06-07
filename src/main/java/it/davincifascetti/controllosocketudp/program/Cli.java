@@ -99,6 +99,8 @@ public class Cli extends Component {
                 }catch(ErrorLogException e){
                     this.printError(e.getMessage());
                     this.getUi().errorLog(e.getMessage());
+                }catch(Exception e){
+                    this.printError(e.getMessage());
                 }
                 break;
             }   

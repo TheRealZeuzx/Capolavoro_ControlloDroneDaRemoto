@@ -9,6 +9,9 @@ import it.davincifascetti.controllosocketudp.program.Ui;
  *  @version 1.0
  */
 public class CommandSetSocketServer extends CommandI<Server> implements UndoableCommand{
+    private String porta;
+    private String ip;
+    private String ipPrecedente;
     private String portaPrecedente;
     /**
      * 
@@ -16,9 +19,14 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      * @param porta nuova porta locale
      * @throws CommandException
      */
-    public CommandSetSocketServer(Server gestore,String porta,Ui ui) throws CommandException {
-        super(gestore,porta,ui);
-        this.portaPrecedente = String.valueOf(this.getGestore().getPorta());
+    public CommandSetSocketServer(Server gestore,String ipPorta,Ui ui) throws CommandException {
+        super(gestore,ipPorta,ui);
+        String []temp =  this.getParams().split("[ ]+");
+        if(temp.length != 2) throw new CommandException("Errore, il numero di parametri è errato!");
+        this.porta = temp[0];
+        this.portaPrecedente = String.valueOf(this.getGestore().getPorta());;
+        this.ip = temp[1];
+        this.ipPrecedente = this.getGestore().getIp();
     }
     @Override
     /**elimina il socket e imposta lo stato a disattivo quindi una volta modificato il socket devi riattivare il server
@@ -26,7 +34,7 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      */
     public void execute() throws CommandException,ErrorLogException {
         try {
-            this.getGestore().setSocket(this.getParams());
+            this.getGestore().setSocket(ip,porta);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
@@ -34,7 +42,8 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
     @Override
     public boolean undo() throws CommandException,ErrorLogException{
         try {
-            this.getGestore().setSocket(portaPrecedente);
+            if(portaPrecedente.equals("-1")) this.portaPrecedente = null;
+            this.getGestore().setSocket(ipPrecedente,portaPrecedente);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
