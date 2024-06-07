@@ -65,6 +65,7 @@ Durante lo sviluppo dell'applicazione, abbiamo incontrato alcune difficoltà e i
   - Con tempi limitati, implementare un'architettura così complessa potrebbe non essere praticabile, richiedendo soluzioni più semplici per rispettare le scadenze.
 
 **Design Finale che vorremmo implementare**
+
 ![image](https://github.com/TommasoMussaldi/ControlloSocketUDP_TPS/assets/96235087/edb4a3d0-862f-4911-b83a-380ceaffb51b)
 ### Pro
 - **Separazione dei Concerns**:
