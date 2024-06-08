@@ -109,10 +109,10 @@ public class Terminal extends Ui {
     public void update(String eventType, Commandable commandable) {
         if(commandable == null){this.getCli().printError("Errore!");} //!gestire
         this.getCli().print("è successo questo: " + eventType); 
-       // if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setBloccato(true); 
+        //if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setLocked(true); 
         
         //TODO capire se conviene mettere un attributo bloccatoVideo in CLI in modo che anche se è bloccata la CLI possa stampare ad esempio un msg di risposta
-        //if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setBloccato(false); 
+        //if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setLocked(false); 
         
     }
 
@@ -130,7 +130,7 @@ public class Terminal extends Ui {
                     this.getCli().printError(e.getMessage());
                 } catch (ErrorLogException e) {
                     this.getCli().printError(e.getMessage());
-                    this.errorLog(e.getMessage());
+                    this.fileErrorLog(e.getMessage());
                 }
             }else if(commandable.getDesc().equals("video")){
                 this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
@@ -139,7 +139,7 @@ public class Terminal extends Ui {
     }
 
     @Override
-    public void errorLog(String msg){
+    public void fileErrorLog(String msg){
         try {
             this.getErrorLog().log(msg);
         } catch (IOException e) {

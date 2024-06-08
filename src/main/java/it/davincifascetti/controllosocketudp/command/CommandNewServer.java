@@ -24,10 +24,7 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
         String []temp =  nomePortaIp.split("[ ]+");
         if(temp.length == 1)
             this.nome = temp[0]; //new c c1 localhost 1212
-        else if(temp.length == 2){
-            this.nome = temp[0];
-            this.ip = temp[1];
-        }else if(temp.length == 3){
+        else if(temp.length == 3){
             this.nome = temp[0];
             this.ip = temp[1];
             this.porta = temp[2];
@@ -42,11 +39,10 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
     @Override
     public void execute() throws CommandException, ErrorLogException {
         try{
-            if(porta == null)
+            if(porta == null && ip == null)
                 this.getGestore().newServer(nome);
-            else if(ip == null)
-                this.getGestore().newServer(nome,porta);
-            else  this.getGestore().newServer(nome,ip,porta);
+            else if(porta != null && ip != null)  this.getGestore().newServer(nome,ip,porta);
+            else throw new CommandException("Errore, qualcosa è andato storto!");
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }

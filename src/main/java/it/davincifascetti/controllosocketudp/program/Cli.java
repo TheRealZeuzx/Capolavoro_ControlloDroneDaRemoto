@@ -18,8 +18,13 @@ public class Cli extends Component {
 
     private CommandFactoryI factory;
     private Stack<Commandable> viste = new Stack<Commandable>();
-    private AtomicBoolean BLOCCATO = new AtomicBoolean(); //rende boolean thread safe
     private Scanner input = null;
+    //STATI DELLA CLI
+    private final AtomicBoolean LOCKED = new AtomicBoolean(); //rende boolean thread safe
+    private final AtomicBoolean RUNNING = new AtomicBoolean(); //rende boolean thread safe
+    private final AtomicBoolean PRINT_ENABLED = new AtomicBoolean(); //rende boolean thread safe
+    private final AtomicBoolean GETTING_INPUT = new AtomicBoolean(); //rende boolean thread safe
+    //COLOR CODES CONSOLE
     public final static String BANNER_COLOR = "\033[38;2;255;107;53m";
     public final static String INPUT_COLOR = "\033[38;2;239;239;208m";
     public final static String OUTPUT_COLOR = "\033[38;2;130;112;129m";
@@ -39,7 +44,11 @@ public class Cli extends Component {
 
 
     public void main(){
-        if(this.isBloccato()) return;
+        if(RUNNING.get()) return;
+        if(this.isLocked()){
+            return;
+        } 
+        this.RUNNING.set(true);
         if(this.input == null){ 
             System.out.println("Prima devi specificare uno scanner!");
             return; 
@@ -50,12 +59,16 @@ public class Cli extends Component {
         }
         String menu;
         do{ 
-            if(this.isBloccato()) return;
-            System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >"  + RESET_COLOR);
-            menu ="";
-            System.out.print(INPUT_COLOR);
-            menu = input.nextLine();
-            System.out.print(OUTPUT_COLOR);
+            if(this.isLocked()) return;
+            synchronized(GETTING_INPUT){
+                GETTING_INPUT.compareAndSet(false, true);
+                System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >"  + RESET_COLOR);
+                menu ="";
+                System.out.print(INPUT_COLOR + ">");
+                menu = input.nextLine();
+                System.out.print(OUTPUT_COLOR);
+                GETTING_INPUT.compareAndSet(true, false);
+            }
             String[] params;
             if(menu.isBlank())
             params = null;
@@ -70,7 +83,7 @@ public class Cli extends Component {
                     this.printError(e.getMessage());
                 } catch (ErrorLogException e) {
                     this.printError(e.getMessage());
-                    this.getUi().errorLog(e.getMessage());
+                    this.getUi().fileErrorLog(e.getMessage());
                 }
                 break;
                 case "quit":
@@ -98,7 +111,7 @@ public class Cli extends Component {
                     this.printError(e.getMessage());
                 }catch(ErrorLogException e){
                     this.printError(e.getMessage());
-                    this.getUi().errorLog(e.getMessage());
+                    this.getUi().fileErrorLog(e.getMessage());
                 }catch(Exception e){
                     this.printError(e.getMessage());
                 }
@@ -110,10 +123,14 @@ public class Cli extends Component {
     
     public Commandable getGestoreAttuale(){return this.viste.peek();}
     //TODO capire come gestire il "bloccaggio" della CLI, esempio quando devo stampare un msg dall'esterno ma sto in input
-    public synchronized boolean isBloccato(){return this.BLOCCATO.get();}
-    public synchronized void setBloccato(boolean bloccato){
-        this.BLOCCATO.set(bloccato);
-        if(!this.isBloccato()) this.main();
+    //TODO ci deve essere un solo main attivo
+    public synchronized boolean isLocked(){return this.LOCKED.get();}
+    public synchronized void setLocked(boolean bloccato){
+        this.LOCKED.set(bloccato);
+        this.RUNNING.set(!bloccato);
+        if(!this.isLocked()){
+            this.main();
+        } 
     }
 
     public boolean isAttivo(Commandable gestore){
@@ -156,16 +173,20 @@ public class Cli extends Component {
      */
     public synchronized void print(String message){
         
-            System.out.println(OUTPUT_COLOR  + message);
+        System.out.println(OUTPUT_COLOR  + message);
         System.out.print(RESET_COLOR);
+        
     }
     /**PER STAMPARE UN ERRORE SULLA CLI SI USA QUESTO (chiunque voglia stampare a video deve usare questo, quindi lo gestirà la UI chi stampa cosa)
      * 
      * @param message
      */
+    //TODO gestire il bloccaggio
     public synchronized void printError(String message){
+        
         System.out.println(ERROR_COLOR  + message);
         System.out.print(RESET_COLOR);
+        
     }
 
     public void setScanner(Scanner input) throws CommandException{

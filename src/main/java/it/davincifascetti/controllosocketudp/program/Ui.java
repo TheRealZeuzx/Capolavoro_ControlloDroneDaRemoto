@@ -61,8 +61,7 @@ public abstract class Ui implements EventListenerRicezioneBuffer,EventListenerCo
         return this.business;
     }
     
-    public abstract void errorLog(String msg);
-    
+    public abstract void fileErrorLog(String msg);
     public ErrorLog getErrorLog(){
         return this.errorLog;
     }

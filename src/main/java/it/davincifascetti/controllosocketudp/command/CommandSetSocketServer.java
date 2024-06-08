@@ -9,10 +9,10 @@ import it.davincifascetti.controllosocketudp.program.Ui;
  *  @version 1.0
  */
 public class CommandSetSocketServer extends CommandI<Server> implements UndoableCommand{
-    private String porta;
-    private String ip;
-    private String ipPrecedente;
-    private String portaPrecedente;
+    private String porta = null;
+    private String ip = null;
+    private String ipPrecedente = null;
+    private String portaPrecedente = null;
     /**
      * 
      * @param gestore Server a cui verrà cambiato la socket
@@ -23,10 +23,14 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
         super(gestore,ipPorta,ui);
         String []temp =  this.getParams().split("[ ]+");
         if(temp.length != 2) throw new CommandException("Errore, il numero di parametri è errato!");
-        this.porta = temp[0];
-        this.portaPrecedente = String.valueOf(this.getGestore().getPorta());;
-        this.ip = temp[1];
-        this.ipPrecedente = this.getGestore().getIp();
+        else if(temp.length == 2){
+            this.ip = temp[0];
+            this.ipPrecedente = this.getGestore().getIp();
+            this.porta = temp[1];
+            this.portaPrecedente = String.valueOf(this.getGestore().getPorta());
+        }else
+            throw new CommandException("I parametri passati non sono validi!");
+        
     }
     @Override
     /**elimina il socket e imposta lo stato a disattivo quindi una volta modificato il socket devi riattivare il server
@@ -34,7 +38,9 @@ public class CommandSetSocketServer extends CommandI<Server> implements Undoable
      */
     public void execute() throws CommandException,ErrorLogException {
         try {
-            this.getGestore().setSocket(ip,porta);
+            if(this.porta == null || this.ip== null)
+            throw new CommandException("Errore, qualcosa è andato storto!");
+            else if(porta != null && ip != null)  this.getGestore().setSocket(ip,porta);
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }

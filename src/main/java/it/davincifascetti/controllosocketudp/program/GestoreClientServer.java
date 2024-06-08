@@ -122,22 +122,7 @@ public class GestoreClientServer implements Commandable{
         this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
         
     }
-    /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server
-     * 
-     * @param terminale terminale da di server da passare al costruttore di server
-     * @param nome nome del server
-     * @param porta porta locale del server
-     * @throws CommandableException
-     * @throws ErrorLogException
-     */
-    public void newServer(String nome,String porta) throws CommandableException, ErrorLogException{
-        if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
-        Server s = new Server(nome,porta,this.getEventManagerServer());
-        this.listaServer.add(s);
-        s.iniziaAscolto();
-        this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
-        
-    }
+
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il secondo costruttore di server
      * 
      * @param terminale terminale da di server da passare al costruttore di server
@@ -150,8 +135,12 @@ public class GestoreClientServer implements Commandable{
     public void newServer(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,ip,porta,this.getEventManagerServer());
+        try{
+            s.iniziaAscolto();
+        }catch(CommandableException e){
+            throw new CommandableException(e.getMessage());
+        }
         this.listaServer.add(s);
-        s.iniziaAscolto();
         this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
         
     }

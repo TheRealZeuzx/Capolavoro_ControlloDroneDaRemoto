@@ -45,6 +45,7 @@ public class EventManagerCommandable {
 
     public void notify(String eventType, Commandable commandable){
         ArrayList<EventListenerCommandable> users = listenerCommandable.get(eventType);
+        if(users == null) return;
         for (EventListenerCommandable listener : users) {
             listener.update(eventType, commandable);
         }

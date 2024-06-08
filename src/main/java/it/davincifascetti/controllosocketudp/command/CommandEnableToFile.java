@@ -41,7 +41,7 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
      * @throws CommandException
      */
     public void execute() throws CommandException{
-        throw new UnsupportedOperationException("Operazione non piu' supportata.");
+        throw new UnsupportedOperationException("va fixato.");
         /*
         try {
             this.getGestore().SuFile(append, nomeFile);
@@ -52,7 +52,7 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
 
     @Override
     public boolean undo() throws CommandException{
-        throw new UnsupportedOperationException("Operazione non piu' supportata.");/*
+        throw new UnsupportedOperationException("va fixato.");/*
         new CommandDisableToFile(this.getGestore(),"").execute();
         return true; */
     }

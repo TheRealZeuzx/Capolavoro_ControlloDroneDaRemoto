@@ -13,13 +13,14 @@ public class GestoreRemote extends Component {
     public GestoreRemote() throws CommandException {
         listaRemote = new Vector<Remote>();
     }
+    //TODO mettere i comandi specificati in un file xml in modo da fare che i comandi sono nella UI, ogni componente può avere comandi es CLI e Remote sarà poi ogni componente a cercare se stesso nella lista comandi che sta in UI
     public GestoreRemote(Ui ui) throws CommandException {
         this();
         this.setUi(ui);
     }
 
     public void modTelecomando(Client c) throws CommandException,ErrorLogException, IOException{
-        ((Terminal)this.getUi()).getCli().setBloccato(true);
+        ((Terminal)this.getUi()).getCli().setLocked(true);
         if(c == null) throw new CommandException("Errore, il client calling è null!");
         Remote temp = this.findRemote(c);
         if(temp==null){
@@ -35,7 +36,7 @@ public class GestoreRemote extends Component {
     public void destroy(Remote remote){
         remote.destroy();
         this.remove(remote);
-        ((Terminal)this.getUi()).getCli().setBloccato(false);
+        ((Terminal)this.getUi()).getCli().setLocked(false);
     }
 
     private Remote findRemote(Client c) throws CommandException{

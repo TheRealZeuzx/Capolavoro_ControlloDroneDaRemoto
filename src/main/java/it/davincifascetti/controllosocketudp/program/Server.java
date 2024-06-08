@@ -1,9 +1,18 @@
 package it.davincifascetti.controllosocketudp.program;
+import java.io.UncheckedIOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.DatagramSocketImpl;
+import java.net.DatagramSocketImplFactory;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+
+import org.bytedeco.javacv.ImageTransformer.Data;
+
+import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -17,7 +26,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 public class Server implements Runnable,Commandable{
     
     public static final int BUFFER_LENGHT = 1024;
-    private DatagramSocket socket;
+    private DatagramSocket socket = null;
     private String nome;
     private int porta;
     private InetAddress ip;
@@ -43,33 +52,16 @@ public class Server implements Runnable,Commandable{
         this.eventManager = eventManager;
         this.setNome(nomeServer);
     }
-    /**se uso quest costruttore, posso attivare il server
-     * 
-     * @param nomeClient nome del server
-     * @param porta porta locale su cui aprire il socket
-     * @param t riferimento terminale che verra usato da questo server
-     * @throws CommandableException
-     * @throws ErrorLogException
-     */
-    public Server(String nomeServer, String porta,EventManagerCommandable eventManager) throws CommandableException,ErrorLogException{
-        this(nomeServer,eventManager);
-        this.setPorta(porta);
-        if(porta == null) throw new CommandableException("Errore, la porta è null!");
-        try {
-            this.socket = new DatagramSocket(this.porta);
-        } catch (SocketException e) {
-            throw new ErrorLogException(e.getMessage());
-        }
-    }
+
     public Server(String nomeServer, String ip,String porta,EventManagerCommandable eventManager) throws CommandableException,ErrorLogException{
         this(nomeServer,eventManager);
-        if(porta == null || ip == null) throw new ErrorLogException("Errore, la porta o l'ip non sono stati specificati");
+        if(porta == null || ip == null) throw new ErrorLogException("Errore nella creazione del server: la porta o l'ip non sono stati specificati");
         this.setPorta(porta);
         this.setIp(ip);
         try {
             this.socket = new DatagramSocket(this.porta,this.ip);
         } catch (SocketException e) {
-            throw new ErrorLogException(e.getMessage());
+            throw new ErrorLogException("Errore nella creazione del server: " + e.getMessage());
         }
     }
 
@@ -103,16 +95,17 @@ public class Server implements Runnable,Commandable{
      * @throws CommandableException
      * @throws ErrorLogException 
      */
-    public void iniziaAscolto()throws CommandableException, ErrorLogException{
-        if(!this.socketIsSet()) throw new CommandableException("Errore, la socket è null non può essere avviato, imposta una porta prima");
-        if(this.socket.isClosed())
-            try {
-                this.socket = new DatagramSocket(this.porta);
-            } catch (SocketException e) {
-                throw new ErrorLogException(e.getMessage());
+    public void iniziaAscolto()throws CommandableException{
+        if(!this.socketIsSet()) throw new CommandableException("Prima di avviare l'ascolto di un server devi impostare la socket!");
+        if(this.socket.isClosed()) throw new CommandableException("Errore nell'avvio ascolto del server: la socket è chiusa");
+        if(!this.socket.isConnected())
+            try { 
+                this.socket.connect(ip, porta);
+            } catch (Exception e) {
+                throw new CommandableException("Errore, qualcosa è andato storto durante la connessione: " + e.getMessage());
             }
         this.statoAttivo = true;
-        this.getEventManager().notify(LISTENING_STARTED, this);//! notifico inizio ascolto
+        this.getEventManager().notify(LISTENING_STARTED, this);
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
@@ -139,7 +132,7 @@ public class Server implements Runnable,Commandable{
      * @param ip ip di destinazione può essere "localhost" oppure un ip normale
      * @throws CommandableException
      */
-    public void setIp(String ip) throws CommandableException{
+    private void setIp(String ip) throws CommandableException{
         if(ip == null){ this.ip = null;return;}
         boolean temp = false;
         if(!ip.equalsIgnoreCase("localhost")){ 
@@ -163,7 +156,7 @@ public class Server implements Runnable,Commandable{
     public String getIp(){ if(this.ip == null) return null; return this.ip.getHostAddress();}
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (this.socket == null?"Port: - ":("Port: "+this.getPorta())) + "\t" + (this.socket == null?"Ip: - ":("Ip: "+this.getIp()))+ "\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return "Name: " + this.getNome() + "\t" + (((this.socket == null) || (this.socket.getPort() == -1))?"Port: - ":("Port: "+this.socket.getPort())) + "\t" + (((this.socket == null) || (this.socket.getInetAddress() == null))?"Ip: - ":("Ip: "+this.socket.getInetAddress().getHostName()))+ "\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
 
@@ -200,24 +193,45 @@ public class Server implements Runnable,Commandable{
     public int getPorta(){return this.porta;}
 
     /**si occupa di terminare l'ascolto,modificare il socket e se era attivo riattivare la socket
-     * 
+     * si comporta come una transaction , se non va a buon fine reimposta la socket precedente
      * @param porta nuova porta locale
      * @throws CommandableException
      * @throws ErrorLogException
      */
     public void setSocket(String ip, String porta) throws CommandableException, ErrorLogException{
         boolean wasActive = this.isAttivo();
-
-        if(this.isAttivo())
-            this.terminaAscolto();
-        this.setPorta(porta);
-        this.setIp(ip);
+        int port = this.porta;
+        InetAddress i = this.ip;
         try {
-            this.socket = new DatagramSocket(this.porta);
+            this.setPorta(porta);
+            this.setIp(ip);
+            if(this.socketIsSet() && this.isAttivo())
+                this.terminaAscolto();
+            this.socket = new DatagramSocket(this.porta,this.ip);
+            try{
+                this.socket.connect(this.ip, this.porta);
+            }catch(UncheckedIOException e1){
+                throw new SocketException(e1.getMessage());
+            }
+            if(wasActive)this.iniziaAscolto();
+        } catch (CommandableException e) {
+            this.porta = port;
+            this.ip = i;
+            throw e;
         } catch (SocketException e) {
-            throw new ErrorLogException(e.getMessage());
+            this.porta = port;
+            this.ip = i;
+            try {
+                this.socket = new DatagramSocket(this.porta,this.ip);
+                if(wasActive)this.iniziaAscolto();
+            } catch (SocketException e1) {
+                throw new CommandableException("Errore, qualcosa è andato storto");
+            }
+            throw new CommandableException(e.getMessage());
         }
-        if(wasActive)this.iniziaAscolto();
+        
+        
+        
     }
 
     @Override
