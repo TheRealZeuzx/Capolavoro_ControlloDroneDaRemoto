@@ -85,9 +85,9 @@ public class Client implements Commandable,Runnable{
             
             this.socket.setSoTimeout(Client.WAIT_TIME);
             this.socket.receive(ricevuto);
-            msgRicevuto = new String(ricevuto.getData());
-            msgRicevuto = msgRicevuto.substring(0, ricevuto.getLength());
+            
             this.eventManager.notify(Client.MESSAGE_RECEIVED,this);
+            this.eventManager.notify(ricevuto.getData(),ricevuto.getLength(),this);
         }catch(SocketTimeoutException e){
             this.eventManager.notify(Client.SERVER_NO_RESPONSE,this);
         } catch (Exception e) {

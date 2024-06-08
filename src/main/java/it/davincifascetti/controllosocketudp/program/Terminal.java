@@ -99,6 +99,7 @@ public class Terminal extends Ui {
         this.getBusiness().getEventManagerClient().subscribe(EventManagerCommandable.SUBSCRIBE_ALL,this);
         this.getBusiness().getEventManagerServer().subscribe(EventManagerCommandable.SUBSCRIBE_ALL,this);
         this.getBusiness().getEventManagerServer().subscribe(this);
+        this.getBusiness().getEventManagerClient().subscribe(this);
 
         
     }
@@ -108,7 +109,7 @@ public class Terminal extends Ui {
     @Override
     public void update(String eventType, Commandable commandable) {
         if(commandable == null){this.getCli().printError("Errore!");} //!gestire
-        this.getCli().print("è successo questo: " + eventType); 
+        this.getCli().print(commandable.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setLocked(true); 
         
         //TODO capire se conviene mettere un attributo bloccatoVideo in CLI in modo che anche se è bloccata la CLI possa stampare ad esempio un msg di risposta
@@ -118,9 +119,8 @@ public class Terminal extends Ui {
 
     @Override
     public void update(byte[] buffer, int lung, Commandable commandable) {
-            System.out.println(new String(buffer));
-        if(commandable == null){this.getCli().printError("Errore!");} //!gestire
-        this.getCli().print(commandable.getClass().getSimpleName() + " ha detto: " + new String(buffer));   
+        if(commandable == null){this.getCli().printError("Errore, qualcosa è andato storto!");} //!gestire   
+        //messaggio ricevuto in dal server da un client (ricevuto dal server)
         if(ServerThread.class.isInstance(commandable)){
             //in base alla descrizione decido come gestire es: getDesc.equals("video") --> aggiorno il video
             if(commandable.getDesc() == null){
@@ -134,6 +134,19 @@ public class Terminal extends Ui {
                 }
             }else if(commandable.getDesc().equals("video")){
                 this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
+            }
+        }
+        //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
+        if(Client.class.isInstance(commandable)){
+            if(commandable.getDesc() == null){
+                try {
+                    this.getGestoreRisposte().gestisciRisposta(buffer, lung, (Client)commandable);
+                } catch (CommandException e) {
+                    this.getCli().printError(e.getMessage());
+                } catch (ErrorLogException e) {
+                    this.getCli().printError(e.getMessage());
+                    this.fileErrorLog(e.getMessage());
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 /**specifico per la Ui Terminal
  * 
  */
+//!volendo possiamo creare un gestore risposte client e uno server in modo da avere anche comandi separati per i due 
 public class GestoreRisposte extends Component{
     private CommandFactoryI factory;
     private Map<Server,InfoServer> mapInfoServer = Collections.synchronizedMap(new HashMap<Server,InfoServer>());
@@ -31,12 +32,18 @@ public class GestoreRisposte extends Component{
 
     public void gestisciRisposta(byte[] buffer, int length, ServerThread s) throws CommandException,ErrorLogException{
         String msgRicevuto = this.getMsgRicevuto(buffer, length);
-        ((Terminal)this.getUi()).getCli().print("la risposta a: '" + msgRicevuto + "' verrà ora gestita");
+        ((Terminal)this.getUi()).getCli().print("il "+s.getClass().getSimpleName()+" gestirà il messaggio: '" + msgRicevuto + "' appena ricevuto");
         if(this.factory != null){
             this.executeCommand(this.factory.getCommand(s,msgRicevuto,this.getUi()),s);
-            this.add(s.getServer());
+            this.add(s);
         }
     }
+    public void gestisciRisposta(byte[] buffer, int length, Client c) throws CommandException,ErrorLogException{
+        String msgRicevuto = this.getMsgRicevuto(buffer, length);
+        ((Terminal)this.getUi()).getCli().print("il server dice: \n" + msgRicevuto);
+
+    }
+    
 
     public void defaultResponse(String message,Server s) throws CommandableException{
         InfoServer temp = this.add(s);
