@@ -207,6 +207,7 @@ public class Server implements Runnable,Commandable{
      */
     public void setSocket(String ip, String porta) throws CommandableException, ErrorLogException{
         boolean wasActive = this.isAttivo();
+
         if(this.isAttivo())
             this.terminaAscolto();
         this.setPorta(porta);

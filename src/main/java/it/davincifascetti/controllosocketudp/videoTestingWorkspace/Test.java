@@ -8,6 +8,9 @@ import javax.swing.JLabel;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+
+import it.davincifascetti.controllosocketudp.program.Video;
+
 import java.awt.image.BufferedImage;
 
 

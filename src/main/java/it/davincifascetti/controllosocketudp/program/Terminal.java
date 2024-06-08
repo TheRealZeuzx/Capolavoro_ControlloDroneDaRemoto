@@ -109,7 +109,7 @@ public class Terminal extends Ui {
     public void update(String eventType, Commandable commandable) {
         if(commandable == null){this.getCli().printError("Errore!");} //!gestire
         this.getCli().print("è successo questo: " + eventType); 
-        if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setBloccato(true); 
+       // if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setBloccato(true); 
         
         //TODO capire se conviene mettere un attributo bloccatoVideo in CLI in modo che anche se è bloccata la CLI possa stampare ad esempio un msg di risposta
         //if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setBloccato(false); 
@@ -118,6 +118,7 @@ public class Terminal extends Ui {
 
     @Override
     public void update(byte[] buffer, int lung, Commandable commandable) {
+            System.out.println(new String(buffer));
         if(commandable == null){this.getCli().printError("Errore!");} //!gestire
         this.getCli().print(commandable.getClass().getSimpleName() + " ha detto: " + new String(buffer));   
         if(ServerThread.class.isInstance(commandable)){

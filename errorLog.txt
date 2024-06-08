@@ -37,3 +37,4 @@
 [2024/06/07 10:01:29]	Address already in use: bind
 [2024/06/07 10:48:26]	Address already in use: bind
 [2024/06/07 10:48:38]	Address already in use: bind
+[2024/06/08 08:32:17]	Address already in use: bind

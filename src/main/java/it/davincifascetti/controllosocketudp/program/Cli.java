@@ -155,7 +155,7 @@ public class Cli extends Component {
      * @param message
      */
     public synchronized void print(String message){
-        if(!this.isBloccato())
+        
             System.out.println(OUTPUT_COLOR  + message);
         System.out.print(RESET_COLOR);
     }

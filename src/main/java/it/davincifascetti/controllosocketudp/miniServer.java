@@ -17,6 +17,7 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.Video;
 /**classe server, crea un thread che si occupa della ricezione e uno separato (ServerThread) che si occupa di rispondere
  * 
  * @throws CommandableExceptio errori stampati sul terminale
@@ -33,7 +34,7 @@ public class miniServer implements Runnable{
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
     private String ip;
-    private JFrame frame = null;
+    private Video video = null;
     /**se uso quest costruttore, posso attivare il server
      * 
      * @param nomeClient nome del server
@@ -47,16 +48,22 @@ public class miniServer implements Runnable{
         this.setPorta(porta);
         this.nome = nomeServer;
         this.ip = ip;
+        this.video = new Video();
         try {
             this.socket = new DatagramSocket(this.porta,InetAddress.getByName(ip));
         } catch (SocketException e) {
             throw new ErrorLogException(e.getMessage());
         }
-        this.frame =  new JFrame("Image Viewer");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 300);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        try {
+            miniServer serv = new miniServer("s1", "11111","0.0.0.0");
+            serv.iniziaAscolto();
+        } catch (UnknownHostException | CommandableException | ErrorLogException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     /**implementa la logica di ricezione e attiva il thread di risposta
@@ -64,20 +71,16 @@ public class miniServer implements Runnable{
      */
     @Override
     public void run(){
+        StringBuilder packetData = new StringBuilder();        
         if(!this.isAttivo())return;
         byte[] bufferIN = new byte[miniServer.LunghezzaBuffer];
         while(this.isAttivo()){
             DatagramPacket pacchetto = new DatagramPacket(bufferIN, miniServer.LunghezzaBuffer);
             try {
                 this.socket.receive(pacchetto);
-                ByteArrayInputStream inStreambj = new ByteArrayInputStream(pacchetto.getData());
-                BufferedImage image = ImageIO.read(inStreambj);
-                if(image != null){
-                    JLabel imageLabel = new JLabel(new ImageIcon(image));
-                    frame.add(imageLabel);
-                    frame.pack();
-                    frame.setVisible(true);
-                }else {System.out.println("image==null |  =/");}
+                packetData.append(new String(pacchetto.getData(), 0, pacchetto.getLength()));
+                if (pacchetto.getLength() != 1460) 
+                    this.video.decodeH264Frame(packetData.toString().getBytes());
             } catch (Exception e) {
 
             }
