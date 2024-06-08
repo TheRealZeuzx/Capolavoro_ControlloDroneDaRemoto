@@ -135,9 +135,8 @@ public class Terminal extends Ui {
             }else if(commandable.getDesc().equals("video")){
                 this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
             }
-        }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
-        if(Client.class.isInstance(commandable)){
+        }else if(Client.class.isInstance(commandable)){
             if(commandable.getDesc() == null){
                 try {
                     this.getGestoreRisposte().gestisciRisposta(buffer, lung, (Client)commandable);

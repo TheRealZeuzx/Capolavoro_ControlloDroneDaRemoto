@@ -43,18 +43,7 @@ public class InfoServer {
     public CommandHistory getStoriaComandi(){return this.storiaComandi;}
     public ArrayList<String> getStoriaMsg(){return this.storiaMsg;}
 
-        /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
-     * 
-     * @return stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
-     */
-    public String stampaStoriaMsg(Server s){
-        String temp = "";   
-        for (String string : this.storiaMsg) {
-            temp +=string+"\n";
-        }
-        return temp;
-    }
-
+     
     public FileLogger getFileLogger() {
         return fileLogger;
     }

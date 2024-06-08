@@ -1,4 +1,5 @@
 package it.davincifascetti.controllosocketudp.command;
+import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.Terminal;
@@ -18,7 +19,7 @@ public class CommandSelectServer extends CommandI<GestoreClientServer>{
         super(gestore,nome,ui);
         if(!Terminal.class.isInstance(ui)) throw new CommandException("Errore, la Ui passata non è un Terminal!");
     }
-    public void execute() throws CommandException {
+    public void execute() throws CommandException{
         Server temp = this.getGestore().ricercaServer(this.getParams());
         if(temp == null) throw new CommandException("il server '" + this.getParams() + "' non esiste");
         ((Terminal)this.getUi()).getCli().setVista(temp);

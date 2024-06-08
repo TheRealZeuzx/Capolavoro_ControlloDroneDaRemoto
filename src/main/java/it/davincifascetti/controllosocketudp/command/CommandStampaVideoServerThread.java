@@ -3,6 +3,7 @@ package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 import it.davincifascetti.controllosocketudp.program.Ui;
+import it.davincifascetti.controllosocketudp.program.Terminal;
 
 /** stampa a video usando Server.stampaVideo(String) così da avere i vantaggi di quel metodo (vedi Server.stampaVideo)
  *  invia al client risposta di successo
@@ -22,6 +23,8 @@ public class CommandStampaVideoServerThread extends CommandI<ServerThread>{
     }
     public void execute() throws CommandException, ErrorLogException {
         if(this.getParams().isBlank()) new CommandInviaMsgDefaultToClient(this.getGestore(),this.getParams(),this.getUi()).execute();
+        if(((Terminal)this.getUi()).getCli().isAttivo(getGestore()))((Terminal)this.getUi()).getCli().print(this.getParams());
+        ((Terminal)this.getUi()).getGestoreRisposte().add(this.getGestore().getServer()).addMsg(this.getParams());
         new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine",this.getUi()).execute();
 
     }

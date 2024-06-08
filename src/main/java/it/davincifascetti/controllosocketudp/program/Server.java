@@ -95,7 +95,7 @@ public class Server implements Runnable,Commandable{
      */
     public void iniziaAscolto()throws CommandableException{
         if(!this.socketIsSet()) throw new CommandableException("Prima di avviare l'ascolto di un server devi impostare la socket!");
-        if(this.socket.isClosed()) throw new CommandableException("Errore nell'avvio ascolto del server: la socket è chiusa");
+        if(this.socket.isClosed()) this.setSocket(this.getIp(), Integer.toString(this.getPorta()));
         if(!this.socket.isBound())
             try { 
                 this.socket.bind(new InetSocketAddress(ip, porta));

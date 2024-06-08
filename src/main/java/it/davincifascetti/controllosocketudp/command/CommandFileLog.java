@@ -33,8 +33,8 @@ public class CommandFileLog extends CommandI<ServerThread>{
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }
-        new CommandStampaVideoServerThread(this.getGestore(),this.getParams()).execute();
-        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine").execute();
+        new CommandStampaVideoServerThread(this.getGestore(),this.getParams(),this.getUi()).execute();
+        new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine",this.getUi()).execute();
         
     }
 }

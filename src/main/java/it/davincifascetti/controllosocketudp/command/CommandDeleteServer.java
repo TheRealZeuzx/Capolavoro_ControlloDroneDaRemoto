@@ -16,6 +16,7 @@ import it.davincifascetti.controllosocketudp.program.Ui;
 public class CommandDeleteServer extends CommandI<GestoreClientServer> implements UndoableCommand{
     private String nome;
     private Server server;
+    private boolean wasActive;
     /**
         Costruttore di default di CommandDeleteServer.
         Richiama al costruttore del padre (CommandI).
@@ -37,6 +38,7 @@ public class CommandDeleteServer extends CommandI<GestoreClientServer> implement
         try {
             this.server = this.getGestore().ricercaServer(nome);
             if(server == null) throw new CommandException("Il server '" + nome +"' non è stato trovato!");
+            this.wasActive = this.server.isAttivo();
             this.server.terminaAscolto();
             this.getGestore().removeServer(this.server);
         } catch (CommandableException e) {
@@ -53,7 +55,7 @@ public class CommandDeleteServer extends CommandI<GestoreClientServer> implement
     public boolean undo() throws CommandException,ErrorLogException{
         try {
             if(this.server != null){ 
-                this.server.iniziaAscolto();
+                if(this.wasActive) this.server.iniziaAscolto();
                 this.getGestore().addServer(this.server);
             }
         } catch (CommandableException e) {

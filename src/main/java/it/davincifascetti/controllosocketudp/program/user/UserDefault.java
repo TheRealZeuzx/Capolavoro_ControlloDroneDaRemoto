@@ -70,6 +70,7 @@ public final class UserDefault extends User{
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
             "quit\t\tpermette di tornare al Terminale Generale \n" + 
             "undo\t\tpermette di annullare l'ultima operazione significativa eseguita \n" + 
+            "received\t\tpermette di visualizzare i messaggi ricevuti da questo server\n" +
             "info\t\tpermette di visualizzare le informazioni di questo server\n" +
             "enable\t\tpermette di avviare questo server\n" +
             "disable\t\tpermette di disattivare questo server\n" +
@@ -79,6 +80,7 @@ public final class UserDefault extends User{
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
         temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
         temp.registraComando( "^d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisattivaServer");
+        temp.registraComando( "^r(?:e(?:c(?:e(?:i(?:v(?:e(?:d)?)?)?)?)?)?)?[ ]*$",path + "CommandStampaMsgRicevuti");
         temp.registraComando( "^e(?:n(?:a(?:b(?:l(?:e)?)?)?)?)?[ ]*$",path + "CommandAttivaServer");
         temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+s(?:o(?:c(?:k(?:e(?:t)?)?)?)?)?[ ]+",path + "CommandSetSocketServer");

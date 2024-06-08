@@ -51,11 +51,11 @@ public class Cli extends Component {
         } 
         this.RUNNING.set(true);
         if(this.input == null){ 
-            System.out.println("Prima devi specificare uno scanner!");
+            this.printError("Prima devi specificare uno scanner!");
             return; 
         }
         if(this.viste.empty()){ 
-            System.out.println("Prima devi impostare una vista!");
+            this.printError("Prima devi impostare una vista!");
             return; 
         }
         String menu;
@@ -78,8 +78,8 @@ public class Cli extends Component {
             switch((params == null ? "" : params[0])){
                 case "undo":
                 try {
-                    if(!this.undo(this.getGestoreAttuale()))System.out.println("no commands to undo");
-                    else System.out.println("last command undone correctly");
+                    if(!this.undo(this.getGestoreAttuale()))System.out.println(OUTPUT_COLOR + "no commands to undo");
+                    else System.out.println(OUTPUT_COLOR + "last command undone correctly");
                 } catch (CommandException e) {
                     this.printError(e.getMessage());
                 } catch (ErrorLogException e) {

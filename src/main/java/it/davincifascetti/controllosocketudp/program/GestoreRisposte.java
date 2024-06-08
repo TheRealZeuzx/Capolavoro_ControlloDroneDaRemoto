@@ -79,10 +79,29 @@ public class GestoreRisposte extends Component{
 
     private InfoServer findLista(Server s){
         boolean pos = this.mapInfoServer.containsKey(s);
-        if(pos)
+        if(!pos)
             return null;
         return this.mapInfoServer.get(s);
     }
+
+    public InfoServer getInfo(Server s){
+        return this.findLista(s);
+    }
+
+       /**restitsce stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
+     * 
+     * @return stringa contenente tutti i msg ricevuti dal client concatenati (aggiunge \n)
+     */
+    public String stampaStoriaMsg(Server s){
+        InfoServer temp1 = getInfo(s);
+        if(temp1 == null) return "";
+        String temp = "";   
+        for (String string : temp1.getStoriaMsg()) {
+            temp +=string+"\n";
+        }
+        return temp.substring(0,temp.length() - 1);//tolgo l'ultimo '\n'
+    }
+
 
     public void remove(Server s){
         if(s == null) return;

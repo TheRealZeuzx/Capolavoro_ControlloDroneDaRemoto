@@ -41,3 +41,8 @@
 [2024/06/08 15:53:26]	Errore nella creazione del server: java.net.BindException: Cannot assign requested address: connect
 [2024/06/08 16:00:10]	Errore nella creazione del server: Errore, qualcosa è andato storto durante la connessione: java.net.BindException: Cannot assign requested address: connect
 [2024/06/08 16:03:14]	Errore nella creazione del server: Errore, qualcosa è andato storto durante la connessione: java.net.BindException: Cannot assign requested address: connect
+[2024/06/08 19:00:31]	Errore nella creazione del server: Address already in use: bind
+[2024/06/08 19:22:16]	Errore, impossibile ripristinare il server
+[2024/06/08 19:22:44]	Errore, impossibile ripristinare il server
+[2024/06/08 19:35:35]	Errore, impossibile ripristinare il server
+[2024/06/08 19:38:22]	Errore, impossibile ripristinare il server
