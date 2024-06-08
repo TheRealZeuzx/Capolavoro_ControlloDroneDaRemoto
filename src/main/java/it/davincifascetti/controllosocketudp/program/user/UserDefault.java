@@ -73,7 +73,7 @@ public final class UserDefault extends User{
             "info\t\tpermette di visualizzare le informazioni di questo server\n" +
             "enable\t\tpermette di avviare questo server\n" +
             "disable\t\tpermette di disattivare questo server\n" +
-            "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set port nuovaPorta) permette di cambiare la porta del server\n"+
+            "set\t\tpermette di modificare la socket oppure il nome del server\n\t\t(set name nuovoNome) permette di cambiare il nome del server\n\t\t(set socket nuovoIp nuovaPorta) permette di cambiare la socket del server\n"+
             "file\t\tpermette di abilitare la stampa su file in maniera automatica di tutto ciò che viene inviato al server\n\t\t(file nomefile modalità) se si vuole stampare sul file che prende il nome di questo server , si usa 'this' al posto del nomeFile \n\t\tla modalità può essere append oppure overwrite\n\t\t(file disable) permette di disabilitare la stampa su file, una volta disabilitata,\n\t\tsarà necessario usare il comando (file nomefile modalita) per riattivarla\n"
         );
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
@@ -81,7 +81,7 @@ public final class UserDefault extends User{
         temp.registraComando( "^d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisattivaServer");
         temp.registraComando( "^e(?:n(?:a(?:b(?:l(?:e)?)?)?)?)?[ ]*$",path + "CommandAttivaServer");
         temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
-        temp.registraComando( "s(?:e(?:t?)?)?[ ]+p(?:o(?:r(?:t)?)?)?[ ]+",path + "CommandSetSocketServer");
+        temp.registraComando( "s(?:e(?:t?)?)?[ ]+s(?:o(?:c(?:k(?:e(?:t)?)?)?)?)?[ ]+",path + "CommandSetSocketServer");
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeServer");
         temp.registraComando( "f(?:i(?:l(?:e)?)?)?[ ]+",path + "CommandEnableToFile");
         temp.registraComando( "^f(?:i(?:l(?:e)?)?)?[ ]+d(?:i(?:s(?:a(?:b(?:l(?:e)?)?)?)?)?)?[ ]*$",path + "CommandDisableToFile");
