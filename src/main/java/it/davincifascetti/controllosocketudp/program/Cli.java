@@ -30,6 +30,7 @@ public class Cli extends Component {
     public final static String OUTPUT_COLOR = "\033[38;2;130;112;129m";
     public final static String SCOPE_COLOR = "\033[38;2;1;167;194m"; // si riferisce a |gestore|>
     public final static String ERROR_COLOR = "\033[38;2;226;61;40m";
+    
     public final static String RESET_COLOR = "\u001B[0m";
     public final static String CLEAR_CONSOLE = "\033\143";
 
@@ -62,9 +63,9 @@ public class Cli extends Component {
             if(this.isLocked()) return;
             synchronized(GETTING_INPUT){
                 GETTING_INPUT.compareAndSet(false, true);
-                System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >"  + RESET_COLOR);
+                System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >");
+                System.out.print(INPUT_COLOR + ">" );
                 menu ="";
-                System.out.print(INPUT_COLOR + ">");
                 menu = input.nextLine();
                 System.out.print(OUTPUT_COLOR);
                 GETTING_INPUT.compareAndSet(true, false);

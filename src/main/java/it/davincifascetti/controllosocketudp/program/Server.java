@@ -28,8 +28,8 @@ public class Server implements Runnable,Commandable{
     public static final int BUFFER_LENGHT = 1024;
     private DatagramSocket socket = null;
     private String nome;
-    private int porta;
-    private InetAddress ip;
+    private int porta = -1;
+    private InetAddress ip = null;
     private boolean statoAttivo=false;
     private Thread threadAscolto = null;
     private ServerThread threadRisposta = null;
@@ -56,11 +56,9 @@ public class Server implements Runnable,Commandable{
     public Server(String nomeServer, String ip,String porta,EventManagerCommandable eventManager) throws CommandableException,ErrorLogException{
         this(nomeServer,eventManager);
         if(porta == null || ip == null) throw new ErrorLogException("Errore nella creazione del server: la porta o l'ip non sono stati specificati");
-        this.setPorta(porta);
-        this.setIp(ip);
-        try {
-            this.socket = new DatagramSocket(this.porta,this.ip);
-        } catch (SocketException e) {
+        try{
+            this.setSocket(ip, porta);
+        } catch (CommandableException e) {
             throw new ErrorLogException("Errore nella creazione del server: " + e.getMessage());
         }
     }
@@ -98,13 +96,13 @@ public class Server implements Runnable,Commandable{
     public void iniziaAscolto()throws CommandableException{
         if(!this.socketIsSet()) throw new CommandableException("Prima di avviare l'ascolto di un server devi impostare la socket!");
         if(this.socket.isClosed()) throw new CommandableException("Errore nell'avvio ascolto del server: la socket è chiusa");
-        if(!this.socket.isConnected())
+        if(!this.socket.isBound())
             try { 
-                this.socket.connect(ip, porta);
+                this.socket.bind(new InetSocketAddress(ip, porta));
             } catch (Exception e) {
                 throw new CommandableException("Errore, qualcosa è andato storto durante la connessione: " + e.getMessage());
             }
-        this.statoAttivo = true;
+        if(!this.isAttivo())this.statoAttivo = true;
         this.getEventManager().notify(LISTENING_STARTED, this);
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
@@ -115,7 +113,7 @@ public class Server implements Runnable,Commandable{
      * chiude la socket
      */
     public void terminaAscolto(){
-        this.statoAttivo = false;
+        if(this.isAttivo())this.statoAttivo = false;
         if(this.socket != null){
             if(!this.socket.isClosed())this.socket.close();
         }
@@ -156,11 +154,15 @@ public class Server implements Runnable,Commandable{
     public String getIp(){ if(this.ip == null) return null; return this.ip.getHostAddress();}
     @Override
     public String toString() {
-        return "Name: " + this.getNome() + "\t" + (((this.socket == null) || (this.socket.getPort() == -1))?"Port: - ":("Port: "+this.socket.getPort())) + "\t" + (((this.socket == null) || (this.socket.getInetAddress() == null))?"Ip: - ":("Ip: "+this.socket.getInetAddress().getHostName()))+ "\tStatus: "+ (this.isAttivo() ? "attivo" : "disattivo");
+        return 
+        "Name: " + this.getNome() + "\t" 
+        + (!this.socketIsSet() ?"Port: - ":("Port: "+this.getPorta())) + "\t" 
+        + (!this.socketIsSet() ?"Ip: - ":("Ip: "+this.getIp()))+ "\t" 
+        + "Status: "+ (this.isAttivo() ? "attivo" : "disattivo");
     }
 
 
-    public boolean isAttivo(){return this.statoAttivo;}
+    public synchronized boolean isAttivo(){return this.statoAttivo;}
 
     public String getNome(){return this.nome;}
     /**imposta il nome (deve avere almeno una lettera, può contenere numeri, lettere e _ min 1 carattere e max 18)
@@ -196,10 +198,10 @@ public class Server implements Runnable,Commandable{
      * si comporta come una transaction , se non va a buon fine reimposta la socket precedente
      * @param porta nuova porta locale
      * @throws CommandableException
-     * @throws ErrorLogException
      */
-    public void setSocket(String ip, String porta) throws CommandableException, ErrorLogException{
+    public void setSocket(String ip, String porta) throws CommandableException{
         boolean wasActive = this.isAttivo();
+        boolean wasSet = this.socketIsSet();
         int port = this.porta;
         InetAddress i = this.ip;
         try {
@@ -207,11 +209,13 @@ public class Server implements Runnable,Commandable{
             this.setIp(ip);
             if(this.socketIsSet() && this.isAttivo())
                 this.terminaAscolto();
-            this.socket = new DatagramSocket(this.porta,this.ip);
+            
             try{
-                this.socket.connect(this.ip, this.porta);
-            }catch(UncheckedIOException e1){
-                throw new SocketException(e1.getMessage());
+                this.socket = new DatagramSocket(this.porta,this.ip);
+            }catch(UncheckedIOException e){
+                this.socket.close();
+                this.socket = null;
+                this.socket = new DatagramSocket(this.porta,this.ip);
             }
             if(wasActive)this.iniziaAscolto();
         } catch (CommandableException e) {
@@ -222,7 +226,7 @@ public class Server implements Runnable,Commandable{
             this.porta = port;
             this.ip = i;
             try {
-                this.socket = new DatagramSocket(this.porta,this.ip);
+                if(wasSet)this.socket = new DatagramSocket(this.porta,this.ip);
                 if(wasActive)this.iniziaAscolto();
             } catch (SocketException e1) {
                 throw new CommandableException("Errore, qualcosa è andato storto");

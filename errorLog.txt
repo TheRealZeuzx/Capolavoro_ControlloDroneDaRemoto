@@ -38,3 +38,6 @@
 [2024/06/07 10:48:26]	Address already in use: bind
 [2024/06/07 10:48:38]	Address already in use: bind
 [2024/06/08 08:32:17]	Address already in use: bind
+[2024/06/08 15:53:26]	Errore nella creazione del server: java.net.BindException: Cannot assign requested address: connect
+[2024/06/08 16:00:10]	Errore nella creazione del server: Errore, qualcosa è andato storto durante la connessione: java.net.BindException: Cannot assign requested address: connect
+[2024/06/08 16:03:14]	Errore nella creazione del server: Errore, qualcosa è andato storto durante la connessione: java.net.BindException: Cannot assign requested address: connect
