@@ -55,7 +55,7 @@ public class Terminal extends Ui {
             //https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=CAPOLAVORO
             //https://www.asciiart.eu/computers/computers
             //per cambiarlo devi metterlo nel file
-            FileReader fileTesto = new FileReader("./art/art6.txt");
+            FileReader fileTesto = new FileReader("./art/art5.txt");
             Scanner in = new Scanner(fileTesto);  
             System.out.print(Cli.BANNER_COLOR);
             while(in.hasNextLine()) {
