@@ -40,7 +40,8 @@ public class Server implements Runnable,Commandable{
     public static final String LISTENING_ENDED = "listening_ended";
     private EventManagerCommandable eventManager = null;
 
-    
+    //TODO risolvere il problema descritto di sotto
+    //! anche se il server è disattivo, una volta attivato gestisce i msg che gli sono arrivati
      /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
      * 
      * @param nomeClient nome del server

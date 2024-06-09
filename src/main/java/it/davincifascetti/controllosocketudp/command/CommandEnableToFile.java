@@ -2,6 +2,7 @@
 
 package it.davincifascetti.controllosocketudp.command;
 import it.davincifascetti.controllosocketudp.program.Server;
+import it.davincifascetti.controllosocketudp.program.Terminal;
 import it.davincifascetti.controllosocketudp.program.Ui;
 /**
  * SERVER
@@ -41,20 +42,20 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
      * @throws CommandException
      */
     public void execute() throws CommandException{
-        throw new UnsupportedOperationException("va fixato.");
-        /*
+        
+        
         try {
-            this.getGestore().SuFile(append, nomeFile);
+            ((Terminal)this.getUi()).getGestoreRisposte().add(this.getGestore()).setFileLogger(append, nomeFile, this.getGestore().getNome());;
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
-        } */
+        } 
     }
 
     @Override
     public boolean undo() throws CommandException{
-        throw new UnsupportedOperationException("va fixato.");/*
-        new CommandDisableToFile(this.getGestore(),"").execute();
-        return true; */
+        
+        new CommandDisableToFile(this.getGestore()).execute();
+        return true; 
     }
     
 

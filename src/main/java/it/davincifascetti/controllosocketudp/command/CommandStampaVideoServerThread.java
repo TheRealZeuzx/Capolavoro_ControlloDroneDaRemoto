@@ -23,7 +23,7 @@ public class CommandStampaVideoServerThread extends CommandI<ServerThread>{
     }
     public void execute() throws CommandException, ErrorLogException {
         if(this.getParams().isBlank()) new CommandInviaMsgDefaultToClient(this.getGestore(),this.getParams(),this.getUi()).execute();
-        if(((Terminal)this.getUi()).getCli().isAttivo(getGestore()))((Terminal)this.getUi()).getCli().print(this.getParams());
+        if(((Terminal)this.getUi()).getCli().isAttivo(getGestore().getServer()))((Terminal)this.getUi()).getCli().print(this.getParams());
         ((Terminal)this.getUi()).getGestoreRisposte().add(this.getGestore().getServer()).addMsg(this.getParams());
         new CommandInviaMsgToClient(this.getGestore(),"operazione andata a buon fine",this.getUi()).execute();
 

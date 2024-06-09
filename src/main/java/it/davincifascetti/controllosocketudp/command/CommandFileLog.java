@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
+import it.davincifascetti.controllosocketudp.program.Terminal;
 import it.davincifascetti.controllosocketudp.program.Ui;
 
 /**
@@ -29,7 +30,7 @@ public class CommandFileLog extends CommandI<ServerThread>{
      */
     public void execute() throws CommandException, ErrorLogException {
         try {
-            this.getGestore().fileLog(this.getParams());
+            ((Terminal)this.getUi()).getGestoreRisposte().add(this.getGestore().getServer()).fileLog(getParams(), this.getGestore().getServer());
         } catch (CommandableException e) {
             throw new CommandException(e.getMessage());
         }

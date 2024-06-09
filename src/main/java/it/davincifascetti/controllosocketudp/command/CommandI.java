@@ -15,12 +15,18 @@ public abstract class CommandI<T extends Commandable> implements Command{
     private Ui ui = null;
     
     public CommandI(T gestore,String params,Ui ui) throws CommandException{
-        if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
-        this.gestore = gestore;
-        if(params == null) throw new CommandException("Errore, non ci sono parametri");
-        this.params = params;
+        this(gestore,params);
         if(ui == null) throw new CommandException("Errore, Ui è null!");
         this.ui = ui;
+    }
+    public CommandI(T gestore,String params) throws CommandException{
+        this(gestore);
+        if(params == null) throw new CommandException("Errore, non ci sono parametri");
+        this.params = params;
+    }
+    public CommandI(T gestore)throws CommandException{
+        if(gestore == null) throw new CommandException("Errore, hai inserito un gestore null");
+        this.gestore = gestore;
     }
     /**
         getGestore().
