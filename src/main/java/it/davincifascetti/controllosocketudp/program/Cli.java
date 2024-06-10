@@ -194,25 +194,5 @@ public class Cli extends Component {
         if(input == null) throw new CommandException("Errore, scanner è null!");
         this.input = input;
     }
-
-    // @Override
-    // public void update(byte[] buffer, int lung,Commandable commandable) {
-    //     System.out.println(commandable.getClass().getSimpleName() + ": messaggio ricevuto! --> " + new String(buffer));
-    // }
-    // @Override
-    // public void update(String eventType, Commandable commandable) {
-    //     switch (eventType) {
-    //         case Client.SERVER_NO_RESPONSE:
-    //             System.out.println("Il server non ha dato nessuna risposta =( ");
-    //             break;
-        
-    //         default:
-    //             System.out.println("è appena successa una cosa epica: " + eventType);
-    //             break;
-    //     }
-       
-    // }
-
-
     
 }
