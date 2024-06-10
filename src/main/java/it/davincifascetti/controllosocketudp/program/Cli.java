@@ -14,16 +14,18 @@ import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 
-public class Cli extends Component {
+public class Cli extends Component implements Runnable{
 
     private CommandFactoryI factory;
     private Stack<Commandable> viste = new Stack<Commandable>();
     private Scanner input = null;
+    private Thread esecuzione = null;
     //STATI DELLA CLI
-    private final AtomicBoolean LOCKED = new AtomicBoolean(); //rende boolean thread safe
-    private final AtomicBoolean RUNNING = new AtomicBoolean(); //rende boolean thread safe
-    private final AtomicBoolean PRINT_ENABLED = new AtomicBoolean(); //rende boolean thread safe
-    private final AtomicBoolean GETTING_INPUT = new AtomicBoolean(); //rende boolean thread safe
+    private final AtomicBoolean LOCKED = new AtomicBoolean(); //se la cli deve essere bloccata (no richiesta input)
+    private final AtomicBoolean RUNNING = new AtomicBoolean(); //se al momento è in esecuzione
+    private final AtomicBoolean PRINT_ENABLED = new AtomicBoolean(); //se al momento la stampa a video (metodo print e printError) sono attivi
+    private final AtomicBoolean GETTING_INPUT = new AtomicBoolean(); //se al momento mi trovo bloccato nella richiesta input
+    private final AtomicBoolean TERMINATED = new AtomicBoolean(); //se viene terminata
     //COLOR CODES CONSOLE
     public final static String BANNER_COLOR = "\033[38;2;255;107;53m";
     public final static String INPUT_COLOR = "\033[38;2;239;239;208m";
@@ -45,12 +47,7 @@ public class Cli extends Component {
 
 
     public void main(){
-        if(RUNNING.get()) return;
-        if(this.isLocked()){
-            return;
-        } 
-        this.RUNNING.set(true);
-        if(this.input == null){ 
+        if(this.input == null){  
             this.printError("Prima devi specificare uno scanner!");
             return; 
         }
@@ -58,82 +55,119 @@ public class Cli extends Component {
             this.printError("Prima devi impostare una vista!");
             return; 
         }
-        String menu;
-        do{ 
-            if(this.isLocked()) return;
-            synchronized(GETTING_INPUT){
-                GETTING_INPUT.compareAndSet(false, true);
-                System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >");
-                System.out.print(INPUT_COLOR + ">" );
-                menu ="";
-                menu = input.nextLine();
-                System.out.print(OUTPUT_COLOR);
-                GETTING_INPUT.compareAndSet(true, false);
-            }
-            String[] params;
-            if(menu.isBlank())
-            params = null;
-            //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
-            else params = menu.toLowerCase().split(" ");
-            switch((params == null ? "" : params[0])){
-                case "undo":
-                try {
-                    if(!this.undo(this.getGestoreAttuale()))System.out.println(OUTPUT_COLOR + "no commands to undo");
-                    else System.out.println(OUTPUT_COLOR + "last command undone correctly");
-                } catch (CommandException e) {
-                    this.printError(e.getMessage());
-                } catch (ErrorLogException e) {
-                    this.printError(e.getMessage());
-                    this.getUi().fileErrorLog(e.getMessage());
-                }
-                break;
-                case "quit":
-                    if(this.isLastVista()){
-                        String conferma="";
-                        do{
-                        
-                            System.out.print(SCOPE_COLOR + "|sure? [y/n]| > " + INPUT_COLOR);
-                            conferma = input.nextLine();
-                            if(conferma.equals("y"))System.out.println(OUTPUT_COLOR+"Chiusura Programma ...");
-                            else if(conferma.equals("n"))menu = "";
-                        }while(!conferma.equals("y") && !conferma.equals("n"));
-                    }else{
-                        this.quitVista();
-                        menu = "";
-                    }
-                break;
-                case "clear":
-                    System.out.print(CLEAR_CONSOLE);
-                break;
-                default:
-                try{
-                    this.executeCommand(factory.getCommand(this.getGestoreAttuale(),menu.toLowerCase(),this.getUi()),this.getGestoreAttuale());
-                }catch(CommandException e){
-                    this.printError(e.getMessage());
-                }catch(ErrorLogException e){
-                    this.printError(e.getMessage());
-                    this.getUi().fileErrorLog(e.getMessage());
-                }catch(Exception e){
-                    this.printError(e.getMessage());
-                }
-                break;
-            }   
-        }while(!menu.equalsIgnoreCase("quit"));
-        System.out.print(RESET_COLOR);
+        this.esecuzione = new Thread(this);
+        this.esecuzione.start();
     }
     
+    @Override
+    public void run(){
+        do{
+            this.loop();
+            try {
+                synchronized(this.esecuzione){
+                    this.esecuzione.wait(20);
+                }
+            } catch (InterruptedException e) {
+                this.printError(e.getMessage());
+            }
+        }while(!this.isTerminated());
+        this.print("Chiusura Programma ...");
+        this.getUi().kill();//destroy di tutto
+    }
+
+    private void loop(){
+        if(this.isLocked()){
+            return;
+        }
+        String menu;
+        synchronized(GETTING_INPUT){
+            GETTING_INPUT.compareAndSet(false, true);
+            System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >");
+            System.out.print(INPUT_COLOR + ">" );
+            menu ="";
+            menu = input.nextLine();
+            System.out.print(OUTPUT_COLOR);
+            GETTING_INPUT.compareAndSet(true, false);
+        }
+        String[] params;
+        if(menu.isBlank())
+        params = null;
+        //split crea un array in cui inserisce le parole separate dalla stringa inserita, in questo caso " "
+        else params = menu.toLowerCase().split(" ");
+        switch((params == null ? "" : params[0])){
+            case "undo":
+            try {
+                if(!this.undo(this.getGestoreAttuale()))System.out.println(OUTPUT_COLOR + "no commands to undo");
+                else System.out.println(OUTPUT_COLOR + "last command undone correctly");
+            } catch (CommandException e) {
+                this.printError(e.getMessage());
+            } catch (ErrorLogException e) {
+                this.printError(e.getMessage());
+                this.getUi().fileErrorLog(e.getMessage());
+            }
+            break;
+            case "quit":
+                if(this.isLastVista()){
+                    String conferma="";
+                    do{
+                        synchronized(GETTING_INPUT){
+
+                            System.out.print(SCOPE_COLOR + "|sure? [y/n]| > " + INPUT_COLOR);
+                            if(!this.GETTING_INPUT.get()){
+                                this.GETTING_INPUT.set(true);
+                                conferma = input.nextLine();
+                            }
+                            this.GETTING_INPUT.set(false);
+                        }
+                    }while(!conferma.equals("y") && !conferma.equals("n"));
+                    if(conferma.equals("y")) {
+                        this.setTerminated();
+                    }
+                }else{
+                    this.quitVista();
+                }
+            break;
+            case "clear":
+                System.out.print(CLEAR_CONSOLE);
+            break;
+            default:
+            try{
+                this.executeCommand(factory.getCommand(this.getGestoreAttuale(),menu.toLowerCase(),this.getUi()),this.getGestoreAttuale());
+            }catch(CommandException e){
+                this.printError(e.getMessage());
+            }catch(ErrorLogException e){
+                this.printError(e.getMessage());
+                this.getUi().fileErrorLog(e.getMessage());
+            }catch(Exception e){
+                this.printError(e.getMessage());
+            }
+            break;
+        }
+    }
+
     public Commandable getGestoreAttuale(){return this.viste.peek();}
-    //TODO capire come gestire il "bloccaggio" della CLI, esempio quando devo stampare un msg dall'esterno ma sto in input
-    //TODO ci deve essere un solo main attivo
     public synchronized boolean isLocked(){return this.LOCKED.get();}
     public synchronized void setLocked(boolean bloccato){
         this.LOCKED.set(bloccato);
-        this.RUNNING.set(!bloccato);
-        if(!this.isLocked()){
-            this.main();
-        } 
+    }
+    public synchronized boolean isTerminated(){return this.TERMINATED.get();}
+    public synchronized void setTerminated(){
+        this.TERMINATED.set(true);
+    }
+    public synchronized boolean isPrintEnabled(){return this.PRINT_ENABLED.get();}
+    public synchronized void setPrintEnabled(boolean enable){
+        this.PRINT_ENABLED.set(enable);
+    }
+    public synchronized boolean isRunning(){return this.RUNNING.get();}
+    public synchronized void setRunning(boolean running){
+        this.PRINT_ENABLED.set(running);
     }
 
+    /**si riferisce alla view (se il commandable è attivo significa che è la view attuale )
+     * 
+     * @param gestore
+     * @return
+     */
     public boolean isAttivo(Commandable gestore){
         if(gestore == null) return false;
         return this.viste.peek().equals(gestore);
@@ -173,9 +207,17 @@ public class Cli extends Component {
      * @param message
      */
     public synchronized void print(String message){
+
+        if(!this.GETTING_INPUT.get()){
+            System.out.println(OUTPUT_COLOR  + message);
+            System.out.print(RESET_COLOR);
+        }else{
+            System.out.println("\r" + OUTPUT_COLOR  + message);
+            System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >");
+            System.out.print(INPUT_COLOR + ">" );
+        }
         
-        System.out.println(OUTPUT_COLOR  + message);
-        System.out.print(RESET_COLOR);
+        
         
     }
     /**PER STAMPARE UN ERRORE SULLA CLI SI USA QUESTO (chiunque voglia stampare a video deve usare questo, quindi lo gestirà la UI chi stampa cosa)
@@ -185,14 +227,28 @@ public class Cli extends Component {
     //TODO gestire il bloccaggio
     public synchronized void printError(String message){
         
-        System.out.println(ERROR_COLOR  + message);
-        System.out.print(RESET_COLOR);
-        
+        if(!this.GETTING_INPUT.get()){
+            System.out.println(ERROR_COLOR  + message);
+            System.out.print(RESET_COLOR);
+        }else{
+            System.out.println("\r" + OUTPUT_COLOR  + message);
+            System.out.print(SCOPE_COLOR+"|" + this.getGestoreAttuale().getClass().getSimpleName() +"| >");
+            System.out.print(INPUT_COLOR + ">" );
+        }
+ 
     }
 
     public void setScanner(Scanner input) throws CommandException{
         if(input == null) throw new CommandException("Errore, scanner è null!");
         this.input = input;
+    }
+    
+    @Override
+    public void destroy(){
+        super.destroy();
+        this.viste = null;
+        this.factory = null;
+
     }
     
 }

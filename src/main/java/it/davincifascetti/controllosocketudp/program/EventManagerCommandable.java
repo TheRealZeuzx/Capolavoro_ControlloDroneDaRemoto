@@ -43,11 +43,25 @@ public class EventManagerCommandable {
         }
     }
 
-    public void notify(String eventType, Commandable commandable){
+    public void notify(String eventType, Commandable responsabile){
         ArrayList<EventListenerCommandable> users = listenerCommandable.get(eventType);
         if(users == null) return;
         for (EventListenerCommandable listener : users) {
-            listener.update(eventType, commandable);
+            listener.update(eventType, responsabile);
+        }
+    }
+
+    /**
+     * 
+     * @param eventType 
+     * @param responsabile chi chiama la notify
+     * @param target chi è il target dell'evento esempio CLIENT_ADDED il target sarà il Client aggiunto
+     */
+    public void notify(String eventType, Commandable responsabile,Commandable target){
+        ArrayList<EventListenerCommandable> users = listenerCommandable.get(eventType);
+        if(users == null) return;
+        for (EventListenerCommandable listener : users) {
+            listener.update(eventType, responsabile,target);
         }
     }
 

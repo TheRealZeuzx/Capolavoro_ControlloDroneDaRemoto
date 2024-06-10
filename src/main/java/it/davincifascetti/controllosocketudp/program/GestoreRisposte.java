@@ -136,5 +136,9 @@ public class GestoreRisposte extends Component{
         this.factory.setManager(manager);
     }
 
+    public void destroy(){
+        super.destroy();
+        this.mapInfoServer = null;
+    }
 
 }

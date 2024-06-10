@@ -92,6 +92,16 @@ public class ServerThread extends Thread implements Commandable{
     public String getDesc() {
         return this.getServer().getDesc();
     }
+    @Override
+    public void setDesc(String desc) {
+        return;
+    }
+    @Override
+    public void destroy() {
+        this.riferimentoServer = null;
+        if(this.socketRisposta != null && !this.socketRisposta.isClosed()) this.socketRisposta.close(); 
+        this.socketRisposta = null;
+    }
 
 }
 

@@ -34,8 +34,8 @@ public class GestoreRemote extends Component {
     }
 
     public void destroy(Remote remote){
-        remote.destroy();
         this.remove(remote);
+        remote.destroy();
         ((Terminal)this.getUi()).getCli().setLocked(false);
     }
 
@@ -74,6 +74,10 @@ public class GestoreRemote extends Component {
         return;
     }
 
-
+    public void destroy(){
+        super.destroy();
+        this.listaRemote.forEach(r -> {r.destroy();});
+        this.listaRemote = null;
+    }
 
 }

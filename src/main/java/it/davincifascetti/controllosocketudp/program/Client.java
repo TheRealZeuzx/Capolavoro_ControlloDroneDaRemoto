@@ -19,6 +19,7 @@ public class Client implements Commandable,Runnable{
 	private static final int BUFFER_LENGHT = 1024;
 	private static final int WAIT_TIME = 2000;
     private String nome;
+    private String desc = null;
 
     private InetAddress ipDestinazioneDefault = null;
     private int porta = -1;
@@ -243,8 +244,17 @@ public class Client implements Commandable,Runnable{
         return this.eventManager;
     }
     @Override
-    public String getDesc() {
+    public synchronized String getDesc() {
         return null;
+    }
+    @Override
+    public synchronized void setDesc(String desc) {
+        this.desc = desc;
+    }
+    @Override
+    public void destroy() {
+        if(this.socketIsSet() && !this.socket.isClosed())this.socket.close();
+        this.socket = null;
     }
 
 }

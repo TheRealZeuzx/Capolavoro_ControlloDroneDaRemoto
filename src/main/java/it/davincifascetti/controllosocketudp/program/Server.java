@@ -40,8 +40,6 @@ public class Server implements Runnable,Commandable{
     public static final String LISTENING_ENDED = "listening_ended";
     private EventManagerCommandable eventManager = null;
 
-    //TODO risolvere il problema descritto di sotto
-    //! anche se il server è disattivo, una volta attivato gestisce i msg che gli sono arrivati
      /**costruttore che prende due parametri, quindi se si usa questo non si può attivare il server, va settato il socket
      * 
      * @param nomeClient nome del server
@@ -254,10 +252,18 @@ public class Server implements Runnable,Commandable{
     }
 
     public EventManagerCommandable getEventManager(){return this.eventManager;}
-
-    public void setDesc(String desc){this.desc = desc;}
     @Override
-    public String getDesc(){return this.desc;}
+    public synchronized void setDesc(String desc){this.desc = desc;}
+    @Override
+    public synchronized String getDesc(){return this.desc;}
+
+    @Override
+    public void destroy() {
+        this.terminaAscolto();
+        if(this.socketIsSet() && !this.socket.isClosed())this.socket.close();
+        this.socket = null;
+        this.ip = null;
+    }
 
     
 

@@ -15,10 +15,16 @@ public class App {
     public App(String errorLogPath,User comandi) throws NullPointerException,CommandableException, CommandException, IOException{
         if(errorLogPath == null || errorLogPath.isBlank()) throw new NullPointerException("Errore, il path è null oppure vuoto!");
         this.business = new GestoreClientServer();
-        this.ui = new Terminal(new ErrorLog(errorLogPath),business,comandi);
+        this.ui = new Terminal(new ErrorLog(errorLogPath),business,comandi,this);
     }
 
     public void start() throws CommandException, IOException{
         this.ui.start();
+    }
+    public void destroy(){
+        this.business.destroy();
+        this.ui.destroy();
+        this.business = null;
+        this.ui = null;
     }
 }

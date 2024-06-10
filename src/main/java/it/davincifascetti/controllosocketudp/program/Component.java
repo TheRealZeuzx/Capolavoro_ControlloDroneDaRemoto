@@ -79,4 +79,9 @@ public abstract class Component {
         }
         return false;
     }
+    public void destroy(){
+        this.riferimentoUi = null;
+        this.storieComandi = null;
+        this.manager = null;
+    }
 }

@@ -89,7 +89,7 @@ public class GestoreClientServer implements Commandable{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,this.getEventManagerClient());
         this.listaClient.add(c);
-        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED, c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED, this,c);
         
     }
     /**permette di instanziare un nuovo client e inserirlo nella lista di client, utilizza il secondo costruttore di client
@@ -106,7 +106,7 @@ public class GestoreClientServer implements Commandable{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,ip,porta,this.getEventManagerClient());
         this.listaClient.add(c);
-        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED, c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED,this, c);
     }
 
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il primo costruttore di server
@@ -119,7 +119,7 @@ public class GestoreClientServer implements Commandable{
         if(ricercaServer(nome) != null) throw new CommandableException("il server '" + nome + "' è già esistente");
         Server s = new Server(nome,this.getEventManagerServer());
         this.listaServer.add(s);
-        this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
+        this.eventManager.notify(GestoreClientServer.SERVER_ADDED,this, s);
         
     }
 
@@ -141,7 +141,7 @@ public class GestoreClientServer implements Commandable{
             throw new CommandableException(e.getMessage());
         }
         this.listaServer.add(s);
-        this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
+        this.eventManager.notify(GestoreClientServer.SERVER_ADDED,this, s);
         
     }
     
@@ -153,7 +153,7 @@ public class GestoreClientServer implements Commandable{
     public void addServer(Server s)throws CommandableException{
         if(s == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
         this.listaServer.add(s);
-        this.eventManager.notify(GestoreClientServer.SERVER_ADDED, s);
+        this.eventManager.notify(GestoreClientServer.SERVER_ADDED,this, s);
     }
     /**permette di aggiungere un client alla lista di client (gia instanziato)
      * 
@@ -163,7 +163,7 @@ public class GestoreClientServer implements Commandable{
     public void addClient(Client c)throws CommandableException{
         if(c == null) throw new CommandableException("Errore, il server che hai provato ad inserire è null");
         this.listaClient.add(c);
-        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED, c);
+        this.eventManager.notify(GestoreClientServer.CLIENT_ADDED,this, c);
     }
     public boolean isEmpty(boolean client){
         if(client) return this.listaClient.isEmpty();
@@ -207,7 +207,7 @@ public class GestoreClientServer implements Commandable{
     public void removeClient(Client c)throws CommandableException {
         if(c == null) throw new CommandableException("il client è null!");
         if(!this.listaClient.remove(c)) throw new CommandableException("il client '" + c.getNome() + "' non esiste");
-        this.eventManager.notify(CLIENT_REMOVED, c);
+        this.eventManager.notify(CLIENT_REMOVED,this, c);
     }
     /**permette di rimuovere un server dalla lista server
      * 
@@ -217,7 +217,7 @@ public class GestoreClientServer implements Commandable{
     public void removeServer(Server s)throws CommandableException {
         if(s == null) throw new CommandableException("il server è null!");
         if(!this.listaServer.remove(s)) throw new CommandableException("il server '" + s.getNome() + "' non esiste");
-        this.eventManager.notify(SERVER_REMOVED, s);
+        this.eventManager.notify(SERVER_REMOVED, this,s);
 
     }
 
@@ -227,5 +227,23 @@ public class GestoreClientServer implements Commandable{
     @Override
     public String getDesc() {
         return null;
+    }
+
+
+    @Override
+    public void destroy() {
+        this.eventManager = null;
+        this.eventManagerClient = null;
+        this.eventManagerServer = null;
+        this.listaClient.forEach(c -> {c.destroy();});
+        this.listaClient = null;
+        this.listaServer.forEach(s -> {s.destroy();});
+        this.listaServer = null;
+    }
+
+
+    @Override
+    public void setDesc(String desc) {
+        return;
     }
 }

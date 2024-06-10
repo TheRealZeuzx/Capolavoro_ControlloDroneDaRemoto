@@ -31,8 +31,8 @@ public class Terminal extends Ui {
      * @throws IOException 
      */
     //TODO capire come gestire USER, per ora rappresenta solo i comandi di CLI
-    public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi) throws CommandException, IOException{
-        super(business, errorLog,comandi);
+    public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi,App app) throws CommandException, IOException{
+        super(business, errorLog,comandi,app);
         this.telecomandi = new GestoreRemote(this);
         this.cli = new Cli(this.getUser().getManager(),this); //agirà di input output con l'utente
         this.video = new Video(this); 
@@ -105,16 +105,22 @@ public class Terminal extends Ui {
     }
 
 
-    //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
     @Override
-    public void update(String eventType, Commandable commandable) {
-        if(commandable == null){this.getCli().printError("Errore!");} //!gestire
-        this.getCli().print(commandable.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
-        //if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setLocked(true); 
+    public void update(String eventType, Commandable responsabile) {
+        if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
+        if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
+        if(responsabile.getDesc() == null){
+            if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setLocked(true); 
+        } 
+        if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setLocked(false); 
         
-        //TODO capire se conviene mettere un attributo bloccatoVideo in CLI in modo che anche se è bloccata la CLI possa stampare ad esempio un msg di risposta
-        //if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setLocked(false); 
-        
+    }
+    @Override
+    public void update(String eventType, Commandable responsabile,Commandable target) {
+        if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
+        if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
+        //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
+
     }
 
     @Override
@@ -159,35 +165,13 @@ public class Terminal extends Ui {
         }
     }
 
-    // private void subscribeVideo(){
-    //     business.newServer("servervideo")
-    //     nuovoServer.getEventManager().subscribe(this.getVideo())
-    // }
-    // private void subscribeCli(){
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getCli());
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_AGGIUNTO, this.getCli());
-
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_RIMOSSO, this.getCli());
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_AGGIUNTO, this.getCli());
-        
-    //     this.getBusiness().getEventManagerClient().subscribe(Client.SERVER_NO_RESPONSE, this.getCli());
-    //     this.getBusiness().getEventManagerClient().subscribe(Client.MESSAGGIO_INVIATO, this.getCli());
-
-
-    //     this.getBusiness().getEventManagerServer().subscribe(Server.ASCOLTO_INIZIATO, this.getCli());
-    //     this.getBusiness().getEventManagerServer().subscribe(Server.ASCOLTO_TERMINATO, this.getCli());
-    //     this.getBusiness().getEventManagerClient().subscribe(this.getCli());
-    // }
-    // private void subscribeGestoreRemote(){
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.CLIENT_RIMOSSO, this.getGestoreRemote());
-    // }
-    // private void subscribeGestoreRisposte(){
-    //     this.getBusiness().getEventManager().subscribe(GestoreClientServer.SERVER_RIMOSSO, this.getGestoreRisposte());
-    //     this.getBusiness().getEventManagerServer().subscribe(this.getGestoreRisposte());
-    // }
-
-
-
+    @Override
+    public void destroy() {
+        this.cli.destroy();
+        this.gestoreRisposte.destroy();
+        this.telecomandi.destroy();
+        this.video.destroy();
+    }
     
 
 

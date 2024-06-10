@@ -15,4 +15,6 @@ public interface Commandable {
     */
     public abstract EventManagerCommandable getEventManager();
     public abstract String getDesc();
+    public abstract void setDesc(String desc);
+    public abstract void destroy();
 }

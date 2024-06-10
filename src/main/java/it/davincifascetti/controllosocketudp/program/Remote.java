@@ -67,6 +67,7 @@ public class Remote extends KeyAdapter{
     public void destroy(){
         this.frame.removeKeyListener(this);
         this.frame.dispose();
+        this.client.setDesc(null);
         this.client = null;
     }
 

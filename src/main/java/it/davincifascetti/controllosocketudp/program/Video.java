@@ -128,6 +128,12 @@ public class Video extends Component {
         this.frame.repaint();
     }
 
+    public void destroy(){
+        super.destroy();
+        if(this.frame != null && this.frame.isActive())this.frame.dispose();
+        this.frame = null;
+        this.label = null;
 
+    }
     
 }
