@@ -19,11 +19,11 @@ public class CommandShow extends CommandI<GestoreClientServer>{
      */
     public CommandShow(GestoreClientServer gestore,String params,Ui ui) throws CommandException{
         super(gestore,params,ui);
-        if(CommandFactoryI.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",this.getParams()))
+        if(CommandFactoryCli.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",this.getParams()))
             this.server = true;
-        else if(CommandFactoryI.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",this.getParams()))
+        else if(CommandFactoryCli.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",this.getParams()))
             this.client = true;
-        else if(CommandFactoryI.controllaRegexAssoluta("^a(?:l(?:l)?)?[ ]*$",this.getParams())){
+        else if(CommandFactoryCli.controllaRegexAssoluta("^a(?:l(?:l)?)?[ ]*$",this.getParams())){
             this.client = true;this.server = true;
         }else
             throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (server | client | all)");

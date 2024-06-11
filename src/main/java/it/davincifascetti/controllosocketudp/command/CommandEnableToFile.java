@@ -28,9 +28,9 @@ public class CommandEnableToFile extends CommandI<Server> implements UndoableCom
         String[] temp = this.getParams().split("[ ]+");
         if(temp.length != 2)throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (nomeFile) (append | overwrite)");
         this.nomeFile = temp[0];
-        if(CommandFactoryI.controllaRegexAssoluta("^a(?:p(?:p(?:e(?:n(?:d)?)?)?)?)?[ ]*$",temp[1]))
+        if(CommandFactoryCli.controllaRegexAssoluta("^a(?:p(?:p(?:e(?:n(?:d)?)?)?)?)?[ ]*$",temp[1]))
             this.append = true;
-        else if(CommandFactoryI.controllaRegexAssoluta("^o(?:v(?:e(?:r(?:w(?:r(?:i(?:t(?:e)?)?)?)?)?)?)?)?[ ]*$",temp[1]))
+        else if(CommandFactoryCli.controllaRegexAssoluta("^o(?:v(?:e(?:r(?:w(?:r(?:i(?:t(?:e)?)?)?)?)?)?)?)?[ ]*$",temp[1]))
             this.append = false;
         else{
             throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (nomeFile) (append | overwrite)");

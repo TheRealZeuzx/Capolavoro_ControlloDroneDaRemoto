@@ -16,8 +16,8 @@ import it.davincifascetti.controllosocketudp.program.Ui;
     @author Tommaso Mussaldi
     @version 1.0
 */ 
-//! in teoria ora funziona con tutte le classi che estendono Commandable (continua a distinguere i comandi per classi)
-public class CommandFactoryI implements CommandFactory{
+
+public class CommandFactoryCli implements CommandFactory{
 
     private Map<String,String> arrayAssociativo = null;
     private String comandoDefault = null;
@@ -28,7 +28,7 @@ public class CommandFactoryI implements CommandFactory{
         
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryI() throws CommandException{
+    public CommandFactoryCli() throws CommandException{
         super();     
     }
     /**
@@ -36,7 +36,7 @@ public class CommandFactoryI implements CommandFactory{
         
         @throws CommandException Eccezione generale sollevata da tutti i comandi in caso di errore.
     */
-    public CommandFactoryI(Commandable gestore, CommandListManager manager) throws CommandException{
+    public CommandFactoryCli(Commandable gestore, CommandListManager manager) throws CommandException{
         this.setManager(manager);
         this.setGestore(gestore);
     }
@@ -79,7 +79,7 @@ public class CommandFactoryI implements CommandFactory{
         for(Map.Entry<String, String> entry : this.arrayAssociativo.entrySet()) {
             String key = entry.getKey(); // regex
             String value = entry.getValue(); // comando di riferimento
-            String tempP = CommandFactoryI.controllaRegexGruppo(key, params);
+            String tempP = CommandFactoryCli.controllaRegexGruppo(key, params);
             //controllo che non tempP non sia null, non sia empty non ci siano parole prima del match (caso errato: ciao new client c1 dove new client è il comando e c1 sarà il parametro)
             if(tempP != null && !tempP.isEmpty() && params.substring(0,tempP.length()).equals(tempP)){
                 try {

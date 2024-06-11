@@ -32,9 +32,9 @@ public class Terminal extends Ui {
     public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi,App app) throws CommandException, IOException{
         super(business, errorLog,comandi,app);
         this.telecomandi = new GestoreRemote(this);
-        this.cli = new Cli(this.getUser().getManager(),this); //agirà di input output con l'utente
+        this.cli = new Cli(this.getUser().getManager(Cli.class),this); //agirà di input output con l'utente
         this.video = new Video(this); 
-        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(),this);
+        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(GestoreRemote.class),this);
         
         this.cli.setVista(this.getBusiness());
     }

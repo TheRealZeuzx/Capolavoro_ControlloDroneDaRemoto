@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<user nome="drone">
+
+    <componente>
+        <classe>Cli</classe>
+        <classeTarget target="Server">
+            <help>
+                Stringa help
+            </help>
+            <default>
+                <classe>CommandDefault</classe>
+            </default>
+            <comandi>
+                <comando>
+                    <key>^f(?:i(?:l(?:e)?)?)?[ ]*$</key>
+                    <classecomando >it.davincifascetti.controllosocketudp.program.CommandFileLog</classecomando>
+                </comando>
+                <comando>
+                    <key>^h(?:e(?:l(?:p)?)?)?[ ]*$</key>
+                    <classecomando>CommandInviaHelpToClient</classecomando>
+                </comando>
+                <comando>
+                    <key>^h(?:e(?:l(?:p)?)?)?[ ]*$</key>
+                    <classecomando>CommandStampaVideoServerThread</classecomando>
+                </comando>
+            </comandi>
+        </classeTarget>
+    </componente>
+    <componente>
+        <classe>GestoreRemote</classe>
+        <classeTarget>
+            <help>
+                Stringa help
+            </help>
+            <default>
+                <classe>CommandDefault</classe>
+            </default>
+            <comandi>
+                <comando>
+                    <key>VK_D CTRL_DOWN_MASK</key>
+                    <classecomando>it.davincifascetti.controllosocketudp.command.drone.CommandFlipRight</classecomando>
+                </comando>
+                <comando>
+                    <key>[key pressed] [mask]</key>
+                    <classecomando>it.davincifascetti.controllosocketudp.command.drone.CommandFlipRight</classecomando>
+                </comando>
+                <comando>
+                    <key>VK_A CTRL_DOWN_MASK</key>
+                    <classecomando>it.davincifascetti.controllosocketudp.command.drone.CommandFlipLeft</classecomando>
+                </comando>
+            </comandi>
+        </classeTarget>
+    </componente>
+
+</user>

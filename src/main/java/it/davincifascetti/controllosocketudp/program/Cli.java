@@ -4,7 +4,7 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryCli;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -12,7 +12,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class Cli extends Component implements Runnable{
 
-    private CommandFactoryI factory;
+    private CommandFactoryCli factory;
     private Stack<Commandable> viste = new Stack<Commandable>();
     private Scanner input = null;
     private Thread esecuzione = null;
@@ -33,7 +33,7 @@ public class Cli extends Component implements Runnable{
     public final static String CLEAR_CONSOLE = "\033\143";
 
     public Cli(CommandListManager manager) throws CommandException{
-        this.factory = new CommandFactoryI();
+        this.factory = new CommandFactoryCli();
         this.setManager(manager);
     }
     public Cli(CommandListManager manager,Ui ui) throws CommandException{

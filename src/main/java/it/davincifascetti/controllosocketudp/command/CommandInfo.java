@@ -29,9 +29,9 @@ public class CommandInfo extends CommandI<GestoreClientServer>{
         else 
             throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (client | server) (nome)");
 
-        if(CommandFactoryI.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",temp[0]))
+        if(CommandFactoryCli.controllaRegexAssoluta("^s(?:e(?:r(?:v(?:e(?:r)?)?)?)?)?[ ]*$",temp[0]))
             this.server = true;
-        else if(CommandFactoryI.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",temp[0]))
+        else if(CommandFactoryCli.controllaRegexAssoluta("^c(?:l(?:i(?:e(?:n(?:t)?)?)?)?)?[ ]*$",temp[0]))
             this.client = true;
         else{
             throw new CommandException("Errore, '" + this.getParams() +"' non è un parametro corretto, prova -> (server | client) (nome)");

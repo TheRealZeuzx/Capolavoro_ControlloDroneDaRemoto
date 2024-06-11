@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
-import it.davincifascetti.controllosocketudp.command.CommandFactoryI;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryCli;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
@@ -16,11 +16,11 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 //!volendo possiamo creare un gestore risposte client e uno server in modo da avere anche comandi separati per i due 
 public class GestoreRisposte extends Component{
-    private CommandFactoryI factory;
+    private CommandFactoryCli factory;
     private Map<Server,InfoServer> mapInfoServer = Collections.synchronizedMap(new HashMap<Server,InfoServer>());
 
     public GestoreRisposte(CommandListManager manager) throws CommandException {
-        this.factory = new CommandFactoryI();
+        this.factory = new CommandFactoryCli();
         this.setManager(manager);
     }
     public GestoreRisposte(CommandListManager manager,Ui ui) throws CommandException {

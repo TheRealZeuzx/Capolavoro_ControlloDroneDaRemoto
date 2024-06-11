@@ -1,5 +1,6 @@
 package it.davincifascetti.controllosocketudp.command;
 
+import it.davincifascetti.controllosocketudp.program.Cli;
 import it.davincifascetti.controllosocketudp.program.Terminal;
 import it.davincifascetti.controllosocketudp.program.Ui;
 
@@ -26,6 +27,6 @@ public class CommandHelp<T extends Commandable> extends CommandI<T>{
     }
     public void execute() throws CommandException {
 
-        System.out.println(getUi().getUser().getManager().getCommandList(this.getGestore().getClass()).getStringaHelp());
+        System.out.println(getUi().getUser().getManager(Cli.class).getCommandList(this.getGestore().getClass()).getStringaHelp());
     }
 }

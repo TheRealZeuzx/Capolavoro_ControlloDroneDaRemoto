@@ -2,7 +2,9 @@ package it.davincifascetti.controllosocketudp.program.user;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
+import it.davincifascetti.controllosocketudp.program.Cli;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Component;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
@@ -12,15 +14,27 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public final class UserDrone extends User{
-
+public final class UserDrone{
+    private User user;
     public UserDrone() throws CommandException{
-        super(UserDrone.class);
+        this.user = new User("drone");
+        this.registraComandiGenerali(Cli.class);
+        this.registraComandiGestoreCS(Cli.class);
+        this.registraComandiClient(Cli.class);
+        this.registraComandiServer(Cli.class);
+        this.registraComandiServerThread(Cli.class);
+    }
+    
+    private void registraComandiGenerali(Class<? extends Component> clazz){
+        
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = this.user.getManager(clazz).getCommandList(null);
+        //non ce ne sono
     }
 
-    protected void registraComandiClient(){
+    private void registraComandiClient(Class<? extends Component> clazz){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(Client.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Drone\n\n"+
@@ -40,9 +54,9 @@ public final class UserDrone extends User{
         temp.registraComando( "^i(?:n(?:f(?:o)?)?)?[ ]*$",path + "CommandToString");
     }
    
-    protected void registraComandiServer(){
+    private void registraComandiServer(Class<? extends Component> clazz){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp =  this.getManager().getCommandList(Server.class);
+        CommandList temp =  this.user.getManager(clazz).getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale InfoDrone\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -63,10 +77,10 @@ public final class UserDrone extends User{
     }
     
     
-    protected void registraComandiGestoreCS(){
+    private void registraComandiGestoreCS(Class<? extends Component> clazz){
         //!fatto
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp =  this.getManager().getCommandList(GestoreClientServer.class);
+        CommandList temp =  this.user.getManager(clazz).getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -94,9 +108,9 @@ public final class UserDrone extends User{
         // drone1.CommandInviaMsgClient("streamoff") 
         
     }
-    protected void registraComandiServerThread(){
+    private void registraComandiServerThread(Class<? extends Component> clazz){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(ServerThread.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -111,6 +125,6 @@ public final class UserDrone extends User{
         temp.registraComando( null,path + "CommandInviaMsgDefaultToClient",true);
         
     }
-
+    public User getUser(){return this.user;}
 
 }

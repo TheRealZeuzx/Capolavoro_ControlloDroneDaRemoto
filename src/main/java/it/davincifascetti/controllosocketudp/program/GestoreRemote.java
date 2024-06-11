@@ -3,11 +3,12 @@ import java.io.IOException;
 import java.util.Vector;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
+import it.davincifascetti.controllosocketudp.command.CommandFactoryRemote;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 
 public class GestoreRemote extends Component {
-
+    private CommandFactoryRemote factory = null;
     private Vector<Remote> listaRemote = null;
     public GestoreRemote() throws CommandException {
         listaRemote = new Vector<Remote>();
@@ -16,6 +17,7 @@ public class GestoreRemote extends Component {
     public GestoreRemote(Ui ui) throws CommandException {
         this();
         this.setUi(ui);
+        this.factory = new CommandFactoryRemote();
     }
 
     public void modTelecomando(Client c) throws CommandException,ErrorLogException, IOException{
@@ -79,4 +81,5 @@ public class GestoreRemote extends Component {
         this.listaRemote = null;
     }
 
+    public CommandFactoryRemote getFactory(){return this.factory;}
 }

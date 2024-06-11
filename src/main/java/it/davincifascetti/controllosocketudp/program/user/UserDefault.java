@@ -3,8 +3,12 @@ package it.davincifascetti.controllosocketudp.program.user;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
+import it.davincifascetti.controllosocketudp.command.CommandListManager;
+import it.davincifascetti.controllosocketudp.program.Cli;
 import it.davincifascetti.controllosocketudp.program.Client;
+import it.davincifascetti.controllosocketudp.program.Component;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.GestoreRemote;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
@@ -14,31 +18,36 @@ import it.davincifascetti.controllosocketudp.program.ServerThread;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public final class UserDefault extends User{
+public final class UserDefault{
     
+    private User user;
     /**
      * @param pathErrorLogFile path del file errori
      * @throws CommandException
      */
     public UserDefault() throws CommandException{
-        super(UserDefault.class);
+        this.user = new User("default");
+        this.registraComandiGenerali(Cli.class);
+        this.registraComandiGestoreCS(Cli.class);
+        this.registraComandiClient(Cli.class);
+        this.registraComandiServer(Cli.class);
+        this.registraComandiServerThread(Cli.class);
+        this.registraComandiGenerali(GestoreRemote.class);
     }
 
-    //TODO Divisione dei comandi in pacchetti dedicati ?
-    //TODO possibilmente fare le registrazioni prendendo i file da xml, decidere se farlo o no
-    //TODO controllo e nel caso riscrittura concorrenza ErrorLogger/FileLogger
     
-    //quella sotto non è un problema degli spazi, è problema del metodo removeClient di gestoreClientServer e del comando DeleteClient/DeleteServer, 
-    //semplicemente la ricerca restituiva null e nel metodo removeClient il caso null non era considerato... , fixato adesso il caso null è gestito e 
-    //quando faccio la ricerca, nel comando se restiuisce null faccio una throw.      
-    // // FRA......... Dobbiamo gestire gli spazi dopo il parametro. Ho appena ricevuto una nullpointerexception dal delete :sob:
-    // // ! TO RECREATE: "new c c1 " "del c c1 "
-    // // ! ALTRO ERRORE: comando non esistente in client = exception
-    // // ! TO RECREATE: ">new c c1 localhost 1111 " ">se c c1" ">rem"
-    protected void registraComandiClient(){
+
+    private void registraComandiGenerali(Class<? extends Component> clazz){
         
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(Client.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(null);
+        temp.registraComando( null,path + "CommandInviaMsgClient",true);
+        //non ce ne sono
+    }
+    private void registraComandiClient(Class<? extends Component> clazz){
+        
+        String path = "it.davincifascetti.controllosocketudp.command.";
+        CommandList temp = this.user.getManager(clazz).getCommandList(Client.class);
         //normali
         temp.setStringaHelp(
             "Comandi Terminale Client\n\n"+
@@ -61,10 +70,10 @@ public final class UserDefault extends User{
         temp.registraComando( "s(?:e(?:t?)?)?[ ]+n(?:a(?:m(?:e)?)?)?[ ]+",path + "CommandSetNomeClient");
     }
    
-    protected void registraComandiServer(){
+    private void registraComandiServer(Class<? extends Component> clazz){
         
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(Server.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(Server.class);
         temp.setStringaHelp(
             "Comandi Terminale Server\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -90,10 +99,10 @@ public final class UserDefault extends User{
     }
     
     
-    protected void registraComandiGestoreCS(){
+    private void registraComandiGestoreCS(Class<? extends Component> clazz){
 
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(GestoreClientServer.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(GestoreClientServer.class);
         temp.setStringaHelp(
             "Comandi Terminale Generale\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -117,9 +126,9 @@ public final class UserDefault extends User{
         temp.registraComando( "i(?:n(?:f(?:o)?)?)?[ ]+",path +"CommandInfo");
 
     }
-    protected void registraComandiServerThread(){
+    private void registraComandiServerThread(Class<? extends Component> clazz){
         String path = "it.davincifascetti.controllosocketudp.command.";
-        CommandList temp = this.getManager().getCommandList(ServerThread.class);
+        CommandList temp = this.user.getManager(clazz).getCommandList(ServerThread.class);
         temp.setStringaHelp(
             "Comandi Remoti Disponibili\n\n"+
             "help\t\tpermette di visualizzare tutti i comandi \n" + 
@@ -136,7 +145,7 @@ public final class UserDefault extends User{
         
     }
 
- 
+    public User getUser(){return this.user;}
 
 
 }

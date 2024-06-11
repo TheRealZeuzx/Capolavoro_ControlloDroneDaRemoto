@@ -28,15 +28,16 @@ public class Remote extends KeyAdapter{
      * 
      */
     public void keyTyped(KeyEvent e) {
-        char c = e.getKeyChar();
-        if(c == 'e'){
+        char c = e.getKeyChar(); System.out.println((int)e.getKeyChar());
+        
+        if(e.getKeyChar() == KeyEvent.VK_ESCAPE){
             this.gestoreRemote.destroy(this);
         }
         try {
-            if(tastoPrecedente == null || !tastoPrecedente.equals(Character.valueOf(c))){
-                tastoPrecedente = Character.valueOf(c);
-                new CommandInviaMsgClient(this.client,"print " + String.valueOf(c),this.gestoreRemote.getUi()).execute();
-            }
+            
+            tastoPrecedente = Character.valueOf(c);
+            new CommandInviaMsgClient(this.client,"print " + String.valueOf(c),this.gestoreRemote.getUi()).execute();
+            
         } catch (CommandException e1) {
             
         } catch (ErrorLogException e1) {
@@ -57,7 +58,7 @@ public class Remote extends KeyAdapter{
         this.frame.addKeyListener(this); 
         this.frame.setVisible(true);
         this.frame.setAlwaysOnTop(true); 
-        System.out.println("premi la tab per iniziare ad inviare ('e' per uscire)");
+        System.out.println("premi la tab per iniziare ad inviare ('escape' per uscire)");
     }
 
     public boolean isActive(){

@@ -1,4 +1,5 @@
 package it.davincifascetti.controllosocketudp.program.user;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
+import it.davincifascetti.controllosocketudp.program.Component;;
 
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
@@ -14,66 +16,45 @@ import it.davincifascetti.controllosocketudp.command.CommandListManager;
  * @author Mussaldi Tommaso, Mattia Bonfiglio
  * @version 1.0
  */
-public abstract class User {
+public class User {
 
-    //!problema: così i listmanager sono specifici per la CLi ma non dovrebbero esserlo, dobrebbe essercene una per ogni componente della UI 
-    //TODO capire come affrontare il problema e risolvero, per ora userò la classe User per Cli
-    private static final Map<Class<? extends User>, CommandListManager> listeManagers = Collections.synchronizedMap(new HashMap<Class<? extends User>, CommandListManager>());
-    private static final Map<Class<? extends User>, AtomicBoolean> listeInizialized = Collections.synchronizedMap(new HashMap<Class<? extends User>, AtomicBoolean>());
+    //TODO cambiare eccezione
+    private final Map<Class<? extends Component>, CommandListManager> listeManagers = Collections.synchronizedMap(new HashMap<Class<? extends Component>, CommandListManager>());
+    private String nome;
     /**
      * @param pathErrorLogFile path del file errori
      * @param clazz Class che estende User (deve essere la classe di tipo figlio)
      * @throws CommandException
      */
-    protected User(Class<? extends User> clazz) throws CommandException{
-        if (!getClass().getSuperclass().equals(User.class)) {
-            throw new RuntimeException("Non puoi estendere la classe più di una volta!");
-        }
-        this.init(clazz);
+    //se voglio registrarli partendo da un file xml
+    public User(File file) throws CommandException{
+        //parse file
+        System.out.println("USER " + this.nome);
+
+    }
+    //se voglio registrarli manualmente da codice
+    public User(String nome) throws CommandException{
+        this.nome = nome;
+        System.out.println("USER " + this.nome);
     }
 
-    protected abstract void registraComandiClient();
-    protected abstract void registraComandiServer();
-    protected abstract void registraComandiGestoreCS();
-    protected abstract void registraComandiServerThread();
 
-    private void init(Class<? extends User> clazz){
-        if(User.getListaInit(clazz).compareAndSet(false, true)){
-            System.out.println("Debug: | Registrazione comandi GestoreClientServer |");
-            this.registraComandiGestoreCS();
-            System.out.println("Debug: | Registrazione comandi Client |");
-            this.registraComandiClient();
-            System.out.println("Debug: | Registrazione comandi Server |");
-            this.registraComandiServer();
-            System.out.println("Debug: | Registrazione comandi ServerThread |");
-            this.registraComandiServerThread();
-        }
-    }
-
-    /**
+    /**se la chiave esiste già non viene creato
      * 
-     * @param clazz classe dello user del quale si vuole il CommandListManager
-     * !se inserisco una classe errata, i comandi di tutti gli user potrebbero essere sballati
-     * @return CommandListManager corrispondente alla classe
+     * @param clazz non può essere null
+     * @return
      */
-    public CommandListManager getManager(){
-        if(User.listeManagers.containsKey(this.getClass()))
-            return User.listeManagers.get(this.getClass());
+    public CommandListManager getManager(Class<? extends Component> clazz){
+        if(clazz == null) return null;
+        if(this.listeManagers.containsKey(clazz))
+            return this.listeManagers.get(clazz);
         else{
-            System.out.println("Debug: > Creazione Lista Comandi " + this.getClass());
+            System.out.println("Debug: > Creazione Lista Comandi " + clazz == null? "" : clazz.getSimpleName());
             CommandListManager n = new CommandListManager();
-            User.listeManagers.put(this.getClass(),n); 
+            this.listeManagers.put(clazz,n); 
             return n;
         }
+        
     }
-    private static AtomicBoolean getListaInit(Class<? extends User> clazz){
-        if(User.listeInizialized.containsKey(clazz))
-            return User.listeInizialized.get(clazz);
-        else{
-            System.out.println("Debug: > Creazione Lista Comandi " + clazz);
-            AtomicBoolean n = new AtomicBoolean();
-            User.listeInizialized.put(clazz,n);
-            return n;
-        }
-    }
+
 }

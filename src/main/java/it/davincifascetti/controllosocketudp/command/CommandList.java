@@ -19,20 +19,11 @@ public class CommandList {
      * inizialmente il comando di default è impostato su CommandDefault
      * @throws CommandException
      */
-    //?nel caso in cui venga inserita una GUI , si può inserire un riferimento ad un bottone o simile come chiave idk
     private void registrazioneComando(String call,String CommandClass,boolean defaultCommand) throws CommandException{
         System.out.println("Debug: " + CommandClass + " | registrazione...");
-        //Controllo che la regex sia compilabile
-        try {
-            if(!defaultCommand && Pattern.compile(call) == null)
-                throw new CommandException("Errore, la regex non è valida!");
-        } catch (Exception e) {
-            throw new CommandException("Errore, la regex non è valida! | " + e.getMessage());
-        }
-        
         if(((defaultCommand) || (call != null && !call.isBlank())) && CommandClass != null  && !CommandClass.isBlank()){
             try { 
-                if(CommandI.class.isAssignableFrom(Class.forName(CommandClass)))
+                if(Command.class.isAssignableFrom(Class.forName(CommandClass)))
                     if(!defaultCommand)this.arrayAssociativo.put(call, CommandClass); else this.comandoDefault = CommandClass;
                 else
                     throw new CommandException("La classe inserita non implementa 'CommandI'");
@@ -74,12 +65,6 @@ public class CommandList {
         }
     }
 
-
-   
-    public void eliminaComando(){
-        //TODO Elimina Comando?
-        throw new UnsupportedOperationException("Unimplemented method 'eliminaComando'");
-    }
 
     /**
      * 
