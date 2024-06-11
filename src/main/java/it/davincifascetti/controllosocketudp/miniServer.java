@@ -1,6 +1,7 @@
 package it.davincifascetti.controllosocketudp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,6 +18,7 @@ import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.Commandable;
 import it.davincifascetti.controllosocketudp.command.CommandableException;
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
+import it.davincifascetti.controllosocketudp.program.FileLogger;
 import it.davincifascetti.controllosocketudp.program.Video;
 /**classe server, crea un thread che si occupa della ricezione e uno separato (ServerThread) che si occupa di rispondere
  * 
@@ -80,6 +82,8 @@ public class miniServer implements Runnable{
                 this.socket.receive(pacchetto);
                 packetData.append(new String(pacchetto.getData(), 0, pacchetto.getLength()));
                 if (pacchetto.getLength() != 1460) 
+                    // TODO grab byte array e stampa a video x debug
+                    new FileLogger("FrameByteData.txt").printToFile("FRAME: "+packetData.toString()+"\n");
                     this.video.decodeH264Frame(packetData.toString().getBytes());
             } catch (Exception e) {
 
