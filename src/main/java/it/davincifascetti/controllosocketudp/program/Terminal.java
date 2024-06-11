@@ -118,7 +118,8 @@ public class Terminal extends Ui {
         if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
         if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
-
+        if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc().equals("video")){
+        }
     }
 
     @Override
@@ -137,7 +138,8 @@ public class Terminal extends Ui {
                     this.fileErrorLog(e.getMessage());
                 }
             }else if(commandable.getDesc().equals("video")){
-                this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
+                //this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
+                //! sicuro? considerata la nuova implementazione del video, non servirà aggiornare il video manualmente.
             }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
         }else if(Client.class.isInstance(commandable)){

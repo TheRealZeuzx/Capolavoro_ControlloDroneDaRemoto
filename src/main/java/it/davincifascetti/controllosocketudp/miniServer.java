@@ -39,7 +39,7 @@ public class miniServer implements Runnable{
         this.setPorta(porta);
         this.nome = nomeServer;
         this.ip = ip;
-        this.video = new Video();
+        this.video = null;
         try {
             this.socket = new DatagramSocket(this.porta,InetAddress.getByName(ip));
         } catch (SocketException e) {
@@ -69,13 +69,8 @@ public class miniServer implements Runnable{
             DatagramPacket pacchetto = new DatagramPacket(bufferIN, miniServer.LunghezzaBuffer);
             try {
                 this.socket.receive(pacchetto);
-                packetData.append(new String(pacchetto.getData(), 0, pacchetto.getLength()));
-                if (pacchetto.getLength() != 1460) 
-                    // TODO grab byte array e stampa a video x debug
-                    new FileLogger("FrameByteData.txt").printToFile("FRAME: "+packetData.toString()+"\n");
-                    this.video.decodeH264Frame(packetData.toString().getBytes());
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         } 
         if(!this.socket.isClosed())this.socket.close();
@@ -95,6 +90,7 @@ public class miniServer implements Runnable{
                 throw new ErrorLogException(e.getMessage());
             }
         this.statoAttivo = true;
+        this.video = new Video();
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }
@@ -109,6 +105,8 @@ public class miniServer implements Runnable{
         }
         if(this.threadAscolto != null ) this.threadAscolto.interrupt();
         this.threadAscolto = null;
+        this.video.destroy();
+        this.video = null;
     }
 
     @Override
