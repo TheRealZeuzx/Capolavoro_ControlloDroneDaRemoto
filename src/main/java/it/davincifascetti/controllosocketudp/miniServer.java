@@ -90,7 +90,6 @@ public class miniServer implements Runnable{
                 throw new ErrorLogException(e.getMessage());
             }
         this.statoAttivo = true;
-        this.video = new Video();
         if(this.threadAscolto == null)this.threadAscolto = new Thread(this);
         if(!this.threadAscolto.isAlive())this.threadAscolto.start(); 
     }

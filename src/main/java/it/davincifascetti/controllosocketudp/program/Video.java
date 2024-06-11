@@ -14,21 +14,18 @@ public class Video extends Component {
     private VideoWindow videoWindow = null;
     private boolean alive = false;
 
-    public static void main(String[] args) throws Exception {
-
-    }
-
     public Video(Ui ui) throws CommandException{
         this.setUi(ui);
     }
 
     public void start(){
         if(Video.INIT.compareAndSet(false, true)){
-            try (TelloDrone drone = new WifiDroneFactory().build()) {
+            try{
+                this.listeningTo = new WifiDroneFactory().build();
                 this.videoWindow = new VideoWindow();
-                drone.connect();
-                drone.addVideoListener(this.videoWindow);
-                drone.setStreaming(true);
+                this.listeningTo.connect();
+                this.listeningTo.addVideoListener(this.videoWindow);
+                this.listeningTo.setStreaming(true);
                 this.alive = true;
                 while (this.alive) ;
             }catch(Exception e){

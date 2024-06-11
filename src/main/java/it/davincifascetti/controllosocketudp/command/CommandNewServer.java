@@ -2,6 +2,7 @@ package it.davincifascetti.controllosocketudp.command;
 
 import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.Ui;
 
 /** permette di instanziare un nuovo server all'interno della lista client di GestoreClientServer
@@ -13,6 +14,7 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
     private String nome;
     private String porta = null;
     private String ip = null;
+    private String descrizione = null;
     /**permette di instanziare un nuovo server e inserirlo nella lista di server, utilizza il primo costruttore di server
      * @param gestore GestoreClientServer che farà da reciever e quindi instanziera e inserira il server
      * @param terminale terminale da di server da passare al costruttore di server
@@ -32,16 +34,22 @@ public class CommandNewServer extends CommandI<GestoreClientServer> implements U
             throw new CommandException("I parametri passati non sono validi!");
     }
 
+    public CommandNewServer(GestoreClientServer gestore,String nomePortaIp,Ui ui, String descrizione) throws CommandException {
+        this(gestore, nomePortaIp,ui);
+        this.descrizione = descrizione;
+    }
+
 
     /**utilizza il metodo newServer 
      * 
      */
     @Override
     public void execute() throws CommandException, ErrorLogException {
+        Server s = null;
         try{
             if(porta == null && ip == null)
-                this.getGestore().newServer(nome);
-            else if(porta != null && ip != null)  this.getGestore().newServer(nome,ip,porta);
+                s = this.getGestore().newServer(nome, descrizione);
+            else if(porta != null && ip != null) s = this.getGestore().newServer(nome,ip,porta,descrizione);
             else throw new CommandException("Errore, qualcosa è andato storto!");
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());

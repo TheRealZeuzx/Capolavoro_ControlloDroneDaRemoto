@@ -118,7 +118,11 @@ public class Terminal extends Ui {
         if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
         if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
-        if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc().equals("video")){
+        System.out.println("DESC: "+ target.getDesc());
+        if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc() != null && target.getDesc().equals("video")){
+            //! be. .. usiamo una api esterna per il server, quindi il "server_added" non ha molto senso..
+            //! il target è inutile allo scopo del video fino a che "video" sarà implementato con api esterne che si connettono per conto proprio
+            this.getVideo().start();
         }
     }
 

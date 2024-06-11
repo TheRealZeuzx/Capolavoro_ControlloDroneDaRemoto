@@ -95,7 +95,7 @@ public final class UserDrone{
         //TODO scegliere se far in modo da creare una finestra separata per la visualizzazione delle stats del drone
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
         temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
-        temp.registraComando( "connect",path + "CommandConnect"); 
+        temp.registraComando( "connect",path +"drone.CommandNewDrone"); 
         // Comando per inizializzare il client del drone (Si connette all'ip 192.168.10.1 porta 8889 e manda un pacchetto contenente "command") 
         // new CommandNewClient(drone1, 192.168.10.1, 8889)
         // new CommandInviaMsgClient("command") 
