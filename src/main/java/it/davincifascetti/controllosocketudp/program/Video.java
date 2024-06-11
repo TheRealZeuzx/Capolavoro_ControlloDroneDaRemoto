@@ -2,11 +2,8 @@ package it.davincifascetti.controllosocketudp.program;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,11 +11,9 @@ import javax.swing.JLabel;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.javacv.ImageTransformer.Data;
 
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
-import it.davincifascetti.controllosocketudp.command.Commandable;
 
 public class Video extends Component {
     public static final int TIME_BEFORE_CLOSING_FRAME = 2000;
