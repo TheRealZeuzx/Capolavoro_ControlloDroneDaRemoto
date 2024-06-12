@@ -1,6 +1,8 @@
 package it.davincifascetti.controllosocketudp.program.user;
 
 
+import java.awt.event.KeyEvent;
+
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import it.davincifascetti.controllosocketudp.command.CommandList;
 import it.davincifascetti.controllosocketudp.command.CommandListManager;
@@ -8,7 +10,7 @@ import it.davincifascetti.controllosocketudp.program.Cli;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.Component;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
-import it.davincifascetti.controllosocketudp.program.GestoreRemote;
+import it.davincifascetti.controllosocketudp.program.Remote;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
@@ -32,7 +34,7 @@ public final class UserDefault{
         this.registraComandiClient(Cli.class);
         this.registraComandiServer(Cli.class);
         this.registraComandiServerThread(Cli.class);
-        this.registraComandiGenerali(GestoreRemote.class);
+        this.registraComandiGenerali(Remote.class);
     }
 
     
@@ -41,7 +43,8 @@ public final class UserDefault{
         
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp = this.user.getManager(clazz).getCommandList(null);
-        temp.registraComando( null,path + "CommandInviaMsgClient",true);
+        temp.registraComando( Integer.toString(KeyEvent.VK_ESCAPE),path + "CommandTerminaTelecomando");
+        temp.registraComando( null,path + "CommandInviaMsgClientTelecomando",true);
         //non ce ne sono
     }
     private void registraComandiClient(Class<? extends Component> clazz){

@@ -17,7 +17,7 @@ import it.davincifascetti.controllosocketudp.program.user.User;
 public class Terminal extends Ui {
     
     public static Scanner input = new Scanner(System.in);
-    private GestoreRemote telecomandi = null;
+    private Remote telecomandi = null;
     private Cli cli = null;
     private Video video = null;
     private GestoreRisposte gestoreRisposte = null;
@@ -31,10 +31,10 @@ public class Terminal extends Ui {
     //TODO capire come gestire USER, per ora rappresenta solo i comandi di CLI
     public Terminal(ErrorLog errorLog,GestoreClientServer business,User comandi,App app) throws CommandException, IOException{
         super(business, errorLog,comandi,app);
-        this.telecomandi = new GestoreRemote(this);
+        this.telecomandi = new Remote(this,this.getUser().getManager(Remote.class));
         this.cli = new Cli(this.getUser().getManager(Cli.class),this); //agirà di input output con l'utente
         this.video = new Video(this); 
-        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(GestoreRemote.class),this);
+        this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(Cli.class),this);
         
         this.cli.setVista(this.getBusiness());
     }
@@ -76,7 +76,7 @@ public class Terminal extends Ui {
         return this.cli.isAttivo(gestore);
     }
 
-    public GestoreRemote getGestoreRemote(){
+    public Remote getRemote(){
         return this.telecomandi;
     }
     public GestoreRisposte getGestoreRisposte(){
@@ -118,7 +118,6 @@ public class Terminal extends Ui {
         if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
         if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
-        System.out.println("DESC: "+ target.getDesc());
         if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc() != null && target.getDesc().equals("video")){
             //! be. .. usiamo una api esterna per il server, quindi il "server_added" non ha molto senso..
             //! il target è inutile allo scopo del video fino a che "video" sarà implementato con api esterne che si connettono per conto proprio

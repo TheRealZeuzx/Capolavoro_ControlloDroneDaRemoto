@@ -29,7 +29,7 @@ public class CommandTelecomando extends CommandI<Client>{
     public void execute() throws CommandException, ErrorLogException{
         try {
             this.getGestore().setDesc("remote");
-            ((Terminal)this.getUi()).getGestoreRemote().modTelecomando(this.getGestore());
+            ((Terminal)this.getUi()).getRemote().start(this.getGestore());
         }catch(Exception e ){
             ((Terminal)this.getUi()).getCli().printError(e.getMessage());
         }
