@@ -19,7 +19,6 @@ public class Terminal extends Ui {
     public static Scanner input = new Scanner(System.in);
     private Remote telecomandi = null;
     private Cli cli = null;
-    private Video video = null;
     private GestoreRisposte gestoreRisposte = null;
     
     /**
@@ -33,7 +32,7 @@ public class Terminal extends Ui {
         super(business, errorLog,comandi,app);
         this.telecomandi = new Remote(this,this.getUser().getManager(Remote.class));
         this.cli = new Cli(this.getUser().getManager(Cli.class),this); //agirà di input output con l'utente
-        this.video = new Video(this); 
+
         this.gestoreRisposte = new GestoreRisposte(this.getUser().getManager(Cli.class),this);
         
         this.cli.setVista(this.getBusiness());
@@ -83,7 +82,7 @@ public class Terminal extends Ui {
         return this.gestoreRisposte;
     }
     public Cli getCli(){return this.cli;}
-    public Video getVideo(){return this.video;}
+
     
     @Override
     protected void init() {
@@ -118,11 +117,6 @@ public class Terminal extends Ui {
         if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
         if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
-        if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc() != null && target.getDesc().equals("video")){
-            //! be. .. usiamo una api esterna per il server, quindi il "server_added" non ha molto senso..
-            //! il target è inutile allo scopo del video fino a che "video" sarà implementato con api esterne che si connettono per conto proprio
-            this.getVideo().start();
-        }
     }
 
     @Override
@@ -140,9 +134,6 @@ public class Terminal extends Ui {
                     this.getCli().printError(e.getMessage());
                     this.fileErrorLog(e.getMessage());
                 }
-            }else if(commandable.getDesc().equals("video")){
-                //this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
-                //! sicuro? considerata la nuova implementazione del video, non servirà aggiornare il video manualmente.
             }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
         }else if(Client.class.isInstance(commandable)){
@@ -173,7 +164,6 @@ public class Terminal extends Ui {
         this.cli.destroy();
         this.gestoreRisposte.destroy();
         this.telecomandi.destroy();
-        this.video.destroy();
     }
     
 

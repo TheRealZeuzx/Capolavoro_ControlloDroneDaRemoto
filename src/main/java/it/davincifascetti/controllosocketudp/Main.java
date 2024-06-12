@@ -14,7 +14,7 @@ public class Main {
         * select c c1
         */
         try {
-            App app = new App("errorLog.txt",new UserDefault().getUser());
+            App app = new App("errorLog.txt",new UserDrone().getUser());
             System.out.println("\u001B[33m" + "User creato correttamente" + "\u001B[37m");
             app.start();
         } catch (Exception e) {

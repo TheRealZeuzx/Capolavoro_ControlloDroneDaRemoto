@@ -11,6 +11,7 @@ public class CommandNewClient extends CommandI<GestoreClientServer> implements U
     private String nome;
     private String porta = null;
     private String ip = "";
+    private String desc = null;
 
     /**permette di instanziare un nuovo client e inserirlo nella lista di client
      * @param gestore GestoreClientServer che farà da reciever e quindi instanziera e inserira il client
@@ -30,14 +31,18 @@ public class CommandNewClient extends CommandI<GestoreClientServer> implements U
         }else
             throw new CommandException("I parametri passati non sono validi!");
     }
+    public CommandNewClient(GestoreClientServer gestore, String nomeIpPorta,Ui ui,String desc) throws CommandException {
+        this(gestore, nomeIpPorta, ui);
+        this.desc = desc;
+    }
 
     @Override
     public void execute() throws CommandException,ErrorLogException {
         try{
         if(ip.equals("") || porta == null)
-            this.getGestore().newClient(nome);
+            this.getGestore().newClient(nome,desc);
         else
-            this.getGestore().newClient(nome,ip,porta);
+            this.getGestore().newClient(nome,ip,porta,desc);
         }catch(CommandableException e){
             throw new CommandException(e.getMessage());
         }

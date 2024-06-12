@@ -86,10 +86,11 @@ public class GestoreClientServer implements Commandable{
      * @return 
      * @throws CommandableException
      */
-    public Client newClient(String nome) throws CommandableException{
+    public Client newClient(String nome,String desc) throws CommandableException{
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,this.getEventManagerClient());
         this.listaClient.add(c);
+        c.setDesc(desc);
         this.eventManager.notify(GestoreClientServer.CLIENT_ADDED, this,c);
         return c;
         
@@ -104,11 +105,12 @@ public class GestoreClientServer implements Commandable{
      * @throws CommandableException
      * @throws ErrorLogException
      */
-    public Client newClient(String nome,String ip,String porta) throws CommandableException, ErrorLogException{
+    public Client newClient(String nome,String ip,String porta,String desc) throws CommandableException, ErrorLogException{
         if(ip == null || ip.equals("")) throw new CommandableException("Errore, l'ip non è stato specificato");
         if(ricercaClient(nome) != null) throw new CommandableException("il client '" + nome + "' è già esistente");
         Client c = new Client(nome,ip,porta,this.getEventManagerClient());
         this.listaClient.add(c);
+        c.setDesc(desc);
         this.eventManager.notify(GestoreClientServer.CLIENT_ADDED,this, c);
         return c;
     }

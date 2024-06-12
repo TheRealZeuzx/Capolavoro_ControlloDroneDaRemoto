@@ -37,7 +37,7 @@ public class Remote extends Component implements KeyListener{
         this.frame.addKeyListener(this); 
         this.frame.setVisible(true);
         this.frame.setAlwaysOnTop(true); 
-        System.out.println("premi la tab per iniziare ad inviare ('escape' per uscire)");//recuperarlo dal manager
+        System.out.println(this.getManager().getCommandList(null).getStringaHelp());//recuperarlo dal manager
     }
 
     public Client stop(){
@@ -66,7 +66,7 @@ public class Remote extends Component implements KeyListener{
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println(e.getKeyChar());
+        // System.out.println(e.getKeyChar());
         try {
             this.executeCommand(this.getFactory().getCommand(this.getClient(),Integer.toString((int)e.getKeyChar()), this.getUi()),null);
         } catch (CommandException e1) {

@@ -245,7 +245,7 @@ public class Client implements Commandable,Runnable{
     }
     @Override
     public synchronized String getDesc() {
-        return null;
+        return this.desc;
     }
     @Override
     public synchronized void setDesc(String desc) {
