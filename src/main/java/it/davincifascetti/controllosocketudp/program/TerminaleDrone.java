@@ -64,7 +64,7 @@ public class TerminaleDrone extends Terminal{
                     this.fileErrorLog(e.getMessage());
                 }
             }else if(commandable.getDesc().equals("video")){
-                this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
+                // this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
                 //! sicuro? considerata la nuova implementazione del video, non servirà aggiornare il video manualmente.
             }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
