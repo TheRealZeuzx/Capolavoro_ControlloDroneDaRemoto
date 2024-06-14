@@ -34,18 +34,18 @@ public class TerminaleDrone extends Terminal{
             if(eventType.equals(Client.MESSAGE_SENT)) this.getCli().setLocked(true); 
         } 
         if(eventType.equals(Client.MESSAGE_RECEIVED) || eventType.equals(Client.SERVER_NO_RESPONSE)) this.getCli().setLocked(false); 
-        if(eventType == Client.MESSAGE_SENT && responsabile.getDesc() != null && responsabile.getDesc().equals("drone")){
-            //! be. .. usiamo una api esterna per il server, quindi il "server_added" non ha molto senso..
-            //! il target è inutile allo scopo del video fino a che "video" sarà implementato con api esterne che si connettono per conto proprio
-            this.getVideo().start();
-        }
+        
     }
     @Override
     public void update(String eventType, Commandable responsabile,Commandable target) {
         if(responsabile == null){this.getCli().printError("Errore!");} //!gestire
         if(this.getCli().isAttivo(responsabile))this.getCli().print(responsabile.getClass().getSimpleName() + " dice che è successo questo: " + eventType); 
         //TODO quando elimino un client o server devo rimuoverlo dalle liste componenti esempio elimino un client, devo rimuoverlo dalla lista di gestoreRemote
-        
+        if(eventType == GestoreClientServer.SERVER_ADDED && target.getDesc() != null && target.getDesc().equals("video")){
+            //! be. .. usiamo una api esterna per il server, quindi il "server_added" non ha molto senso..
+            //! il target è inutile allo scopo del video fino a che "video" sarà implementato con api esterne che si connettono per conto proprio
+            this.getVideo().start();
+        }
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TerminaleDrone extends Terminal{
                     this.fileErrorLog(e.getMessage());
                 }
             }else if(commandable.getDesc().equals("video")){
-                //this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
+                // this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
                 //! sicuro? considerata la nuova implementazione del video, non servirà aggiornare il video manualmente.
             }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)

@@ -89,8 +89,8 @@ public final class UserDrone{
         temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
         temp.registraComando( "c(?:o(?:n(?:n(?:e(?:c(?:t)?)?)?)?)?)?[ ]*",path +"drone.CommandConnectDrone"); 
         temp.registraComando( "sh(?:o(?:w)?)?[ ]+",path +"CommandShow");
-        temp.registraComando( "^st(?:a(?:t(?:u(?:s)?)?)?)?[ ]*$",path +"CommandStatus"); //seleziona il server status
-        temp.registraComando( "^p(?:i(?:l(?:o(?:t)?)?)?)?[ ]*$",path +"CommandPilot"); //seleziona il client 
+        temp.registraComando( "^st(?:a(?:t(?:u(?:s)?)?)?)?[ ]*$",path +"drone.CommandStatus"); //seleziona il server status
+        temp.registraComando( "p(?:i(?:l(?:o(?:t)?)?)?)?[ ]*",path +"drone.CommandPilot"); //seleziona il client 
         
     }
     private void registraComandiServerThread(Class<? extends Component> clazz){

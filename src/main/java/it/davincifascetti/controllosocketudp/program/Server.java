@@ -19,7 +19,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 public class Server implements Runnable,Commandable{
     
-    public static final int BUFFER_LENGHT = 1024;
+    public static final int BUFFER_LENGHT = 2048;
     private DatagramSocket socket = null;
     private String nome;
     private int porta = -1;

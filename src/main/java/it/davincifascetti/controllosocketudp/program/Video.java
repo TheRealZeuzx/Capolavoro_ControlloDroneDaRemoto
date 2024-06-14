@@ -5,7 +5,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import me.friwi.tello4j.api.drone.TelloDrone;
 import me.friwi.tello4j.api.drone.WifiDroneFactory;
+import me.friwi.tello4j.api.exception.TelloNetworkException;
 import me.friwi.tello4j.api.video.VideoWindow;
+import me.friwi.tello4j.wifi.impl.video.TelloVideoThread;
 
 public class Video extends Component implements Runnable {
     public static final int TIME_BEFORE_CLOSING_FRAME = 2000;
@@ -13,6 +15,7 @@ public class Video extends Component implements Runnable {
     private TelloDrone listeningTo = null;
     private VideoWindow videoWindow = null;
     private Thread thread = null;
+
 
     public Video(Ui ui) throws CommandException{
         this.setUi(ui);
@@ -47,4 +50,5 @@ public class Video extends Component implements Runnable {
         this.videoWindow.dispose();
         this.listeningTo = null;
     }
+
 }

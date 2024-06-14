@@ -16,7 +16,7 @@ import it.davincifascetti.controllosocketudp.errorlog.ErrorLogException;
  */
 public class Client implements Commandable,Runnable{
 
-	private static final int BUFFER_LENGHT = 1024;
+	private static final int BUFFER_LENGHT = 2048;
 	private static final int WAIT_TIME = 2000;
     private String nome;
     private String desc = null;
