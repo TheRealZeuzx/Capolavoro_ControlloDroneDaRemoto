@@ -33,7 +33,7 @@ public class CommandConnectDrone implements Command{
     @Override
     public void execute() throws CommandException, ErrorLogException {
         new CommandSelectClient(gestore, "drone", ui).execute();
-        new CommandInviaMsgClient((Client)((TerminaleDrone)this.ui).getCli().getGestoreAttuale(), "connect", ui).execute();
+        new CommandInviaMsgClient((Client)((TerminaleDrone)this.ui).getCli().getGestoreAttuale(), "command", ui).execute();
     }
 
 
