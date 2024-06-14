@@ -63,22 +63,14 @@ public class TerminaleDrone extends Terminal{
                     this.getCli().printError(e.getMessage());
                     this.fileErrorLog(e.getMessage());
                 }
-            }else if(commandable.getDesc().equals("video")){
-                // this.getVideo().updateVideo(buffer, lung); //!quando andrò a creare il server che riceve il video, assegnerò come desc: video =/
-                //! sicuro? considerata la nuova implementazione del video, non servirà aggiornare il video manualmente.
+            }else if(commandable.getDesc().equals("state")){
+                if(this.getCli().isAttivo(((ServerThread)commandable).getServer())) 
+                    this.getCli().print("\r" + new String(buffer)); //!forse devi levare "\r"
             }
         //messaggio ricevuto in risposta ad una richiesta del client (ricevuto dal client)
         }else if(Client.class.isInstance(commandable)){
-            if(commandable.getDesc() == null){
-                try {
-                    this.getGestoreRisposte().gestisciRisposta(buffer, lung, (Client)commandable);
-                } catch (CommandException e) {
-                    this.getCli().printError(e.getMessage());
-                } catch (ErrorLogException e) {
-                    this.getCli().printError(e.getMessage());
-                    this.fileErrorLog(e.getMessage());
-                }
-            }
+            if(this.getCli().isAttivo((Client)commandable)) 
+                    this.getCli().print(new String(buffer));
         }
     }
 

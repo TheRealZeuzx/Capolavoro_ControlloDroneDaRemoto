@@ -87,7 +87,8 @@ public final class UserDrone{
         //TODO scegliere se far in modo da creare una finestra separata per la visualizzazione delle stats del drone
         temp.registraComando( "^(h(?:e(?:l(?:p)?)?)?[ ]*)$",path + "CommandHelp");
         temp.registraComando( "^[?][ ]*$",path + "CommandHelp");
-        temp.registraComando( "c(?:o(?:n(?:n(?:e(?:c(?:t)?)?)?)?)?)?[ ]*",path +"drone.CommandConnectDrone"); 
+        //!preferisco levarlo , uso pilot e gli mando il comando "command" se non è connesso (forse lo fa anche la classe WifiDrone) 
+        //temp.registraComando( "c(?:o(?:n(?:n(?:e(?:c(?:t)?)?)?)?)?)?[ ]*",path +"drone.CommandConnectDrone"); 
         temp.registraComando( "sh(?:o(?:w)?)?[ ]+",path +"CommandShow");
         temp.registraComando( "^st(?:a(?:t(?:u(?:s)?)?)?)?[ ]*$",path +"drone.CommandStatus"); //seleziona il server status
         temp.registraComando( "p(?:i(?:l(?:o(?:t)?)?)?)?[ ]*",path +"drone.CommandPilot"); //seleziona il client 
