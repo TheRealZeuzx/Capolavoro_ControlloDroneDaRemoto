@@ -27,8 +27,8 @@ public class CommandNewDrone implements UndoableCommand{
         if(ui == null) throw new CommandException("Errore la UI è null!");
         this.ui = ui;
         this.newClient = new CommandNewClient(gestore, "drone 192.168.10.1 8889", ui,"drone");
-        this.newServer = new CommandNewServer(gestore, "state 0.0.0.0 8889", ui,"state");
-        this.newServer1 = new CommandNewServer(gestore, "video", ui, "video");
+        this.newServer = new CommandNewServer(gestore, "state 0.0.0.0 8890", ui,"state");
+        this.newServer1 = new CommandNewServer(gestore, "video 0.0.0.0 11111", ui, "video");
     }
 
     /**utilizza il metodo newServer 

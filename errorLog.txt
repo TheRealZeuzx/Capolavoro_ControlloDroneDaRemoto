@@ -46,3 +46,4 @@
 [2024/06/08 19:22:44]	Errore, impossibile ripristinare il server
 [2024/06/08 19:35:35]	Errore, impossibile ripristinare il server
 [2024/06/08 19:38:22]	Errore, impossibile ripristinare il server
+[2024/06/14 17:21:04]	Errore nella creazione del server: Address already in use: bind
