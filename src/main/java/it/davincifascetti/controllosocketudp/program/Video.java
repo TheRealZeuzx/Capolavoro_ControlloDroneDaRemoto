@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.davincifascetti.controllosocketudp.command.CommandException;
 import me.friwi.tello4j.api.drone.TelloDrone;
 import me.friwi.tello4j.api.drone.WifiDroneFactory;
+import me.friwi.tello4j.api.exception.TelloException;
 import me.friwi.tello4j.api.exception.TelloNetworkException;
 import me.friwi.tello4j.api.video.VideoWindow;
 import me.friwi.tello4j.wifi.impl.video.TelloVideoThread;
@@ -12,13 +13,19 @@ import me.friwi.tello4j.wifi.impl.video.TelloVideoThread;
 public class Video extends Component implements Runnable {
     public static final int TIME_BEFORE_CLOSING_FRAME = 2000;
     private final static AtomicBoolean INIT = new AtomicBoolean();
-    private TelloDrone listeningTo = null;
     private VideoWindow videoWindow = null;
     private Thread thread = null;
-
+    private TelloVideoThread tv = null;
 
     public Video(Ui ui) throws CommandException{
         this.setUi(ui);
+        this.videoWindow = new VideoWindow("FPV drone");
+        try {
+            tv =  new TelloVideoThread(videoWindow);
+        } catch (TelloNetworkException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void start(){
@@ -30,13 +37,7 @@ public class Video extends Component implements Runnable {
 
     public void run(){
         try{
-            this.listeningTo = new WifiDroneFactory().build();
-            this.videoWindow = new VideoWindow();
-            this.videoWindow.setSize(960,720);
-            this.listeningTo.connect();
-            this.listeningTo.addVideoListener(this.videoWindow);
-            this.listeningTo.setStreaming(true);
-            while (this.listeningTo.isStreaming())  ;
+            this.tv.start();
         }catch(Exception e){
             Video.INIT.set(false);
             ((Terminal) this.getUi()).getCli().printError(e.getMessage());
@@ -44,11 +45,18 @@ public class Video extends Component implements Runnable {
     }
 
     public void destroy(){
-        this.thread.interrupt();
+        this.tv.finish();
         super.destroy();
-        this.listeningTo.removeVideoListener(this.videoWindow);
-        this.videoWindow.dispose();
-        this.listeningTo = null;
+
+    }
+
+    public void updateVideo(byte[] buffer,int lung){
+        try {
+            this.tv.handleInput(buffer, lung);
+        } catch (TelloException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }

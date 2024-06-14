@@ -9,10 +9,11 @@
     <version>0.0.1</version>
 
     <dependencies>
+
         <dependency>
-            <groupId>me.friwi</groupId>
-            <artifactId>tello4j</artifactId>
-            <version>1.0.2</version>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
