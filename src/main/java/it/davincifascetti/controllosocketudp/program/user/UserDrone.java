@@ -9,6 +9,7 @@ import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
+import java.awt.event.KeyEvent;
 /**classe User è una sorta di wrapper per Error e GestoreClientServer, in modo da evitare all'utente di occuparsi della creazione del errorLog e GestoreClientServer
  * che saranno i componenti principali
  * @author Mussaldi Tommaso, Mattia Bonfiglio
@@ -29,7 +30,16 @@ public final class UserDrone{
         
         String path = "it.davincifascetti.controllosocketudp.command.";
         CommandList temp = this.user.getManager(clazz).getCommandList(null);
-        //non ce ne sono
+        temp.registraComando( Integer.toString(KeyEvent.VK_ESCAPE),path + "CommandTerminaTelecomando");
+        temp.registraComando( Integer.toString(KeyEvent.VK_W),path + "drone.CommandSpostaDestra");
+        temp.registraComando( Integer.toString(KeyEvent.VK_A),path + "drone.CommandSpostaSinistra");
+        temp.registraComando( Integer.toString(KeyEvent.VK_S),path + "drone.CommandSpostaIndietro");
+        temp.registraComando( Integer.toString(KeyEvent.VK_D),path + "drone.CommandSpostaAvanti");
+        temp.registraComando( Integer.toString(KeyEvent.VK_E),path + "drone.CommandRuotaDestra");
+        temp.registraComando( Integer.toString(KeyEvent.VK_Q),path + "drone.CommandRuotaSinistra");
+        temp.registraComando( Integer.toString(KeyEvent.VK_SHIFT),path + "drone.CommandSpostaGiu");
+        temp.registraComando( Integer.toString(KeyEvent.VK_SHIFT),path + "drone.CommandSpostaSu");
+        temp.setStringaHelp("premi la tab per iniziare ad inviare ('escape' per uscire)");
     }
 
     private void registraComandiClient(Class<? extends Component> clazz){

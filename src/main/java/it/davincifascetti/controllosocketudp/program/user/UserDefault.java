@@ -46,7 +46,6 @@ public final class UserDefault{
         temp.registraComando( Integer.toString(KeyEvent.VK_ESCAPE),path + "CommandTerminaTelecomando");
         temp.registraComando( null,path + "CommandInviaMsgClientTelecomando",true);
         temp.setStringaHelp("premi la tab per iniziare ad inviare ('escape' per uscire)");
-        //non ce ne sono
     }
     private void registraComandiClient(Class<? extends Component> clazz){
         
