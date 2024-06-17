@@ -6,6 +6,7 @@ import it.davincifascetti.controllosocketudp.program.Cli;
 import it.davincifascetti.controllosocketudp.program.Client;
 import it.davincifascetti.controllosocketudp.program.Component;
 import it.davincifascetti.controllosocketudp.program.GestoreClientServer;
+import it.davincifascetti.controllosocketudp.program.Remote;
 import it.davincifascetti.controllosocketudp.program.Server;
 import it.davincifascetti.controllosocketudp.program.ServerThread;
 
@@ -24,6 +25,7 @@ public final class UserDrone{
         this.registraComandiClient(Cli.class);
         this.registraComandiServer(Cli.class);
         this.registraComandiServerThread(Cli.class);
+        this.registraComandiGenerali(Remote.class);
     }
     
     private void registraComandiGenerali(Class<? extends Component> clazz){
@@ -38,7 +40,7 @@ public final class UserDrone{
         temp.registraComando( Integer.toString(KeyEvent.VK_E),path + "drone.CommandRuotaDestra");
         temp.registraComando( Integer.toString(KeyEvent.VK_Q),path + "drone.CommandRuotaSinistra");
         temp.registraComando( Integer.toString(KeyEvent.VK_SHIFT),path + "drone.CommandSpostaGiu");
-        temp.registraComando( Integer.toString(KeyEvent.VK_SHIFT),path + "drone.CommandSpostaSu");
+        temp.registraComando( Integer.toString(KeyEvent.VK_SPACE),path + "drone.CommandSpostaSu");
         temp.setStringaHelp("premi la tab per iniziare ad inviare ('escape' per uscire)");
     }
 

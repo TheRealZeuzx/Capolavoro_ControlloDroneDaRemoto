@@ -66,19 +66,20 @@ public class Remote extends Component implements KeyListener{
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        // System.out.println(e.getKeyChar());
-        try {
-            this.executeCommand(this.getFactory().getCommand(this.getClient(),Integer.toString((int)e.getKeyChar()), this.getUi()),null);
-        } catch (CommandException e1) {
-            ((Terminal)this.getUi()).getCli().printError(e1.getMessage());
-        } catch (ErrorLogException e1) {
-            ((Terminal)this.getUi()).getCli().printError(e1.getMessage());
-        }
+        
 
     }
     
     @Override
     public void keyPressed(KeyEvent e) {
+        System.out.println(e.getKeyChar());
+        try {
+            this.executeCommand(this.getFactory().getCommand(this.getClient(),Integer.toString(e.getKeyCode()), this.getUi()),null);
+        } catch (CommandException e1) {
+            ((Terminal)this.getUi()).getCli().printError(e1.getMessage());
+        } catch (ErrorLogException e1) {
+            ((Terminal)this.getUi()).getCli().printError(e1.getMessage());
+        }
     }
 
     @Override
